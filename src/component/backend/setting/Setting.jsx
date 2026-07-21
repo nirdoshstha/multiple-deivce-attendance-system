@@ -103,7 +103,7 @@ const Setting = () => {
                         Website Settings
                     </div>
                     <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>
-                        Update your website information and social media links. TEST
+                        Update your website information and social media links. 
                     </div>
                 </div>
 
@@ -183,17 +183,32 @@ const Setting = () => {
                     </div>
 
                     {/* Slogan */}
-                    <div className="form-group">
-                        <label className="form-label">Website Slogan</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            name="slogan"
-                            value={settings.slogan}
-                            onChange={handleChange}
-                            placeholder="Enter website slogan"
-                        />
+                    <div className='form-row'>
+                        <div className="form-group">
+                            <label className="form-label">Website Slogan</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="slogan"
+                                value={settings.slogan}
+                                onChange={handleChange}
+                                placeholder="Enter website slogan"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">Address</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="address"
+                                value={settings.address}
+                                onChange={handleChange}
+                                placeholder="Company Address"
+                            />
+                        </div>
                     </div>
+
 
                     {/* Email & Phone */}
                     <div className="form-row">
@@ -220,10 +235,7 @@ const Setting = () => {
                                 placeholder="Phone Number"
                             />
                         </div>
-                    </div>
 
-                    {/* Mobile & Address */}
-                    <div className="form-row">
                         <div className="form-group">
                             <label className="form-label">Mobile</label>
                             <input
@@ -236,18 +248,9 @@ const Setting = () => {
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Address</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="address"
-                                value={settings.address}
-                                onChange={handleChange}
-                                placeholder="Company Address"
-                            />
-                        </div>
                     </div>
+
+
 
                     {/* Social Media */}
                     <div className="divider" style={{ margin: "20px 0" }} />
@@ -280,9 +283,7 @@ const Setting = () => {
                                 placeholder="https://x.com/..."
                             />
                         </div>
-                    </div>
 
-                    <div className="form-row">
                         <div className="form-group">
                             <label className="form-label">Instagram</label>
                             <input
@@ -294,19 +295,9 @@ const Setting = () => {
                                 placeholder="https://instagram.com/..."
                             />
                         </div>
-
-                        <div className="form-group">
-                            <label className="form-label">LinkedIn</label>
-                            <input
-                                type="url"
-                                className="form-control"
-                                name="linkedin"
-                                value={settings.linkedin}
-                                onChange={handleChange}
-                                placeholder="https://linkedin.com/in/..."
-                            />
-                        </div>
                     </div>
+
+
 
                     <div className="form-row">
                         <div className="form-group">
@@ -332,9 +323,7 @@ const Setting = () => {
                                 placeholder="+97798XXXXXXXX"
                             />
                         </div>
-                    </div>
 
-                    <div className="form-row">
                         <div className="form-group">
                             <label className="form-label">Viber</label>
                             <input
@@ -347,6 +336,8 @@ const Setting = () => {
                             />
                         </div>
 
+                    </div>
+                    <div className='form-row'>
                         <div className="form-group">
                             <label className="form-label">Google Map</label>
                             <input
@@ -358,7 +349,21 @@ const Setting = () => {
                                 placeholder="Google Map Embed URL"
                             />
                         </div>
+                        <div className="form-group">
+                            <label className="form-label">LinkedIn</label>
+                            <input
+                                type="url"
+                                className="form-control"
+                                name="linkedin"
+                                value={settings.linkedin}
+                                onChange={handleChange}
+                                placeholder="https://linkedin.com/in/..."
+                            />
+                        </div>
                     </div>
+
+
+
 
                     {/* Google Recaptcha */}
                     <div className="divider" style={{ margin: "20px 0" }} />
@@ -366,29 +371,30 @@ const Setting = () => {
                     <div className="section-title" style={{ fontSize: 14, marginBottom: 15 }}>
                         Google reCAPTCHA
                     </div>
+                    <div className='form-row'>
+                        <div className="form-group">
+                            <label className="form-label">Site Key</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="recaptcha_key"
+                                value={settings.recaptcha_key}
+                                onChange={handleChange}
+                                placeholder="Google reCAPTCHA Site Key"
+                            />
+                        </div>
 
-                    <div className="form-group">
-                        <label className="form-label">Site Key</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            name="recaptcha_key"
-                            value={settings.recaptcha_key}
-                            onChange={handleChange}
-                            placeholder="Google reCAPTCHA Site Key"
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label className="form-label">Secret Key</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            name="recaptcha_secret"
-                            value={settings.recaptcha_secret}
-                            onChange={handleChange}
-                            placeholder="Google reCAPTCHA Secret Key"
-                        />
+                        <div className="form-group">
+                            <label className="form-label">Secret Key</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="recaptcha_secret"
+                                value={settings.recaptcha_secret}
+                                onChange={handleChange}
+                                placeholder="Google reCAPTCHA Secret Key"
+                            />
+                        </div>
                     </div>
 
                     <div className="divider" />

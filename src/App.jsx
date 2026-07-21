@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Routes } from 'react-router'
 import Login from './component/frontend/auth/Login'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import Profile from './component/frontend/Profile'
 import PrivateRoutes from './component/PrivateRoutes'
 import MasterLayout from './layout/backend/MasterLayout'
@@ -16,42 +16,41 @@ import UserEdit from './component/backend/user/UserEdit'
 import Permission from './component/backend/permission/Permission'
 
 const App = () => {
+  const { can } = useAuth();
   return (
     <div>
 
 
-      <AuthProvider>
-        <Routes>
-          {/* <Route path="/register" element={<Register />} /> */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
+      <Routes>
+        {/* <Route path="/register" element={<Register />} /> */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
 
-          <Route element={<PrivateRoutes />}>
-            <Route path="/admin" element={<MasterLayout />}>
+        <Route element={<PrivateRoutes />}>
+          <Route path="/admin" element={<MasterLayout />}>
 
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="setting" element={<Setting />} />
-              <Route path="about" element={<About />} />
-
-
-              <Route path="user" element={<User />} />
-              <Route path="user/:id/edit" element={<UserEdit />} />
-
-              {/* Role */}
-              <Route path="role" element={<Role />} />
-              <Route path="role/:id" element={<ShowRole />} />
-              <Route path="role/edit/:id" element={<EditRole />} />
-
-              {/* Permission */}
-              <Route path="permission" element={<Permission />}/>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="setting" element={<Setting />} />
+            <Route path="about" element={<About />} />
 
 
-            </Route>
+            <Route path="user" element={<User />} />
+            <Route path="user/:id/edit" element={can('users.show') ? <UserEdit /> : <div>403 Permission Denied!</div>} />
+
+            {/* Role */}
+            <Route path="role" element={<Role />} />
+            <Route path="role/:id" element={<ShowRole />} />
+            <Route path="role/edit/:id" element={<EditRole />} />
+
+            {/* Permission */}
+            <Route path="permission" element={<Permission />} />
+
+
           </Route>
+        </Route>
 
-          <Route path="*" element={<div>404 Not Found</div>} />
-        </Routes>
-      </AuthProvider>
+        <Route path="*" element={<div>404 Not Found</div>} />
+      </Routes>
     </div>
 
   )

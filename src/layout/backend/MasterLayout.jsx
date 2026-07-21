@@ -10,6 +10,7 @@ const themeNames = ['Ocean Blue', 'Forest Green', 'Violet Night', 'Rose Red', 'A
 
 const MasterLayout = () => {
     const { user, clearAuthState } = useAuth();
+    const { can } = useAuth();
 
 
     const [themeIdx, setThemeIdx] = useState(0);
@@ -59,11 +60,11 @@ const MasterLayout = () => {
                             className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-house-door" /> Dashboard</NavLink>
                     </div>
 
-                     <div className="nav-item">
+                    <div className="nav-item">
                         <NavLink to="user" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-people" /> Users</NavLink>
                     </div>
                     <div className="nav-item">
-                        <NavLink to="role" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-people" /> Role</NavLink>
+                        <NavLink to="role" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-people" /> Roles & Permissions</NavLink>
                     </div>
                     <div className="nav-item">
                         <NavLink to="permission" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-people" /> Permission</NavLink>
@@ -76,14 +77,20 @@ const MasterLayout = () => {
                     <div className="nav-item">
                         <a href="#" className="nav-link"><i className="bi bi-shield-person" /> Admins <span className="nav-badge" id="sidebar-admin-count">4</span></a>
                     </div>
-                   
+
                     <div className="nav-item">
                         <a href="#" className="nav-link"><i className="bi bi-file-earmark-text" /> Reports</a>
                     </div>
                     <div className="nav-section-label">System</div>
-                    <div className="nav-item">
-                        <NavLink to="setting"  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-gear" /> Settings</NavLink>
-                    </div>
+
+                    {
+                        can("settings.store") && (
+                            <div className="nav-item">
+                                <NavLink to="setting" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-gear" /> Settings</NavLink>
+                            </div>
+                        )
+                    }
+
                     <div className="nav-item">
                         <a href="#" className="nav-link"><i className="bi bi-bell" /> Notifications <span className="nav-badge">3</span></a>
                     </div>

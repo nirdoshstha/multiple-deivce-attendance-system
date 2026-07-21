@@ -148,7 +148,7 @@ const Role = () => {
                                 <input type="text" name='name' value={roles.name} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
 
                             </div>
-                            <div className="form-group mb-3">
+                            {/* <div className="form-group mb-3">
                                 <label className="form-label">Permissions</label>
 
                                 <div className="row">
@@ -178,11 +178,11 @@ const Role = () => {
                                         </div>
                                     ))}
                                 </div>
-                            </div>
+                            </div> */}
 
 
                             {
-                                can("users.edit") && (
+                                can("roles.edit") && (
                                     <button type='submit' className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
                                         <i className="bi bi-person-plus-fill" /> Create Role Account
                                     </button>
@@ -223,13 +223,18 @@ const Role = () => {
                                                     <td>
                                                         {role.name}
                                                     </td>
-                                                    <td style={{ fontSize: "13px", color: "#64748B" }} className='gx-2'>
+                                                    {/* <td style={{ fontSize: "13px", color: "#64748B" }} className='gx-2'>
                                                         {
                                                             role.permissions.map((permission) => {
                                                                 return (
                                                                     <span className="status-pill active m-1"> {formatPermission(permission.name)}</span>
                                                                 )
                                                             })
+                                                        }
+                                                    </td> */}
+                                                    <td>
+                                                        {
+                                                           role.name ==='Super Admin' ? 'All Permission' : role.permissions?.length ?? ''
                                                         }
                                                     </td>
 
@@ -253,7 +258,7 @@ const Role = () => {
                                                                     </Link>
                                                                 )
                                                             }
-                                                            
+
                                                             {
                                                                 can("roles.destroy") && (
                                                                     <button className="btn-danger-sm" onClick={() => deleteRole(role.id)} title="Delete"><i className="bi bi-trash3" /></button>
