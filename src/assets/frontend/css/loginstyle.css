@@ -1,0 +1,415 @@
+  /* ============================================================
+     1. RESET
+     ============================================================ */
+  *,
+  *::before,
+  *::after {
+      box-sizing: border-box;
+  }
+
+  html,
+  body {
+      height: 100%;
+      margin: 0;
+  }
+
+  /* ============================================================
+     2. DESIGN TOKENS
+     A warm, matte "pressed stone" palette. Two soft neutrals
+     (light source top-left) drive every emboss/inset shadow pair.
+     ============================================================ */
+  :root {
+      --bg: #1f1e1d;
+      /* page background */
+      --surface: #EAE7DE;
+      /* card / control surface, same family as bg */
+      --shadow-dark: #C6C1B2;
+      /* simulated recessed / far-from-light edge */
+      --shadow-light: #FFFFFF;
+      /* simulated raised / near-light edge */
+      --ink: #2E2B25;
+      /* primary text */
+      --muted: #837E70;
+      /* secondary text */
+      --accent: linear-gradient(135deg, #2563EB, #06B6D4);
+      /* moss green — primary action colour */
+      --accent-dark: #2768c3;
+      /* pressed / hover state of accent */
+      --error: #A8402F;
+      /* muted brick red for validation */
+      --radius-lg: 28px;
+      --radius-md: 16px;
+      --radius-pill: 999px;
+      --ease: cubic-bezier(.65, 0, .35, 1);
+  }
+
+  /* ============================================================
+     3. PAGE SCENE
+     ============================================================ */
+  /* body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      padding: 32px;
+      background:
+          radial-gradient(circle at 20% 15%, #171616 0%, transparent 55%),
+          var(--bg);
+      font-family: 'Inter', sans-serif;
+      color: var(--ink);
+  } */
+
+  /* ============================================================
+     4. CARD SHELL — the main embossed "slab"
+     Raised off the page with a light/dark shadow pair.
+     ============================================================ */
+  .auth-card {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+  }
+
+  /* The two radio inputs that drive every piece of state in this
+     component (which panel slides into view, which switch option
+     is highlighted). They stay in the accessibility/tab order but
+     are visually invisible — never use `hidden`, or keyboard users
+     lose the control entirely. */
+  .mode-radio {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+  }
+
+  /* Because CSS has no "checked" selector that looks backward, both
+     radios must be siblings that come BEFORE .card-inner in the
+     markup — everything below is addressed via the `~` combinator. */
+
+  .card-inner {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 40px 36px 32px;
+      box-shadow:
+          10px 10px 22px var(--shadow-dark),
+          -10px -10px 22px var(--shadow-light);
+      overflow: hidden;
+  }
+
+  /* ============================================================
+     5. HEADER
+     ============================================================ */
+  .card-header {
+      text-align: center;
+      margin-bottom: 24px;
+  }
+
+  .brand-mark {
+      display: inline-block;
+      font-size: 1.1rem;
+      color: var(--accent);
+      transform: rotate(45deg);
+      margin-bottom: 6px;
+  }
+
+  .brand-name-login {
+      margin: 0 0 20px;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      letter-spacing: 0.01em;
+      /* a faint carved-letter effect: a light shadow below, dark above */
+      text-shadow: 0 1px 0 var(--shadow-light);
+      color: #2E2B25;
+  }
+
+  /* ---- Mode switch pill (the signature element) ----
+     A single embossed track with a sliding accent knob that
+     mirrors the panel currently in view. */
+  .mode-switch {
+      position: relative;
+      display: flex;
+      width: 208px;
+      margin: 0 auto;
+      padding: 4px;
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      box-shadow:
+          inset 3px 3px 7px var(--shadow-dark),
+          inset -3px -3px 7px var(--shadow-light);
+  }
+
+  .mode-option {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      text-align: center;
+      padding: 8px 0;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      transition: color .35s var(--ease);
+  }
+
+  .mode-knob {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      border-radius: var(--radius-pill);
+      background: var(--accent);
+      box-shadow:
+          3px 3px 7px var(--shadow-dark),
+          -1px -1px 4px rgba(255, 255, 255, .6);
+      transition: transform .5s var(--ease);
+      z-index: 1;
+  }
+
+  /* Default state = "Log in" selected */
+  .mode-option[for="modeLogin"] {
+      color: #FBFAF7;
+  }
+
+  .mode-option[for="modeSignup"] {
+      color: var(--muted);
+  }
+
+  /* When the Sign up radio is checked: slide the knob and flip text colours */
+  #modeSignup:checked~.card-inner .mode-knob {
+      transform: translateX(100%);
+  }
+
+  #modeSignup:checked~.card-inner .mode-option[for="modeLogin"] {
+      color: var(--muted);
+  }
+
+  #modeSignup:checked~.card-inner .mode-option[for="modeSignup"] {
+      color: #FBFAF7;
+  }
+
+  /* Visible focus ring for keyboard users, drawn on the pill even
+     though the radio itself is visually hidden. */
+  #modeLogin:focus-visible~.card-inner .mode-switch,
+  #modeSignup:focus-visible~.card-inner .mode-switch {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+  }
+
+  /* ============================================================
+     6. SLIDING VIEWPORT
+     .forms-viewport clips overflow; .forms-track is twice the
+     width and holds both panels side by side; toggling the
+     "signup" radio slides it left by 50%.
+     ============================================================ */
+  .forms-viewport {
+      overflow: hidden;
+      border-radius: var(--radius-md);
+  }
+
+  .forms-track {
+      display: flex;
+      width: 200%;
+      transition: transform .6s var(--ease);
+  }
+
+  #modeSignup:checked~.card-inner .forms-track {
+      transform: translateX(-50%);
+  }
+
+  .form-panel {
+      width: 50%;
+      flex-shrink: 0;
+      padding: 28px 2px 4px;
+      min-height: 400px;
+      /* keeps both panels the same height regardless of field count */
+  }
+
+  /* Respect users who've asked for less motion */
+  @media (prefers-reduced-motion: reduce) {
+
+      .forms-track,
+      .mode-knob,
+      .mode-option {
+          transition: none;
+      }
+  }
+
+  /* ============================================================
+     7. PANEL TEXT
+     ============================================================ */
+  .panel-title {
+      margin: 0 0 4px;
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+  }
+
+  .panel-sub {
+      margin: 0 0 24px;
+      font-size: 0.88rem;
+      color: var(--muted);
+  }
+
+  /* ============================================================
+     8. FIELDS — inset "pressed into the slab" inputs with a
+     floating label. No JS: the classic trick is an empty-but-not-
+     absent placeholder (" ") paired with the :placeholder-shown
+     pseudo-class, which is only true while the field is empty.
+     ============================================================ */
+  .field {
+      position: relative;
+      margin-bottom: 20px;
+  }
+
+  .field input {
+      width: 100%;
+      padding: 20px 16px 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--ink);
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-md);
+      box-shadow:
+          inset 3px 3px 7px var(--shadow-dark),
+          inset -3px -3px 7px var(--shadow-light);
+      outline: none;
+      transition: box-shadow .25s ease;
+  }
+
+  .field input:focus {
+      box-shadow:
+          inset 3px 3px 7px var(--shadow-dark),
+          inset -3px -3px 7px var(--shadow-light),
+          0 0 0 2px var(--accent);
+  }
+
+  .field label {
+      position: absolute;
+      left: 16px;
+      top: 14px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      pointer-events: none;
+      transform-origin: left top;
+      transition: transform .2s ease, color .2s ease, top .2s ease;
+  }
+
+  /* Float the label up when the field has focus OR already has a value */
+  .field input:focus+label,
+  .field input:not(:placeholder-shown)+label {
+      top: 7px;
+      transform: scale(0.72);
+      color: var(--accent);
+  }
+
+  /* ---- Validation styling ----
+     required / type="email" / pattern / minlength all populate the
+     browser's built-in constraint validation, which :valid and
+     :invalid simply expose. We only show the red state once a
+     field has content AND has lost focus, so users aren't shown
+     an error while they're still mid-keystroke. */
+  .field input:not(:placeholder-shown):not(:focus):invalid {
+      box-shadow:
+          inset 3px 3px 7px var(--shadow-dark),
+          inset -3px -3px 7px var(--shadow-light),
+          0 0 0 2px var(--error);
+  }
+
+  .field input:not(:placeholder-shown):not(:focus):invalid+label {
+      color: var(--error);
+  }
+
+  .error-msg {
+      display: block;
+      max-height: 0;
+      margin-top: 0;
+      font-size: 0.76rem;
+      color: var(--error);
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .25s ease, opacity .25s ease, margin-top .25s ease;
+  }
+
+  .field input:not(:placeholder-shown):not(:focus):invalid~.error-msg {
+      max-height: 30px;
+      margin-top: 6px;
+      opacity: 1;
+  }
+
+  /* ============================================================
+     9. SUBMIT BUTTON — raised, presses inward on click
+     ============================================================ */
+  .submit-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 4px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--accent);
+      color: #FBFAF7;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      box-shadow:
+          5px 5px 12px var(--shadow-dark),
+          -3px -3px 10px var(--shadow-light);
+      transition: box-shadow .15s ease, transform .15s ease, background .2s ease;
+  }
+
+  .submit-btn:hover {
+      background: linear-gradient(135deg, #EC4899, #7C3AED);
+  }
+
+  .submit-btn:active {
+      transform: translateY(1px);
+      box-shadow:
+          inset 3px 3px 7px rgba(0, 0, 0, .25),
+          inset -2px -2px 5px rgba(255, 255, 255, .12);
+  }
+
+  .submit-btn:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 3px;
+  }
+
+  /* ============================================================
+     10. FOOTER SWITCH LINE
+     ============================================================ */
+  .switch-line {
+      margin: 18px 0 0;
+      text-align: center;
+      font-size: 0.83rem;
+      color: var(--muted);
+  }
+
+  .switch-link {
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+  }
+
+  .switch-link:hover {
+      color: var(--accent-dark);
+  }
+
+  /* ============================================================
+     11. SMALL SCREENS
+     ============================================================ */
+  @media (max-width: 420px) {
+      .card-inner {
+          padding: 32px 22px 26px;
+      }
+
+      .form-panel {
+          min-height: 430px;
+      }
+  }
