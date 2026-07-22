@@ -45,6 +45,31 @@ const Dashboard = () => {
     }
 
 
+    const [changePassword, setChangePassword] = useState({
+        password: "",
+        new_password: "",
+        cnew_password: "",
+    })
+
+
+    const submitChangePassword = async (e) => {
+        e.preventDefault();
+
+        try {
+            const result = await api.put(`/users/update-password/${user.id}`, changePassword);
+            console.log(result);
+            showSuccess(result.data.message)
+            setChangePassword({
+                password: "",
+                new_password: "",
+                cnew_password: ""
+            })
+        } catch (error) {
+            showError(error.response.data.message);
+        }
+    }
+
+
 
 
 
@@ -181,6 +206,10 @@ const Dashboard = () => {
                                         <button className="nav-links active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Personal Information.</button>
                                     </li>
 
+                                    <li className="nav-item" role="presentation">
+                                        <button className="nav-links" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Account Password.</button>
+                                    </li>
+
 
                                 </ul>
                                 <div className="tab-content" id="pills-tabContent">
@@ -269,6 +298,40 @@ const Dashboard = () => {
                                                         </button>
                                                 }
 
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div className="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabIndex={0}>
+                                        <form onSubmit={submitChangePassword}>
+                                            <div className="form-row">
+                                                <div className="form-group">
+                                                    <label className="form-label">Old Password</label>
+                                                    <input type="text" name='password' value={changePassword.password} onChange={(e) => setChangePassword({ ...changePassword, password: e.target.value })} className="form-control" placeholder="First name" />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">New Password</label>
+                                                    <input type="text" name='new_password' value={changePassword.new_password} onChange={(e) => setChangePassword({ ...changePassword, new_password: e.target.value })} className="form-control" placeholder="First name" />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">Confirm New Password</label>
+                                                    <input type="text" name='cnew_password' value={changePassword.cnew_password} onChange={(e) => setChangePassword({ ...changePassword, cnew_password: e.target.value })} className="form-control" placeholder="your@email.com" />
+                                                </div>
+
+                                                <div className="form-group">
+                                                    <div>
+                                                        {
+                                                            !loading ?
+                                                                <button type='submit' className="btn-primary mt-4">
+                                                                    <i className="bi bi-check2-circle" /> Save Changes
+                                                                </button>
+                                                                :
+                                                                <button type="button" className="btn-primary" disabled>
+                                                                    <ClipLoader color='color' size={20} /><i className="bi bi-check2-circle" /> Saving...
+                                                                </button>
+                                                        }
+                                                    </div>
+                                                </div>
                                             </div>
                                         </form>
                                     </div>

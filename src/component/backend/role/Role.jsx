@@ -134,13 +134,13 @@ const Role = () => {
                             <button class="theme-toggle-btn" title="Cycle theme"><i className="bi bi-plus-circle" style={{ fontSize: "14px" }}></i> Create New Role </button>
                             <div className="count-icon"><i className="bi bi-shield-person-fill" /> {getRoles.length || 0} </div>
                         </div>
-                        <div className='d-flex justify-content-between align-items-center'>
+                        {/* <div className='d-flex justify-content-between align-items-center'>
                             <div className="section-title" style={{ fontSize: 15, marginBottom: 16 }}>Create New Role </div>
 
                             {
                                 html_roles
                             }
-                        </div>
+                        </div> */}
 
                         <form onSubmit={handleSubmitRole}  >
                             <div className="form-group">
@@ -182,9 +182,13 @@ const Role = () => {
 
 
                             {
-                                can("roles.edit") && (
+                                can("roles.store") && (
                                     <button type='submit' className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                                        <i className="bi bi-person-plus-fill" /> Create Role Account
+                                        {loading ? <PulseLoader
+                                            color='white'
+                                            loading={true}
+                                            size={12}
+                                        /> : ''}  <i className="bi bi-person-plus-fill" /> Create Role Account
                                     </button>
                                 )
                             }
@@ -234,7 +238,7 @@ const Role = () => {
                                                     </td> */}
                                                     <td>
                                                         {
-                                                           role.name ==='Super Admin' ? 'All Permission' : role.permissions?.length ?? ''
+                                                            role.name === 'Super Admin' ? 'All Permission' : role.permissions?.length ?? ''
                                                         }
                                                     </td>
 

@@ -14,6 +14,9 @@ import ShowRole from './component/backend/role/ShowRole'
 import EditRole from './component/backend/role/EditRole'
 import UserEdit from './component/backend/user/UserEdit'
 import Permission from './component/backend/permission/Permission'
+import Error403 from './component/errors/Error403'
+import Gender from './component/backend/gender/Gender'
+import Designation from './component/backend/designation/Designation'
 
 const App = () => {
   const { can } = useAuth();
@@ -35,7 +38,7 @@ const App = () => {
 
 
             <Route path="user" element={<User />} />
-            <Route path="user/:id/edit" element={can('users.show') ? <UserEdit /> : <div>403 Permission Denied!</div>} />
+            <Route path="user/:id/edit" element={can('users.show') ? <UserEdit /> : <Error403 />} />
 
             {/* Role */}
             <Route path="role" element={<Role />} />
@@ -44,6 +47,10 @@ const App = () => {
 
             {/* Permission */}
             <Route path="permission" element={<Permission />} />
+
+            {/* Gender */}
+            <Route path='gender' element={<Gender />} />
+            <Route path='designation' element={<Designation />} />
 
 
           </Route>

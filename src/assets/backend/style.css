@@ -278,6 +278,53 @@
      gap: 10px;
  }
 
+ /* Drop Down Menu START */
+ /* Dropdown Button */
+ .nav-dropdown {
+     width: 100%;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     cursor: pointer;
+     background: transparent;
+     border: none;
+     color: inherit;
+     padding: 12px 16px;
+     border-radius: 10px;
+     transition: all .3s ease;
+ }
+
+ .nav-dropdown:hover {
+     background: rgba(255, 255, 255, .08);
+ }
+
+ /* Submenu */
+ .submenu {
+     max-height: 0;
+     overflow: hidden;
+     transition: max-height .35s ease;
+     margin-left: 12px;
+ }
+
+ .submenu.show {
+     max-height: 300px;
+ }
+
+ .submenu-link {
+     padding: 10px 15px 10px 40px;
+     font-size: 14px;
+ }
+
+ .submenu-link i {
+     margin-right: 10px;
+ }
+
+ .nav-item.open>.nav-dropdown i:last-child {
+     transition: transform .3s;
+ }
+
+ /* End Drop Down Menu */
+
  .theme-toggle-btn {
      height: 36px;
      padding: 0 16px;
@@ -1763,5 +1810,271 @@
  .badge {
 
      font-size: .8rem;
+
+ }
+
+ /* 403 Error */
+ .background {
+
+     min-height: 100vh;
+     overflow: hidden;
+
+     display: flex;
+     justify-content: center;
+     align-items: center;
+
+     background: linear-gradient(135deg, #0f172a, #1e3a8a, #2563eb);
+
+     position: relative;
+ }
+
+ /* Background */
+
+ .background-circle {
+
+     position: absolute;
+     border-radius: 50%;
+     filter: blur(80px);
+     animation: float 10s ease-in-out infinite;
+ }
+
+ .circle1 {
+
+     width: 320px;
+     height: 320px;
+     background: #00d4ff;
+
+     top: -80px;
+     left: -80px;
+ }
+
+ .circle2 {
+
+     width: 280px;
+     height: 280px;
+     background: #9333ea;
+
+     bottom: -70px;
+     right: -60px;
+ }
+
+ .circle3 {
+
+     width: 220px;
+     height: 220px;
+     background: #38bdf8;
+
+     bottom: 20%;
+     left: 15%;
+ }
+
+ /* Glass Card */
+
+ .glass-card-403 {
+
+     max-width: 620px;
+     width: 100%;
+
+     padding: 20px 15px;
+
+     border-radius: 30px;
+
+     background: rgba(255, 255, 255, .12);
+
+     backdrop-filter: blur(25px);
+     -webkit-backdrop-filter: blur(25px);
+
+     border: 1px solid rgba(255, 255, 255, .2);
+
+     box-shadow:
+         0 15px 35px rgba(0, 0, 0, .3);
+
+     animation: fadeIn .7s;
+ }
+
+ /* Icon */
+
+ .lock-icon {
+
+     width: 100px;
+     height: 100px;
+
+     margin: auto;
+
+     border-radius: 50%;
+
+     display: flex;
+     justify-content: center;
+     align-items: center;
+
+     background: rgba(255, 255, 255, .18);
+
+     border: 1px solid rgba(255, 255, 255, .2);
+
+     margin-bottom: 10px;
+
+     font-size: 40px;
+
+     color: #ffd54f;
+
+     animation: pulse 2s infinite;
+ }
+
+ /* Text */
+
+ .error-code {
+
+     font-size: 90px;
+     font-weight: 700;
+
+     color: #fff;
+ }
+
+ .title {
+
+     color: #fff;
+
+     font-weight: 600;
+
+     margin-bottom: 20px;
+ }
+
+ .description {
+
+     color: #dbeafe;
+
+     font-size: 17px;
+
+     line-height: 1.5;
+
+     margin-bottom: 40px;
+ }
+
+ /* Buttons */
+
+ .btn {
+
+     padding: 13px 35px;
+
+     border-radius: 50px;
+
+     font-weight: 600;
+
+     transition: .4s;
+ }
+
+ .btn-home {
+
+     background: #38bdf8;
+
+     color: #fff;
+ }
+
+ .btn-home:hover {
+
+     transform: translateY(-5px);
+
+     background: #0ea5e9;
+
+     color: #fff;
+ }
+
+ .btn-back {
+
+     background: rgba(255, 255, 255, .15);
+
+     color: #fff;
+
+     border: 1px solid rgba(255, 255, 255, .2);
+ }
+
+ .btn-back:hover {
+
+     background: rgba(255, 255, 255, .3);
+
+     color: #fff;
+
+     transform: translateY(-5px);
+ }
+
+ /* Animations */
+
+ @keyframes float {
+
+     0% {
+         transform: translateY(0px);
+     }
+
+     50% {
+         transform: translateY(-30px);
+     }
+
+     100% {
+         transform: translateY(0px);
+     }
+ }
+
+ @keyframes pulse {
+
+     0% {
+         transform: scale(1);
+     }
+
+     50% {
+         transform: scale(1.08);
+     }
+
+     100% {
+         transform: scale(1);
+     }
+ }
+
+ @keyframes fadeIn {
+
+     from {
+
+         opacity: 0;
+         transform: translateY(40px);
+
+     }
+
+     to {
+
+         opacity: 1;
+         transform: translateY(0);
+     }
+ }
+
+ /* Responsive */
+
+ @media(max-width:768px) {
+
+     .glass-card {
+
+         margin: 20px;
+         padding: 40px 25px;
+     }
+
+     .error-code {
+
+         font-size: 70px;
+     }
+
+     .lock-icon {
+
+         width: 90px;
+         height: 90px;
+         font-size: 45px;
+     }
+
+     .description {
+
+         font-size: 15px;
+     }
+
+     .btn {
+
+         width: 100%;
+     }
 
  }

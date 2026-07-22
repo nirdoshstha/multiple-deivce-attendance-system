@@ -164,13 +164,13 @@ const User = () => {
                             <div className="count-icon"><i className="bi bi-shield-person-fill" /> {users.length || 0}</div>
                         </div>
 
-                        <div className='d-flex justify-content-between align-items-center'>
+                        {/* <div className='d-flex justify-content-between align-items-center'>
                             <div className="section-title" style={{ fontSize: 15, marginBottom: 16 }}>Create New User </div>
 
                             {
                                 html_users
                             }
-                        </div>
+                        </div> */}
                         <form onSubmit={handleSubmit} autoComplete='off' >
                             <div class="form-floating">
                                 <input type="text" name='name' value={userAdd.name} onChange={handleInput} className="form-control" id="floatinginput" placeholder="e.g. Alex Rivera" />
@@ -266,15 +266,19 @@ const User = () => {
                             </div>
                             <div style={{ display: 'flex', gap: 10, marginTop: "20px" }}>
                                 {
-                                    !loading ?
-                                        <button type='submit' className="btn-primary">
-                                            <i className="bi bi-check2-circle" /> Save Changes
-                                        </button>
-                                        :
-                                        <button type="button" className="btn-primary" disabled>
-                                            <ClipLoader color='color' size={20} /><i className="bi bi-check2-circle" /> Saving...
-                                        </button>
+                                    can("users.store") && (
+                                        !loading ?
+                                            <button type='submit' className="btn-primary">
+                                                <i className="bi bi-check2-circle" /> Save Changes
+                                            </button>
+                                            :
+                                            <button type="button" className="btn-primary" disabled>
+                                                <ClipLoader color='color' size={20} /><i className="bi bi-check2-circle" /> Saving...
+                                            </button>
+                                    )
                                 }
+
+
 
                             </div>
 

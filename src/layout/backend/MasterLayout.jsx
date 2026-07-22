@@ -11,6 +11,12 @@ const themeNames = ['Ocean Blue', 'Forest Green', 'Violet Night', 'Rose Red', 'A
 const MasterLayout = () => {
     const { user, clearAuthState } = useAuth();
     const { can } = useAuth();
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+    const isGalleryActive =
+        location.pathname.startsWith("/admin/user") ||
+        location.pathname.startsWith("/admin/gender") ||
+        location.pathname.startsWith("/admin/designation");
 
 
     const [themeIdx, setThemeIdx] = useState(0);
@@ -60,9 +66,52 @@ const MasterLayout = () => {
                             className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-house-door" /> Dashboard</NavLink>
                     </div>
 
-                    <div className="nav-item">
-                        <NavLink to="user" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-people" /> Users</NavLink>
+                    <div className={`nav-item ${userMenuOpen ? "open" : ""}`}>
+                        <button
+                            className={`nav-link nav-dropdown ${isGalleryActive ? "active" : ""}`}
+                            onClick={() => setUserMenuOpen(!userMenuOpen)}
+                        >
+                            <span>
+                                <i className="bi bi-people" /> Users
+                            </span>
+
+                            <i
+                                className={`bi ${userMenuOpen ? "bi-chevron-down" : "bi-chevron-right"
+                                    }`}
+                            />
+                        </button>
+
+                        <div className={`submenu ${userMenuOpen ? "show" : ""}`} style={{marginTop:"5px"}}>
+                            <NavLink
+                                to="user"
+                                className={({ isActive }) =>
+                                    isActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-person" /> User List
+                            </NavLink>
+
+                            <NavLink
+                                to="gender"
+                                className={({ isActive }) =>
+                                    isActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-gender-ambiguous" /> Gender
+                            </NavLink>
+
+                            <NavLink
+                                to="designation"
+                                className={({ isActive }) =>
+                                    isActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-briefcase" /> Designation
+                            </NavLink>
+                        </div>
                     </div>
+
+
                     <div className="nav-item">
                         <NavLink to="role" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-people" /> Roles & Permissions</NavLink>
                     </div>
