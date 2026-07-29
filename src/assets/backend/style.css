@@ -288,7 +288,8 @@
      cursor: pointer;
      background: transparent;
      border: none;
-     color: inherit;
+     /* color: inherit; */
+     color:rgba(255, 255, 255, 0.6);
      padding: 12px 16px;
      border-radius: 10px;
      transition: all .3s ease;

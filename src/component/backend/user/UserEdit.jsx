@@ -6,7 +6,7 @@ import api, { BASE_URL } from '../../../api/api';
 
 const UserEdit = () => {
     const { id } = useParams();
-    const { navigate } = useNavigate();
+    const navigate = useNavigate();
     const [userEdit, setUserEdit] = useState({
         image: null,
         name: '',
@@ -93,7 +93,7 @@ const UserEdit = () => {
                 },
             });
             await showSuccess(res.data.message);
-            navigate("admin/user/");
+            navigate("/admin/user/");
             // console.log(res);
 
         } catch (error) {
@@ -124,9 +124,9 @@ const UserEdit = () => {
                 <div style={{ marginBottom: 20 }}>
                     <div>
                         <div className="section-title" style={{ fontSize: 15 }}>Edit Profile<div className='float-end'>
-
                             <Link to={`/admin/user`} className="theme-toggle-btn text-decoration-none" title="Cycle theme"><i class="bi bi-house-door"></i> Back To Users Table</Link>
-                        </div></div>
+                        </div>
+                        </div>
                         <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>Update your personal and contact information</div>
                         {html_users}
                     </div>

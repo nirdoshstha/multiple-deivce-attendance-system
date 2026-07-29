@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Route, Routes } from 'react-router'
 import Login from './component/frontend/auth/Login'
 import { AuthProvider, useAuth } from './context/AuthContext'
@@ -17,9 +17,25 @@ import Permission from './component/backend/permission/Permission'
 import Error403 from './component/errors/Error403'
 import Gender from './component/backend/gender/Gender'
 import Designation from './component/backend/designation/Designation'
+import Vendor from './component/backend/vendor/Vendor'
+import Trashed from './component/backend/vendor/Trashed'
+import api from './api/api'
+import VendorEdit from './component/backend/vendor/VendorEdit'
+import Company from './component/backend/company/Company'
+import CompanyEdit from './component/backend/company/CompanyEdit'
+import CompanyTrashed from './component/backend/company/CompanyTrashed'
+import Brand from './component/backend/brand/Brand'
+import BrandEdit from './component/backend/brand/BrandEdit'
+import Device from './component/backend/device/Device'
+import DeviceEdit from './component/backend/device/DeviceEdit'
+import CompanyDevice from './component/backend/company-device/CompanyDevice'
+import CompanyDeviceShow from './component/backend/company-device/CompanyDeviceShow'
+import CompanyDeviceTrashed from './component/backend/company-device/CompanyDeviceTrashed'
 
 const App = () => {
   const { can } = useAuth();
+
+
   return (
     <div>
 
@@ -51,6 +67,32 @@ const App = () => {
             {/* Gender */}
             <Route path='gender' element={<Gender />} />
             <Route path='designation' element={<Designation />} />
+
+            {/* Vendor */}
+            <Route path='vendor' element={<Vendor />} />
+            <Route path='vendor/trashed' element={<Trashed />} />
+            <Route path='vendor/edit/:id' element={<VendorEdit />} />
+
+            {/* Companies  */}
+            <Route path='company' element={<Company />} />
+            <Route path='company/trashed' element={<CompanyTrashed />} />
+            <Route path='company/edit/:id' element={<CompanyEdit />} />
+
+            {/* Company Devices */}
+
+            <Route path='company-device' element={<CompanyDevice />} />
+            <Route path='company-device/:id' element={<CompanyDeviceShow />} />
+            <Route path='company-device/trashed' element={<CompanyDeviceTrashed />} />
+            {/* Device Brand */}
+            <Route path='device-brand' element={<Brand />} />
+            <Route path='device-brand/edit/:id' element={<BrandEdit />} />
+
+            {/* Devices */}
+            <Route path='device' element={<Device />} />
+            <Route path='device/edit/:id' element={<DeviceEdit />} />
+
+
+
 
 
           </Route>

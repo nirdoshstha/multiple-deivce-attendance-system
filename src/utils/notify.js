@@ -26,3 +26,16 @@ export const showSuccess = (message) => {
     });
 }
 
+export const showInfo = (message) => {
+    toast.info(message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });
+}
+
