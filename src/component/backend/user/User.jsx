@@ -157,20 +157,11 @@ const User = () => {
                     <div className="glass-card create-admin-card">
                         <div className="count-badge-row d-flex justify-content-between">
                             <button class="theme-toggle-btn" title="Cycle theme"><i className="bi bi-plus-circle" style={{ fontSize: "14px" }}></i> Create New User </button>
-                            <div>
-
-                            </div>
-
+                            
                             <div className="count-icon"><i className="bi bi-shield-person-fill" /> {users.length || 0}</div>
                         </div>
 
-                        {/* <div className='d-flex justify-content-between align-items-center'>
-                            <div className="section-title" style={{ fontSize: 15, marginBottom: 16 }}>Create New User </div>
-
-                            {
-                                html_users
-                            }
-                        </div> */}
+                        
                         <form onSubmit={handleSubmit} autoComplete='off' >
                             <div class="form-floating">
                                 <input type="text" name='name' value={userAdd.name} onChange={handleInput} className="form-control" id="floatinginput" placeholder="e.g. Alex Rivera" />

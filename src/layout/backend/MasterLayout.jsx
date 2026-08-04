@@ -13,6 +13,7 @@ const MasterLayout = () => {
     const { can } = useAuth();
 
     const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const [staffMenuOpen, setStaffMenuOpen] = useState(false);
     const [userDeviceOpen, setUserDeviceOpen] = useState(false);
     const [userCompanyOpen, setUserCompanyOpen] = useState(false);
 
@@ -22,6 +23,10 @@ const MasterLayout = () => {
         location.pathname.startsWith("/admin/designation") ||
         location.pathname.startsWith("/admin/vendor") ||
         location.pathname.startsWith("/admin/company");
+
+    const isStaffActive =
+        location.pathname.startsWith("/admin/staff") ||
+        location.pathname.startsWith("/admin/attendance") ;
 
     const isDeviceActive =
         location.pathname.startsWith("/admin/device-brand") ||
@@ -68,7 +73,7 @@ const MasterLayout = () => {
                 <div className="sidebar-brand">
                     <div className="brand-icon"><i className="bi bi-grid-3x3-gap-fill" /></div>
                     <div>
-                        <div className="brand-name">Multi Device Attendance System</div>
+                        <div className="brand-name">Multi Devices System</div>
                         <div className="brand-sub">Super Admin</div>
                     </div>
                 </div>
@@ -131,7 +136,7 @@ const MasterLayout = () => {
                                 <i className="bi bi-briefcase" /> Vendors
                             </NavLink>
 
-                            
+
                         </div>
                     </div>
 
@@ -224,13 +229,48 @@ const MasterLayout = () => {
                     <div className="nav-item">
                         <NavLink to="about" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-bar-chart-line" /> About Us <span className="nav-badge">New</span></NavLink>
                     </div>
-                    <div className="nav-section-label">Management</div>
-                    <div className="nav-item">
-                        <a href="#" className="nav-link"><i className="bi bi-shield-person" /> Admins <span className="nav-badge" id="sidebar-admin-count">4</span></a>
-                    </div>
 
-                    <div className="nav-item">
-                        <a href="#" className="nav-link"><i className="bi bi-file-earmark-text" /> Reports</a>
+
+                    <div className="nav-section-label">Staffs</div>
+                    <div className={`nav-item ${staffMenuOpen ? "open" : ""}`}>
+                        <button
+                            className={`nav-link nav-dropdown ${isStaffActive ? "active" : ""}`}
+                            onClick={() => setStaffMenuOpen(!staffMenuOpen)}
+                        >
+                            <span>
+                                <i className="bi bi-people" /> Staffs
+                            </span>
+
+                            <i
+                                className={`bi ${staffMenuOpen ? "bi-chevron-down" : "bi-chevron-right"
+                                    }`}
+                            />
+                        </button>
+
+                        <div className={`submenu ${staffMenuOpen ? "show" : ""}`} style={{ marginTop: "5px" }}>
+                            <NavLink
+                                to="staff"
+                                className={({ isStaffActive }) =>
+                                    isStaffActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-person" /> Staff List
+                            </NavLink>
+
+                            <NavLink
+                                to="attendance"
+                                className={({ isStaffActive }) =>
+                                    isStaffActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-gender-ambiguous" /> Staff Attendance
+                            </NavLink>
+
+
+
+
+
+                        </div>
                     </div>
                     <div className="nav-section-label">System</div>
 

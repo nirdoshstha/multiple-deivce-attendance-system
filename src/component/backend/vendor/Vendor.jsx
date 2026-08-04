@@ -231,7 +231,7 @@ const Vendor = () => {
 
                             <div style={{ display: 'flex', gap: 10, marginTop: "20px" }}>
                                 {
-                                    // can("vendors.store") && (
+                                     can("vendors.store") && (
                                     !loading ?
                                         <button type='submit' className="btn-primary">
                                             <i className="bi bi-check2-circle" /> Save Changes
@@ -240,7 +240,7 @@ const Vendor = () => {
                                         <button type="button" className="btn-primary" disabled>
                                             <ClipLoader color='color' size={20} /><i className="bi bi-check2-circle" /> Saving...
                                         </button>
-                                    // )
+                                     )
                                 }
 
 

@@ -34,6 +34,7 @@ const Login = () => {
 
         try {
             const result = await api.post('/login', data)
+
             if (result.data.status === 200) {
                 showSuccess(result.data.message);
                 updateAuthState(result.data.token, result.data.user);
@@ -47,10 +48,21 @@ const Login = () => {
             }
 
         } catch (error) {
-            console.log(error)
-            showError(error.response.data.message)
-            setLoading(false)
+           
+            if (error.response) {
+                // Backend responded with an error (401, 422, 500, etc.)
+                showError(error.response.data.message || "Something went wrong");
+            } else if (error.request) {
+                // Request was sent but no response received
+                showError("Unable to connect to the server. Please make sure the backend is running.");
+            } else {
+                // Other errors
+                showError(error.message || "An unexpected error occurred.");
+            }
+
+            setLoading(false);
         }
+
         finally {
             setLoading(false)
         }

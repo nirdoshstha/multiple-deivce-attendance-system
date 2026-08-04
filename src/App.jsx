@@ -31,6 +31,11 @@ import DeviceEdit from './component/backend/device/DeviceEdit'
 import CompanyDevice from './component/backend/company-device/CompanyDevice'
 import CompanyDeviceShow from './component/backend/company-device/CompanyDeviceShow'
 import CompanyDeviceTrashed from './component/backend/company-device/CompanyDeviceTrashed'
+import Staff from './component/backend/staff/Staff'
+import StaffTrashed from './component/backend/staff/StaffTrashed'
+import StaffShow from './component/backend/staff/StaffShow'
+import Attendance from './component/backend/attendance/Attendance'
+import AttendanceShow from './component/backend/attendance/AttendanceShow' 
 
 const App = () => {
   const { can } = useAuth();
@@ -83,6 +88,7 @@ const App = () => {
             <Route path='company-device' element={<CompanyDevice />} />
             <Route path='company-device/:id' element={<CompanyDeviceShow />} />
             <Route path='company-device/trashed' element={<CompanyDeviceTrashed />} />
+
             {/* Device Brand */}
             <Route path='device-brand' element={<Brand />} />
             <Route path='device-brand/edit/:id' element={<BrandEdit />} />
@@ -90,6 +96,16 @@ const App = () => {
             {/* Devices */}
             <Route path='device' element={<Device />} />
             <Route path='device/edit/:id' element={<DeviceEdit />} />
+
+            {/* Staffs */}
+            <Route path='staff' element={<Staff />} />
+            <Route path='staff/show/:id' element={<StaffShow />} />
+            <Route path='staff/trashed' element={<StaffTrashed />} />
+
+            {/* Staff Attendance */}
+            <Route path='attendance' element={<Attendance />} />
+            <Route path='attendance/show/:id' element={<AttendanceShow />} />
+            {/* <Route path='staff/trashed' element={<AttendanceTrashed />} /> */}
 
 
 

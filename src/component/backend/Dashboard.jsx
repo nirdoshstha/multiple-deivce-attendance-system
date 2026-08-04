@@ -172,9 +172,9 @@ const Dashboard = () => {
                                     previewImage ||
                                     (getUser.image
                                         ? `${BASE_URL}/uploads/user/${getUser.image}`
-                                        : noimage )
+                                        : noimage)
                                 }
-                                alt="Fav" className="profile-avatar"
+                                alt="Fav" className="profile-avatar" style={{ objectFit: "contain" }}
                             />
                         }
                     </div>
