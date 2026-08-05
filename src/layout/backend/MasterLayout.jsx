@@ -65,7 +65,7 @@ const MasterLayout = () => {
     };
 
     return (
-        <div>
+        <>
             {/* ░░ SIDEBAR ░░ */}
             <aside className="sidebar" id="sidebar" style={{
                 width: collapsed ? "64px" : "var(--sidebar-width)"
@@ -353,11 +353,6 @@ const MasterLayout = () => {
             </div>
             {/* ░░ MODALS ░░ */}
 
-
-
-
-
-
             {/* Delete Confirm Modal */}
             <div className="modal-overlay" id="deleteModal">
                 <div className="modal-box" style={{ maxWidth: 380, textAlign: 'center' }}>
@@ -379,8 +374,7 @@ const MasterLayout = () => {
             <div className="toast-container" id="toastContainer">
             </div>
 
-
-        </div>
+        </>
 
     )
 }
