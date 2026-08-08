@@ -10,6 +10,10 @@ import { useAuth } from '../../../context/AuthContext';
 
 const About = () => {
 
+    useEffect(() => {
+            document.title = "About";
+        }, []);
+
     const { can } = useAuth();
 
     const [about, setAbout] = useState({

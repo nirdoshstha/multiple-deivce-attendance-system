@@ -35,7 +35,8 @@ import Staff from './component/backend/staff/Staff'
 import StaffTrashed from './component/backend/staff/StaffTrashed'
 import StaffShow from './component/backend/staff/StaffShow'
 import Attendance from './component/backend/attendance/Attendance'
-import AttendanceShow from './component/backend/attendance/AttendanceShow' 
+import AttendanceShow from './component/backend/attendance/AttendanceShow'
+import StaffEdit from './component/backend/staff/StaffEdit'
 
 const App = () => {
   const { can } = useAuth();
@@ -99,7 +100,8 @@ const App = () => {
 
             {/* Staffs */}
             <Route path='staff' element={<Staff />} />
-            <Route path='staff/show/:id' element={<StaffShow />} />
+            <Route path='staff/:id' element={<StaffShow />} />
+            <Route path='staff/edit/:id' element={<StaffEdit />} />
             <Route path='staff/trashed' element={<StaffTrashed />} />
 
             {/* Staff Attendance */}

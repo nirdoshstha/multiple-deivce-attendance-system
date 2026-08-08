@@ -9,6 +9,11 @@ import { useAuth } from '../../../context/AuthContext';
 
 
 const CompanyTrashed = () => {
+
+    useEffect(() => {
+        document.title = "Company Trashed";
+    }, []);
+
     const { can } = useAuth();
     const [loading, setLoading] = useState(false);
     const [trashed, setTrashed] = useState([]);

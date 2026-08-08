@@ -11,6 +11,14 @@ import axios from 'axios';
 
 const Staff = () => {
 
+    useEffect(() => {
+            document.title = "Staff";
+        }, []);
+
+    useEffect(() => {
+            document.title = "Staff";
+        }, []);
+
     const { can } = useAuth();
     const { user } = useAuth();
 
@@ -32,6 +40,15 @@ const Staff = () => {
     const [trashed, setTrashed] = useState(0);
     const [brands, setBrands] = useState([]);
 
+    const [currentPage, setCurrentPage] = useState(1)
+    const datasPerPage = 4;
+    const lastIndex = currentPage * datasPerPage;
+    const firstIndex = lastIndex - datasPerPage;
+    const datas = staffs.slice(firstIndex, lastIndex);
+    const npage = Math.ceil(staffs.length / datasPerPage)
+    const numbers = [...Array(npage + 1).keys()].slice(1)
+
+
     // const handleInput = (e) => {
     //     setStaff({ ...staff, [e.target.name]: e.target.value })
     // }
@@ -51,7 +68,6 @@ const Staff = () => {
     useEffect(() => {
         fetchDatas();
     }, []);
-
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -74,9 +90,9 @@ const Staff = () => {
                 name: "",
                 email: "",
                 address: "",
-                phone:"",
-                gender:"",
-                working_hr:"",
+                phone: "",
+                gender: "",
+                working_hr: "",
             });
             setPreviewImage(null);
 
@@ -107,8 +123,6 @@ const Staff = () => {
         }
     }
 
-
-
     const fetchDatas = async (e) => {
         try {
             const result = await api.get(`/staffs`)
@@ -123,6 +137,22 @@ const Staff = () => {
 
     }
 
+    //Pagination
+    const prePage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const changeCPage = (page) => {
+        setCurrentPage(page);
+    };
+
+    const nextPage = () => {
+        if (currentPage < npage) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
     return (
         <div>
@@ -365,10 +395,10 @@ const Staff = () => {
                                 </thead>
                                 <tbody id="adminTableBody">
                                     {
-                                        staffs.length > 0 ? staffs.map((staff, index) => {
+                                        datas.length > 0 ? datas.map((staff, index) => {
                                             return (
                                                 <tr key={staff.id}>
-                                                    <td>{index + 1}</td>
+                                                    <td> {(currentPage - 1) * datasPerPage + index + 1}</td>
                                                     <td>
                                                         <div className="admin-name-cell">
 
@@ -377,7 +407,7 @@ const Staff = () => {
                                                                 style={{ background: "#141414aa" }}
                                                             >
                                                                 {
-                                                                    staff.image ? <img src={`${BASE_URL}/uploads/staff/${staff.image}`} alt="Profile" class="navbar-avatar" />
+                                                                    staff.image ? <img src={`${BASE_URL}/uploads/user/${staff.user?.image}`} alt="Profile" class="navbar-avatar" />
                                                                         : <img alt="Profile" class="navbar-avatar" src={noimage} />
                                                                 }
 
@@ -404,7 +434,7 @@ const Staff = () => {
 
                                                             {
                                                                 can("staffs.show") && (
-                                                                    <Link to={`/admin/staff/show/${staff.id}`} className="btn-edit-sm" title="Show" >
+                                                                    <Link to={`/admin/staff/${staff.id}`} className="btn-edit-sm" title="Show" >
                                                                         <i className="bi bi-eye"></i>
                                                                     </Link>
                                                                 )
@@ -439,6 +469,38 @@ const Staff = () => {
 
                                 </tbody>
                             </table>
+
+                            {/* Pagination */}
+                            <div className="pagination-area">
+
+                                <button
+                                    className="prev page-numbers"
+                                    onClick={prePage}
+                                    disabled={currentPage === 1}
+                                >
+                                    <i class="bi bi-chevron-double-left"></i>
+                                </button>
+
+                                {numbers.map((n) => (
+                                    <button
+                                        key={n}
+                                        className={`page-numbers ${currentPage === n ? "active" : ""
+                                            }`}
+                                        onClick={() => changeCPage(n)}
+                                    >
+                                        {n}
+                                    </button>
+                                ))}
+
+                                <button
+                                    className="next page-numbers"
+                                    onClick={nextPage}
+                                    disabled={currentPage === npage}
+                                >
+                                    <i class="bi bi-chevron-double-right"></i>
+                                </button>
+
+                            </div>
                         </div>
                         <div id="emptyState" style={{ display: 'none', textAlign: 'center', padding: 36, color: '#94A3B8' }}>
                             <i className="bi bi-person-x" style={{ fontSize: 36, marginBottom: 10, display: 'block' }} />

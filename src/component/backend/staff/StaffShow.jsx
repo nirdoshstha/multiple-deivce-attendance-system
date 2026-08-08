@@ -6,6 +6,10 @@ import moment from 'moment/moment';
 
 const StaffShow = () => {
 
+    useEffect(() => {
+            document.title = "Staff Show";
+        }, []);
+
     const { id } = useParams();
 
     const [staff, setStaff] = useState({});

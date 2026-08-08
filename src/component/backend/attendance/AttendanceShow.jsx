@@ -6,6 +6,10 @@ import moment from 'moment/moment';
 
 const AttendanceShow = () => {
 
+    useEffect(() => {
+            document.title = "Staff Attendance View";
+        }, []);
+
     const { id } = useParams();
 
     const [staff, setStaff] = useState({});

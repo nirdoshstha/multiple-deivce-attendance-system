@@ -488,6 +488,16 @@ table.heat-table thead th.name-col {
   color: #a8492e;
 }
 
+.punch.holiday {
+  background: #fa673fd8;
+  color: #f6f6f6;
+}
+
+.punch.disabled {
+  background: #f05a31d8;
+  color: #f6f6f6;
+}
+
 .punch.empty {
   background: transparent;
   color: #c9c6ba;

@@ -8,6 +8,10 @@ import api from '../../../api/api';
 
 const Brand = () => {
 
+    useEffect(() => {
+            document.title = "Brand";
+        }, []);
+
     const { can } = useAuth();
 
     const [loading, setLoading] = useState(false);

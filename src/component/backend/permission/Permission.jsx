@@ -4,6 +4,10 @@ import api from '../../../api/api';
 
 const Permission = () => {
 
+    useEffect(() => {
+            document.title = "Permission";
+        }, []);
+
     const [routes, setRoutes] = useState([]);
     const [selectedPermissions, setSelectedPermissions] = useState([]);
     const [permissions, setPermissions] = useState({});

@@ -6,6 +6,10 @@ import moment from 'moment/moment';
 
 const CompanyDeviceShow = () => {
 
+    useEffect(() => {
+            document.title = "Company Device Show";
+        }, []);
+
     const { id } = useParams();
 
     const [device, setDevice] = useState({});

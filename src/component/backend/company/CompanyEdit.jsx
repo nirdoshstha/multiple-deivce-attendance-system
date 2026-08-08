@@ -6,6 +6,10 @@ import noimage from '../../../../public/no_image2.jpg'
 
 const CompanyEdit = () => {
 
+    useEffect(() => {
+            document.title = "Company Edit";
+        }, []);
+
     const { id } = useParams();
     const navigate = useNavigate();
     const [company, setCompany] = useState({

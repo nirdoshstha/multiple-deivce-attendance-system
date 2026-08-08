@@ -5,6 +5,10 @@ import { showError, showSuccess } from '../../../utils/notify';
 import { ClipLoader } from 'react-spinners';
 
 const EditRole = () => {
+
+    useEffect(() => {
+            document.title = "Role Edit";
+        }, []);
     const { id } = useParams();
     const navigate = useNavigate();
 

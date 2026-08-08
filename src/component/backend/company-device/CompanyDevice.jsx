@@ -9,6 +9,10 @@ import axios from 'axios';
 
 const CompanyDevice = () => {
 
+    useEffect(() => {
+            document.title = "Company Device";
+        }, []);
+
     const { can } = useAuth();
 
     const [loading, setLoading] = useState(false);

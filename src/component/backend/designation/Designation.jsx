@@ -8,6 +8,10 @@ import confirmDelete from '../../../utils/confirmDelete';
 
 const Designation = () => {
 
+    useEffect(() => {
+            document.title = "Designation";
+        }, []);
+
     const { can } = useAuth();
 
     const [loading, setLoading] = useState(false);

@@ -11,6 +11,10 @@ import { useAuth } from '../../../context/AuthContext';
 
 const Vendor = () => {
 
+    useEffect(() => {
+            document.title = "Vendor";
+        }, []);
+
     const { can } = useAuth();
 
     const [vendor, setVendor] = useState({

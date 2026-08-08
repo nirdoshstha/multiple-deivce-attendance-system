@@ -5,6 +5,10 @@ import { showError, showSuccess } from '../../../utils/notify';
 import api, { BASE_URL } from '../../../api/api';
 
 const UserEdit = () => {
+
+    useEffect(() => {
+            document.title = "User Edit";
+        }, []);
     const { id } = useParams();
     const navigate = useNavigate();
     const [userEdit, setUserEdit] = useState({

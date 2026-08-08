@@ -28,6 +28,10 @@ const MONTHS = [
 
 const Attendance = () => {
 
+    useEffect(() => {
+            document.title = "Staff Attendance";
+        }, []);
+
     const { can } = useAuth();
     const { user } = useAuth();
 
@@ -36,7 +40,11 @@ const Attendance = () => {
 
     const [staffs, setStaffs] = useState([]);
     const [attendances, setAttendances] = useState([]);
+    const [holidays, setHolidays] = useState([]);
+    const [disabled, setDisabled] = useState(false);
 
+    // const days = Array.from({ length: 32 }, (_, i) => i + 1);
+    const [days, setDays] = useState([]);
     // ---- Daily view state ----
     const [date, setDate] = useState(getTodayBs());
 
@@ -47,7 +55,9 @@ const Attendance = () => {
 
     const handleAttendanceChange = (staffId, field, value) => {
         setAttendances((prev) => prev.map((item) => item.staff_id === staffId ? { ...item, [field]: value } : item));
+
     };
+
 
     useEffect(() => {
         fetchDailyData(date);
@@ -64,10 +74,13 @@ const Attendance = () => {
             const result = await api.get("/attendance/search-by-date", {
                 params: {
                     date: formattedDate,
+
                 },
             });
 
+            console.log(result)
             setStaffs(result.data.staffs);
+            setDisabled(result.data.disabled);
 
             const attendanceData = result.data.staffs.map((staff) => {
                 const attendance = staff.attendances[0] || {};
@@ -122,6 +135,9 @@ const Attendance = () => {
             });
 
             setMonthlyStaffs(result.data.staffs);
+            setDays(result.data.days);
+            setHolidays(result.data.holidays);
+            console.log(result)
         } catch (error) {
             showError(error?.response?.data?.message || "Failed to load monthly report");
         } finally {
@@ -143,7 +159,7 @@ const Attendance = () => {
         return parts.length === 3 ? parseInt(parts[2], 10) : null;
     };
 
-    const days = Array.from({ length: 32 }, (_, i) => i + 1);
+
 
     // ===================== VIEW SWITCH =====================
     useEffect(() => {
@@ -248,87 +264,89 @@ const Attendance = () => {
                                                 <tr><td colSpan={7} className="text-center text-muted py-4">Loading...</td></tr>
                                             ) : staffs.length === 0 ? (
                                                 <tr><td colSpan={7} className="text-center text-muted py-4">No staff found for this date.</td></tr>
-                                            ) : (
-                                                staffs.map((staff, index) => (
-                                                    <tr key={staff.id}>
-                                                        <td className="font-mono text-muted">{index + 1}</td>
-                                                        <td>
-                                                            <div className="d-flex align-items-center gap-3">
-                                                                <div className="staff-avatar" style={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden' }}>
-                                                                    <img src={staff.image ? `${BASE_URL}/uploads/staff/${staff.image}` : noimage} alt={staff.name} width={40} />
-                                                                </div>
-                                                                <div>
-                                                                    <div className="admin-name">{staff.name}</div>
-                                                                    <div className="admin-email">{staff.email || "Email not available"}</div>
-                                                                    <div className="staff-row-meta">{staff.designation?.name} </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        {/* <td></td> */}
-                                                        <td>
-                                                            <div className="time-input-wrap">
-                                                                {/* <input
-                                                                    type="time"
-                                                                    name="check_in"
-                                                                    className="control ${staff.attendances.check_in != null) ? 'punch present' : ''}"
-                                                                    value={attendances.find(a => a.staff_id === staff.id)?.check_in || ""}
-                                                                    onChange={(e) => handleAttendanceChange(staff.id, "check_in", e.target.value)}
-                                                                /> */}
-                                                                <input
-                                                                    type="time"
-                                                                    name="check_in"
-                                                                    className={`control ${attendances.find(a => a.staff_id === staff.id)?.check_in
-                                                                        ? "punch present"
-                                                                        : "punch absent"
-                                                                        }`}
-                                                                    value={attendances.find(a => a.staff_id === staff.id)?.check_in || ""}
-                                                                    onChange={(e) =>
-                                                                        handleAttendanceChange(staff.id, "check_in", e.target.value)
-                                                                    }
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className="time-input-wrap">
-                                                                <input
-                                                                    type="time"
-                                                                    name="check_out"
-                                                                    className={`control ${attendances.find(a => a.staff_id === staff.id)?.check_out
-                                                                        ? "punch present"
-                                                                        : "punch absent"
-                                                                        }`}
-                                                                    value={attendances.find(a => a.staff_id === staff.id)?.check_out || ""}
-                                                                    onChange={(e) => handleAttendanceChange(staff.id, "check_out", e.target.value)}
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <select
-                                                                className="control"
-                                                                name='status'
-                                                                value={attendances.find(a => a.staff_id === staff.id)?.status || "present"}
-                                                                onChange={(e) => handleAttendanceChange(staff.id, "status", e.target.value)}
-                                                            >
-                                                                <option value="absent">Absent</option>
-                                                                <option value="present">Present</option>
-                                                                <option value="leave">Leave</option>
-                                                                <option value="holiday">Holiday</option>
-                                                                <option value="halfday">Half Day</option>
-                                                                <option value="weekend">Weekend</option>
-                                                            </select>
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                type="text"
-                                                                name="remarks"
-                                                                className="control"
-                                                                value={attendances.find(a => a.staff_id === staff.id)?.remarks || ""}
-                                                                onChange={(e) => handleAttendanceChange(staff.id, "remarks", e.target.value)}
-                                                            />
-                                                        </td>
-                                                    </tr>
-                                                ))
-                                            )}
+                                            ) :
+                                                disabled ? (
+                                                    <tr><td colSpan={7} className="text-center text-danger py-4"> Today is Holiday.</td></tr>
+                                                )
+                                                    : (
+                                                        staffs.map((staff, index) => (
+                                                            <tr key={staff.id}>
+                                                                <td className="font-mono text-muted">{index + 1}</td>
+                                                                <td>
+                                                                    <div className="d-flex align-items-center gap-3">
+                                                                        <div className="staff-avatar" style={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden' }}>
+                                                                            <img src={staff.image ? `${BASE_URL}/uploads/staff/${staff.image}` : noimage} alt={staff.name} width={40} />
+                                                                        </div>
+                                                                        <div>
+                                                                            <div className="admin-name">{staff.name}</div>
+                                                                            <div className="admin-email">{staff.email || "Email not available"}</div>
+                                                                            <div className="staff-row-meta">{staff.designation?.name} </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                {/* <td></td> */}
+                                                                <td>
+                                                                    <div className="time-input-wrap">
+
+                                                                        <input
+                                                                            type="time"
+                                                                            name="check_in"
+                                                                            className={`control ${attendances.find(a => a.staff_id === staff.id)?.check_in
+                                                                                ? "punch present"
+                                                                                : "punch absent"
+                                                                                }`}
+                                                                            value={attendances.find(a => a.staff_id === staff.id)?.check_in || ""}
+                                                                            onChange={(e) =>
+                                                                                handleAttendanceChange(staff.id, "check_in", e.target.value)
+                                                                            }
+                                                                        />
+
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div className="time-input-wrap">
+                                                                        <input
+                                                                            type="time"
+                                                                            name="check_out"
+                                                                            disabled={disabled}
+                                                                            className={`control ${attendances.find(a => a.staff_id === staff.id)?.check_out
+                                                                                ? "punch present"
+                                                                                : "punch absent"
+                                                                                }`}
+                                                                            value={attendances.find(a => a.staff_id === staff.id)?.check_out || ""}
+                                                                            onChange={(e) => handleAttendanceChange(staff.id, "check_out", e.target.value)}
+                                                                        />
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <select
+                                                                        className="control"
+                                                                        name='status'
+                                                                        disabled={disabled}
+                                                                        value={attendances.find(a => a.staff_id === staff.id)?.status || "present"}
+                                                                        onChange={(e) => handleAttendanceChange(staff.id, "status", e.target.value)}
+                                                                    >
+                                                                        <option value="absent">Absent</option>
+                                                                        <option value="present">Present</option>
+                                                                        <option value="leave">Leave</option>
+                                                                        <option value="holiday">Holiday</option>
+                                                                        <option value="halfday">Half Day</option>
+                                                                        <option value="weekend">Weekend</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="text"
+                                                                        name="remarks"
+                                                                        disabled={disabled}
+                                                                        className="control"
+                                                                        value={attendances.find(a => a.staff_id === staff.id)?.remarks || ""}
+                                                                        onChange={(e) => handleAttendanceChange(staff.id, "remarks", e.target.value)}
+                                                                    />
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    )}
                                         </tbody>
                                     </table>
                                 </div>
@@ -390,62 +408,142 @@ const Attendance = () => {
                                 <button className="btn-gold"><i className="bi bi-cloud-arrow-down" /> Export</button>
                             </div>
 
+                            {/* <div className="heat-scroll">
+                                <table className="heat-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Staff</th>
+                                            {days.map(day => (
+                                                <th key={day}>
+                                                    {String(day).padStart(2, "0")}
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        {
+                                            monthlyStaffs.map((staff) => {
+                                                return (
+                                                    <tr>
+                                                        <td className="name-col">
+                                                            <div className="staff-row-name">{staff.name}</div>
+                                                            <div className="staff-row-meta">sdfsd Present:  </div>
+                                                            <div className="staff-row-meta">
+                                                                Hours:
+                                                                hr
+                                                            </div>
+                                                        </td>
+                                                        <td className="cell">
+                                                            {staff.attendances?.map((attendance, index) => (
+                                                                <div
+                                                                    key={index}
+                                                                    className="punch present m-1"
+                                                                    data-tip="Present"
+                                                                >
+                                                                    {attendance.date}
+                                                                    <br />
+                                                                    {attendance.check_in} - {attendance.check_out} ✓
+                                                                </div>
+                                                            ))}
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div> */}
                             <div className="heat-scroll">
                                 <table className="heat-table">
                                     <thead>
                                         <tr>
                                             <th className="name-col">Staff</th>
+
                                             {days.map((day) => (
-                                                <th key={day} className="day-col">{String(day).padStart(2, "0")}</th>
+                                                <th key={day} className="day-col">
+                                                    {String(day).padStart(2, "0")}
+                                                </th>
                                             ))}
                                         </tr>
                                     </thead>
+
                                     <tbody>
-                                        {monthlyLoading ? (
-                                            <tr><td colSpan={days.length + 1} className="text-center text-muted py-4">Loading...</td></tr>
-                                        ) : monthlyStaffs.length === 0 ? (
-                                            <tr><td colSpan={days.length + 1} className="text-center text-muted py-4">No records found for this month.</td></tr>
-                                        ) : (
-                                            monthlyStaffs.map((staff) => (
-                                                <tr key={staff.id}>
-                                                    <td className="name-col">
-                                                        <div className="staff-row-name">{staff.name}</div>
-                                                        <div className="staff-row-meta">{staff.designation?.name} Present: {staff.attendances.filter((a) => a.check_in).length}</div>
-                                                        <div className="staff-row-meta">
-                                                            Hours: {(staff.attendances.reduce(
-                                                                (sum, a) => sum + (a.working_minutes || 0), 0) / 60).toFixed(2)}{" "}
-                                                            hr
-                                                        </div>
-                                                    </td>
+                                        {monthlyStaffs.map((staff) => (
+                                            <tr key={staff.id}>
 
-                                                    {days.map((day) => {
-                                                        // staff.attendances only contains rows for the
-                                                        // selected month (filtered server-side), so we just
-                                                        // match on the day portion of the BS date string.
-                                                        const attendance = staff.attendances.find(
-                                                            (a) => getBsDay(a.date) === day
-                                                        );
+                                                {/* Staff Details */}
+                                                <td className="name-col">
+                                                    <div className="staff-row-name">
+                                                        {staff.name}
+                                                    </div>
 
-                                                        return (
-                                                            <td className="cell" key={day}>
-                                                                {attendance && attendance.check_in ? (
-                                                                    <div
-                                                                        className="punch present m-1"
-                                                                        data-tip={`${attendance.check_in?.slice(0, 5) ?? ''} - ${attendance.check_out?.slice(0, 5) ?? ''} = ${attendance.working_minutes ?? 0} min`}
-                                                                    > {attendance.check_in?.slice(0, 5) ?? ''} - {attendance.check_out?.slice(0, 5) ?? ''} <br /> = {(attendance.working_minutes / 60).toFixed(2) ?? 0} Hr
-                                                                        ✓
-                                                                    </div>
-                                                                ) : (
-                                                                    <div className="punch absent m-1" data-tip="Absent">
-                                                                        ✕
-                                                                    </div>
-                                                                )}
-                                                            </td>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            ))
-                                        )}
+                                                    <div className="staff-row-meta">
+                                                        {staff.designation?.name} Present: {staff.attendances.length}
+                                                    </div>
+
+
+
+                                                    <div className="staff-row-meta">
+                                                        Hours:{" "}
+                                                        {(
+                                                            staff.attendances.reduce(
+                                                                (sum, a) => sum + (a.working_minutes || 0),
+                                                                0
+                                                            ) / 60
+                                                        ).toFixed(2)}{" "}
+                                                        hr
+                                                    </div>
+                                                </td>
+
+                                                {/* Attendance Day Wise */}
+                                                {days.map((day) => {
+
+                                                    const dayString = String(day).padStart(2, "0");
+
+                                                    // Attendance
+                                                    const attendance = staff.attendances.find(a =>
+                                                        a.date.split("-")[2] === dayString
+                                                    );
+
+                                                    // Holiday
+                                                    const holiday = holidays.find(h =>
+                                                        h.date.split("-")[2] === dayString &&
+                                                        h.is_holiday
+                                                    );
+
+                                                    return (
+                                                        <td key={day} className="cell">
+
+                                                            {attendance && attendance.check_in ? (
+                                                                <div
+                                                                    className="punch present m-1"
+                                                                    data-tip={`${attendance.check_in?.slice(0, 5) ?? ''} - ${attendance.check_out?.slice(0, 5) ?? ''} = ${attendance.working_minutes ?? 0} min`}
+                                                                > {attendance.check_in?.slice(0, 5) ?? ''} - {attendance.check_out?.slice(0, 5) ?? ''} <br /> = {(attendance.working_minutes / 60).toFixed(2) ?? 0} Hr
+                                                                    ✓
+                                                                </div>
+
+                                                            ) : holiday ? (
+
+                                                                <div className="punch holiday m-1" title={holiday.title}>
+                                                                    {holiday.title}
+                                                                </div>
+
+                                                            ) : (
+
+                                                                <div className="punch absent m-1">
+                                                                    ✕
+                                                                </div>
+
+                                                            )}
+
+                                                        </td>
+                                                    );
+
+                                                })}
+                                            </tr>
+                                        ))}
                                     </tbody>
                                 </table>
                             </div>

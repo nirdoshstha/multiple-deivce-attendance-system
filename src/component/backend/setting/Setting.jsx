@@ -4,6 +4,10 @@ import { showError, showSuccess } from '../../../utils/notify';
 
 const Setting = () => {
 
+    useEffect(() => {
+            document.title = "Setting";
+        }, []);
+
     const [settings, setSettings] = useState({
         logo: null,
         fav_icon: null,

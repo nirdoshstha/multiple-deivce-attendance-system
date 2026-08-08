@@ -9,6 +9,10 @@ import { useAuth } from '../../../context/AuthContext';
 
 const Role = () => {
 
+    useEffect(() => {
+            document.title = "Role";
+        }, []);
+
     const { can } = useAuth();
     const [loading, setLoading] = useState(false);
 

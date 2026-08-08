@@ -8,6 +8,10 @@ import api from '../../../api/api';
 
 const Device = () => {
 
+
+    useEffect(() => {
+            document.title = "Devices";
+        }, []);
     const { can } = useAuth();
 
     const [loading, setLoading] = useState(false);

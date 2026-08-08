@@ -5,6 +5,10 @@ import api from '../../../api/api';
 
 const DeviceEdit = () => {
 
+    useEffect(() => {
+            document.title = "Device Edit";
+        }, []);
+
     const { id } = useParams();
     const navigate = useNavigate();
 

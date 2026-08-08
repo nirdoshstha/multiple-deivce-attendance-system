@@ -8,6 +8,10 @@ import confirmDelete from '../../../utils/confirmDelete';
 
 const Gender = () => {
 
+    useEffect(() => {
+            document.title = "Gender";
+        }, []);
+
     const { can } = useAuth();
 
     const [loading, setLoading] = useState(false);

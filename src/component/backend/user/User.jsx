@@ -11,6 +11,14 @@ import { useAuth } from '../../../context/AuthContext';
 
 const User = () => {
 
+    useEffect(() => {
+        document.title = "User ";
+    }, []);
+
+    useEffect(() => {
+        document.title = "User";
+    }, []);
+
     const { can } = useAuth();
 
     const [userAdd, setUserAdd] = useState({
@@ -23,6 +31,16 @@ const User = () => {
     const [roles, setRoles] = useState([]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const [search, setSearch] = useState("");
+
+    const [currentPage, setCurrentPage] = useState(1)
+    const datasPerPage = 10;
+    const lastIndex = currentPage * datasPerPage;
+    const firstIndex = lastIndex - datasPerPage;
+    const datas = users.slice(firstIndex, lastIndex);
+    const npage = Math.ceil(users.length / datasPerPage)
+    const numbers = [...Array(npage + 1).keys()].slice(1)
 
     useEffect(() => {
         getUsers();
@@ -54,6 +72,8 @@ const User = () => {
 
         setUserAdd({ ...userAdd, [name]: files?.length ? files[0] : value })
     }
+
+
 
     const handleSubmit = async (e) => {
         setLoading(true);
@@ -128,6 +148,22 @@ const User = () => {
 
     }
 
+    //Pagination
+    const prePage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const changeCPage = (page) => {
+        setCurrentPage(page);
+    };
+
+    const nextPage = () => {
+        if (currentPage < npage) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
 
     let html_users = "";
@@ -149,6 +185,34 @@ const User = () => {
 
 
 
+    const handleSubmitSearch = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const result = await api.get('/users/search', {
+                params: { search: search.trim() },
+            });
+            console.log(result);
+
+            setUsers(result.data.users || []);
+            setCurrentPage(1);
+        } catch (error) {
+            console.error(error.response);
+            showError(error.response?.data?.message || "Something went wrong.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Optional: auto-reset to full list when the search box is cleared
+    useEffect(() => {
+        if (search.trim() === "") {
+            getUsers();
+        }
+    }, [search]);
+ 
+
     return (
         <div>
             <div className="admin-mgmt">
@@ -157,11 +221,11 @@ const User = () => {
                     <div className="glass-card create-admin-card">
                         <div className="count-badge-row d-flex justify-content-between">
                             <button class="theme-toggle-btn" title="Cycle theme"><i className="bi bi-plus-circle" style={{ fontSize: "14px" }}></i> Create New User </button>
-                            
+
                             <div className="count-icon"><i className="bi bi-shield-person-fill" /> {users.length || 0}</div>
                         </div>
 
-                        
+
                         <form onSubmit={handleSubmit} autoComplete='off' >
                             <div class="form-floating">
                                 <input type="text" name='name' value={userAdd.name} onChange={handleInput} className="form-control" id="floatinginput" placeholder="e.g. Alex Rivera" />
@@ -280,114 +344,160 @@ const User = () => {
                     <div className="glass-card-solid admin-list-card">
                         <div className="admin-table-header">
                             <div>
-                                <div className="section-title" style={{ fontSize: 15 }}>Admin Accounts</div>
+                                <div className="section-title" style={{ fontSize: 15 }}>User Accounts</div>
                                 <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 1 }}>Manage existing administrator accounts</div>
                             </div>
-                            <div className="search-box">
-                                <i className="bi bi-search" />
-                                <input type="text" className="form-control" id="adminSearch" placeholder="Search admins..." oninput="filterAdmins()" />
-                            </div>
+
+                            <form onSubmit={handleSubmitSearch}>
+                                <div className="search-box float-end">
+
+                                    <div className="search-box float-end">
+                                        <input
+                                            type="text"
+                                            name="search"
+                                            className="form-control"
+                                            placeholder="Search by name or role..."
+                                            value={search}
+                                            onChange={(e) => setSearch(e.target.value)}
+                                        />
+                                        <i className="bi bi-search" />
+                                    </div>
+
+                                </div>
+                            </form>
                         </div>
                         <div style={{ overflowX: 'auto' }}>
-                            <table class="admin-table" id="adminTable">
+                            <table className="admin-table" id="adminTable">
                                 <thead>
                                     <tr>
                                         <th>S.no</th>
                                         <th>Name</th>
                                         <th>Roles</th>
-                                        {/* <th>Phone</th> */}
-                                        {/* <th>Status</th> */}
                                         <th>Joined</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="adminTableBody">
 
-                                    {
-                                        users.map((item, index) => {
-                                            return (
-                                                <tr key={item.id}>
-                                                    <td>{index + 1}</td>
-                                                    <td>
-                                                        <div className="admin-name-cell">
+                                <tbody>
+                                    {datas.map((item, index) => (
+                                        <tr key={item.id}>
+                                            <td>
+                                                {(currentPage - 1) * datasPerPage + index + 1}
+                                            </td>
 
-                                                            <div
-                                                                className="avatar-initials"
-                                                                style={{ background: "#141414aa" }}
-                                                            >
-                                                                {
-                                                                    item.image ? <img src={`${BASE_URL}/uploads/user/${item.image}`} alt="Profile" class="navbar-avatar" />
-                                                                        : <img alt="Profile" class="navbar-avatar" src={noimage} />
-                                                                }
+                                            <td>
+                                                <div className="admin-name-cell">
+                                                    <div
+                                                        className="avatar-initials"
+                                                        style={{ background: "#141414aa" }}
+                                                    >
+                                                        {item.image ? (
+                                                            <img
+                                                                src={`${BASE_URL}/uploads/user/${item.image}`}
+                                                                alt="Profile"
+                                                                className="navbar-avatar"
+                                                            />
+                                                        ) : (
+                                                            <img
+                                                                src={noimage}
+                                                                alt="Profile"
+                                                                className="navbar-avatar"
+                                                            />
+                                                        )}
+                                                    </div>
 
-                                                            </div>
-
-                                                            <div>
-                                                                <div className="admin-name">{item.name} </div>
-                                                                <div className="admin-email"> {item.email} </div>
-                                                                <div className="admin-email"> {item.phone} </div>
-                                                            </div>
+                                                    <div>
+                                                        <div className="admin-name">
+                                                            {item.name}
                                                         </div>
-                                                    </td>
-                                                    <td style={{ fontSize: "13px", color: "#64748B" }}>
-                                                        {
-                                                            item.roles.map((role) => {
-                                                                return (
-                                                                    <span className="status-pill active m-1">{role.name}</span>
-                                                                )
-                                                            })
-                                                        }
-                                                    </td>
 
-                                                    {/* <td style={{ fontSize: "13px", color: "#64748B" }}>
-                                                        {item?.phone}
-                                                    </td> */}
-                                                    {/* <td>
-                                                        <span className="status-pill active">Active</span>
-                                                    </td> */}
-
-                                                    <td style={{ fontSize: "12.5px", color: "#94A3B8" }}>
-                                                        {/* {item.created_at ? new Date(item.created_at).toLocaleDateString() : ""} */}
-                                                        {moment(item.created_at).format('LL')}
-                                                    </td>
-
-                                                    <td>
-                                                        <div className="table-actions">
-                                                            {
-                                                                can("users.update") && (
-                                                                    <Link to={`/admin/user/${item.id}/edit`} className="btn-edit-sm" title="Edit" >
-                                                                        <i className="bi bi-pencil"></i>
-                                                                    </Link>
-                                                                )
-                                                            }
-
-
-                                                            {
-                                                                can("users.destroy") && (
-                                                                    <button
-                                                                        onClick={() => deleteUser(item.id)}
-                                                                        className="btn-danger-sm"
-                                                                        title="Delete"
-                                                                    >
-                                                                        <i className="bi bi-trash3"></i>
-                                                                    </button>
-                                                                )}
+                                                        <div className="admin-email">
+                                                            {item.email}
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            )
-                                        })
-                                    }
 
+                                                        <div className="admin-email">
+                                                            {item.phone}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
 
+                                            <td>
+                                                {item.roles?.map((role) => (
+                                                    <span
+                                                        key={role.id}
+                                                        className="status-pill active m-1"
+                                                    >
+                                                        {role.name}
+                                                    </span>
+                                                ))}
+                                            </td>
 
+                                            <td>
+                                                {moment(item.created_at).format("LL")}
+                                            </td>
+
+                                            <td>
+                                                <div className="table-actions">
+                                                    {can("users.update") && (
+                                                        <Link
+                                                            to={`/admin/user/${item.id}/edit`}
+                                                            className="btn-edit-sm"
+                                                        >
+                                                            <i className="bi bi-pencil"></i>
+                                                        </Link>
+                                                    )}
+
+                                                    {can("users.destroy") && (
+                                                        <button
+                                                            onClick={() => deleteUser(item.id)}
+                                                            className="btn-danger-sm"
+                                                        >
+                                                            <i className="bi bi-trash3"></i>
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
+
+                            {/* Pagination */}
+                            <div className="pagination-area">
+
+                                <button
+                                    className="prev page-numbers"
+                                    onClick={prePage}
+                                    disabled={currentPage === 1}
+                                >
+                                    <i class="bi bi-chevron-double-left"></i>
+                                </button>
+
+                                {numbers.map((n) => (
+                                    <button
+                                        key={n}
+                                        className={`page-numbers ${currentPage === n ? "active" : ""
+                                            }`}
+                                        onClick={() => changeCPage(n)}
+                                    >
+                                        {n}
+                                    </button>
+                                ))}
+
+                                <button
+                                    className="next page-numbers"
+                                    onClick={nextPage}
+                                    disabled={currentPage === npage}
+                                >
+                                    <i class="bi bi-chevron-double-right"></i>
+                                </button>
+
+                            </div>
+
+
                         </div>
-                        <div id="emptyState" style={{ display: 'none', textAlign: 'center', padding: 36, color: '#94A3B8' }}>
-                            <i className="bi bi-person-x" style={{ fontSize: 36, marginBottom: 10, display: 'block' }} />
-                            No admins found.
-                        </div>
+
                     </div>
                 </div>
             </div>

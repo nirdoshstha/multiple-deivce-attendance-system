@@ -6,6 +6,11 @@ import noimage from '../../../../public/no_image2.jpg'
 
 const VendorEdit = () => {
 
+    useEffect(() => {
+        document.title = "Vendor Edit";
+    }, []);
+
+
     const { id } = useParams();
     const navigate = useNavigate();
     const [vendor, setVendor] = useState({
@@ -103,7 +108,7 @@ const VendorEdit = () => {
                                             previewImage ||
                                             (vendor.logo
                                                 ? `${BASE_URL}/uploads/vendor/${vendor.logo}`
-                                                : {noimage})
+                                                : { noimage })
                                         }
                                         alt="Fav" className="user-preview-image"
                                     />}

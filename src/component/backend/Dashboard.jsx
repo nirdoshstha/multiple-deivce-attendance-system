@@ -10,6 +10,10 @@ import noimage from '../../../public/no_image2.jpg'
 
 const Dashboard = () => {
 
+    useEffect(() => {
+        document.title = "Admin Dashboard";
+    }, []);
+
     const { user, updateAuthState } = useAuth();
     const [previewImage, setPreviewImage] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -18,7 +22,7 @@ const Dashboard = () => {
         image: null,
         name: "",
         email: "",
-        phone: ""
+        phone: "", 
     });
 
     useEffect(() => {
@@ -27,7 +31,7 @@ const Dashboard = () => {
                 image: user.image || null,
                 name: user.name || "",
                 email: user.email || "",
-                phone: user.phone || ""
+                phone: user.phone || "", 
             });
         }
     }, [user]);
@@ -180,7 +184,7 @@ const Dashboard = () => {
                     </div>
                     <div className="profile-name" id="profileDisplayName">{user?.name}</div>
                     <div className="profile-role" id="profileDisplayRole">{user?.email}</div>
-                    <div className="profile-badge"><i className="bi bi-patch-check-fill" />{user.roles?.join(", ") || ""}</div>
+                    <div className="profile-badge"><i className="bi bi-patch-check-fill" />{user.roles?.map(role => role.name).join(", ") || ""}</div>
                     <div className="profile-role" id="profileDisplayName"> <b>Joined</b>: {moment(user.created_at).format('LLLL')}</div>
                     <div className="divider" style={{ width: '100%' }} />
 
@@ -278,8 +282,12 @@ const Dashboard = () => {
                                                 </div>
                                                 <div className="form-group">
                                                     <label className="form-label">Role</label>
-                                                    <input type='text' value={user.roles?.join(", ") || ""}
-                                                        readOnly className='form-control' />
+                                                    <input
+                                                        type="text"
+                                                        value={user.roles?.map(role => role.name).join(", ") || ""}
+                                                        readOnly
+                                                        className="form-control"
+                                                    />
 
 
                                                 </div>
@@ -344,12 +352,6 @@ const Dashboard = () => {
 
                 </div>
             </div >
-
-
-
-
-
-
 
         </div >
     )

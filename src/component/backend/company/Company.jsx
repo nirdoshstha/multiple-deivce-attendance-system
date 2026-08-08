@@ -10,6 +10,9 @@ import { useAuth } from '../../../context/AuthContext';
 
 
 const Company = () => {
+    useEffect(() => {
+            document.title = "Company";
+        }, []);
 
     const { can } = useAuth();
 

@@ -5,6 +5,10 @@ import api from '../../../api/api';
 
 const BrandEdit = () => {
 
+    useEffect(() => {
+            document.title = "Brand Edit";
+        }, []);
+
     const { id } = useParams();
     const navigate = useNavigate();
 
