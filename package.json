@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@krbaidik/react-nepali-patro": "^1.0.2",
+    "@munatech/nepali-datepicker": "^1.2.3",
     "axios": "^1.18.1",
     "bootstrap": "^5.3.8",
     "framer-motion": "^12.42.0",

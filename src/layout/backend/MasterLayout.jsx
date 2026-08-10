@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../../assets/backend/style.css'
 import { Link, NavLink, Outlet } from 'react-router';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../api/api';
 
 
 //theme change
@@ -26,7 +27,7 @@ const MasterLayout = () => {
 
     const isStaffActive =
         location.pathname.startsWith("/admin/staff") ||
-        location.pathname.startsWith("/admin/attendance") ;
+        location.pathname.startsWith("/admin/attendance");
 
     const isDeviceActive =
         location.pathname.startsWith("/admin/device-brand") ||
@@ -73,8 +74,8 @@ const MasterLayout = () => {
                 <div className="sidebar-brand">
                     <div className="brand-icon"><i className="bi bi-grid-3x3-gap-fill" /></div>
                     <div>
-                        <div className="brand-name">Multi Devices System</div>
-                        <div className="brand-sub">Super Admin</div>
+                        <div className="brand-name" style={{ fontSize: "15px" }}>Multi Devices System</div>
+                        <div className="brand-sub">{user.name || ""}</div>
                     </div>
                 </div>
                 <nav className="sidebar-nav">
@@ -266,6 +267,15 @@ const MasterLayout = () => {
                                 <i className="bi bi-gender-ambiguous" /> Staff Attendance
                             </NavLink>
 
+                            <NavLink
+                                to="attendance-logs"
+                                className={({ isStaffActive }) =>
+                                    isStaffActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-gender-ambiguous" /> Staff Attendance Logs
+                            </NavLink>
+
 
 
 
@@ -294,9 +304,9 @@ const MasterLayout = () => {
                         <img src="https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8&size=80" alt="Sarah Chen" className="sidebar-user-img" style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.15)' }} />
                         <div className="sidebar-user-info">
                             <div className="sidebar-user-name">{user.name ?? ''}</div>
-                            <div className="sidebar-user-role">{user.role ?? ''}</div>
+                            <div className="sidebar-user-role">{user.roles?.map(role => role.name).join(", ") || ""}</div>
                         </div>
-                        <button onClick={(e) => clearAuthState()} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', padding: 4 }} title="Logout">
+                        <button onClick={() => clearAuthState()} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', padding: 4 }} title="Logout">
                             <i className="bi bi-box-arrow-right" />
                         </button>
                     </div>
@@ -341,7 +351,8 @@ const MasterLayout = () => {
                         <button className="icon-btn" title="Messages">
                             <i className="bi bi-chat-dots" />
                         </button>
-                        <img src="https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8&size=80" alt="Profile" className="navbar-avatar" />
+                        <img src={`${BASE_URL}/uploads/user/${user.image}`} alt="Profile" className="navbar-avatar" />
+                        {/* <img src="https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8&size=80" alt="Profile" className="navbar-avatar" /> */}
                     </div>
                 </header>
                 {/* PAGE BODY */}

@@ -37,6 +37,7 @@ import StaffShow from './component/backend/staff/StaffShow'
 import Attendance from './component/backend/attendance/Attendance'
 import AttendanceShow from './component/backend/attendance/AttendanceShow'
 import StaffEdit from './component/backend/staff/StaffEdit'
+import AttendanceLog from './component/backend/attendance/AttendanceLog'
 
 const App = () => {
   const { can } = useAuth();
@@ -107,6 +108,7 @@ const App = () => {
             {/* Staff Attendance */}
             <Route path='attendance' element={<Attendance />} />
             <Route path='attendance/show/:id' element={<AttendanceShow />} />
+            <Route path='attendance-logs' element={<AttendanceLog/>} />
             {/* <Route path='staff/trashed' element={<AttendanceTrashed />} /> */}
 
 

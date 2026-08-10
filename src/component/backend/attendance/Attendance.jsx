@@ -29,8 +29,8 @@ const MONTHS = [
 const Attendance = () => {
 
     useEffect(() => {
-            document.title = "Staff Attendance";
-        }, []);
+        document.title = "Staff Attendance";
+    }, []);
 
     const { can } = useAuth();
     const { user } = useAuth();
@@ -88,8 +88,9 @@ const Attendance = () => {
                 return {
                     staff_id: staff.id,
                     date: attendance.date || formattedDate,
-                    check_in: attendance.check_in ? attendance.check_in.substring(0, 5) : "",
-                    check_out: attendance.check_out ? attendance.check_out.substring(0, 5) : "",
+                    // check_in: attendance.check_in ? attendance.check_in.substring(0, 5) : "",
+                    check_in: attendance.check_in ? attendance.check_in : "",
+                    check_out: attendance.check_out ? attendance.check_out : "",
                     remarks: attendance.remarks || "",
                     late_minutes: attendance.late_minutes || 0,
                     early_leave_minutes: attendance.early_leave_minutes || 0,

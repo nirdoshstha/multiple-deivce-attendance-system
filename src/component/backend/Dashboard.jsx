@@ -8,11 +8,17 @@ import * as bootstrap from "bootstrap";
 import moment from 'moment/moment';
 import noimage from '../../../public/no_image2.jpg'
 
+import NepaliCalendar, { getTodayBs } from "@krbaidik/react-nepali-patro";
+
 const Dashboard = () => {
 
     useEffect(() => {
         document.title = "Admin Dashboard";
     }, []);
+
+    const token = localStorage.getItem("auth_token");
+
+    const [selected, setSelected] = useState("");
 
     const { user, updateAuthState } = useAuth();
     const [previewImage, setPreviewImage] = useState(false);
@@ -22,7 +28,7 @@ const Dashboard = () => {
         image: null,
         name: "",
         email: "",
-        phone: "", 
+        phone: "",
     });
 
     useEffect(() => {
@@ -31,7 +37,7 @@ const Dashboard = () => {
                 image: user.image || null,
                 name: user.name || "",
                 email: user.email || "",
-                phone: user.phone || "", 
+                phone: user.phone || "",
             });
         }
     }, [user]);
@@ -125,32 +131,68 @@ const Dashboard = () => {
                 <div className="page-sub">Welcome back, <span className='text-primary'>{user.name || ""}</span>  Here's what's happening today.</div>
             </div>
             {/* STAT CARDS */}
-            <div className="stat-grid">
-                <div className="stat-card blue">
-                    <div className="stat-icon"><i className="bi bi-shield-person-fill" /></div>
-                    <div className="stat-value" id="stat-admin-count">4</div>
-                    <div className="stat-label">Total Admins</div>
-                    <div className="stat-change up"><i className="bi bi-arrow-up-short" /> +2 this month</div>
+            <div className='row'>
+                <div className='col-lg-12 mb-5'>
+                    <div className='row'>
+                        <div className='col-lg-3 g-3'>
+                            <div className="stat-card blue">
+                                <div className="stat-icon"><i className="bi bi-shield-person-fill" /></div>
+                                <div className="stat-value" id="stat-admin-count">4</div>
+                                <div className="stat-label">Total Admins</div>
+                                <div className="stat-change up"><i className="bi bi-arrow-up-short" /> +2 this month</div>
+                            </div>
+                        </div>
+                        <div className='col-lg-3 g-3'>
+                            <div className="stat-card green">
+                                <div className="stat-icon"><i className="bi bi-people-fill" /></div>
+                                <div className="stat-value">12,847</div>
+                                <div className="stat-label">Total Users</div>
+                                <div className="stat-change up"><i className="bi bi-arrow-up-short" /> +8.3% growth</div>
+                            </div>
+                        </div>
+                        <div className='col-lg-3 g-3'>
+                            <div className="stat-card amber">
+                                <div className="stat-icon"><i className="bi bi-activity" /></div>
+                                <div className="stat-value">99.8%</div>
+                                <div className="stat-label">System Uptime</div>
+                                <div className="stat-change up"><i className="bi bi-arrow-up-short" /> Stable</div>
+                            </div>
+                        </div>
+                        <div className='col-lg-3 g-3'>
+
+                            <div className="stat-card cyan">
+                                <div className="stat-icon"><i className="bi bi-hdd-fill" /></div>
+                                <div className="stat-value">68%</div>
+                                <div className="stat-label">Storage Used</div>
+                                <div className="stat-change down"><i className="bi bi-arrow-down-short" /> 32% free</div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div className="stat-card green">
-                    <div className="stat-icon"><i className="bi bi-people-fill" /></div>
-                    <div className="stat-value">12,847</div>
-                    <div className="stat-label">Total Users</div>
-                    <div className="stat-change up"><i className="bi bi-arrow-up-short" /> +8.3% growth</div>
-                </div>
-                <div className="stat-card amber">
-                    <div className="stat-icon"><i className="bi bi-activity" /></div>
-                    <div className="stat-value">99.8%</div>
-                    <div className="stat-label">System Uptime</div>
-                    <div className="stat-change up"><i className="bi bi-arrow-up-short" /> Stable</div>
-                </div>
-                <div className="stat-card cyan">
-                    <div className="stat-icon"><i className="bi bi-hdd-fill" /></div>
-                    <div className="stat-value">68%</div>
-                    <div className="stat-label">Storage Used</div>
-                    <div className="stat-change down"><i className="bi bi-arrow-down-short" /> 32% free</div>
+                <div className='col-lg-12'>
+                    <div className="section-header">
+                        <div>
+                            <div className="section-title">Holiday & Events</div>
+                            <div className="section-sub"> Edit your holiday & events update in the Calendar</div>
+                        </div>
+                    </div>
+
+                    <NepaliCalendar
+                        year={getTodayBs().year}
+                        month={getTodayBs().month}
+                        api={`${BASE_URL}/api/calendars`}
+                        apiHeaders={{
+                            Authorization: `Bearer ${token}`,
+                        }}
+                        onDateClick={setSelected}
+                        brandColor="rgb(53, 184, 255)"
+                        onError={(error) => console.error(error)}
+                        canAddEvent={false}
+                    />
                 </div>
             </div>
+
             {/* ADMIN PROFILE SECTION */}
             <div className="section-header">
                 <div>

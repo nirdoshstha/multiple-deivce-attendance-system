@@ -12,12 +12,12 @@ import axios from 'axios';
 const Staff = () => {
 
     useEffect(() => {
-            document.title = "Staff";
-        }, []);
+        document.title = "Staff";
+    }, []);
 
     useEffect(() => {
-            document.title = "Staff";
-        }, []);
+        document.title = "Staff";
+    }, []);
 
     const { can } = useAuth();
     const { user } = useAuth();
@@ -40,8 +40,10 @@ const Staff = () => {
     const [trashed, setTrashed] = useState(0);
     const [brands, setBrands] = useState([]);
 
+    const [search, setSearch] = useState("");
+
     const [currentPage, setCurrentPage] = useState(1)
-    const datasPerPage = 4;
+    const datasPerPage = 10;
     const lastIndex = currentPage * datasPerPage;
     const firstIndex = lastIndex - datasPerPage;
     const datas = staffs.slice(firstIndex, lastIndex);
@@ -136,6 +138,29 @@ const Staff = () => {
         }
 
     }
+
+    const handleSubmitSearch = async (e) => {
+        e.preventDefault();
+        try {
+            const result = await api.get(`/staffs/search`, {
+                params: {
+                    search: search.trim()
+                }
+            });
+            setStaffs(result.data.staffs);
+            setDesignations(result.data.designations);
+            setCompanies(result.data.companies);
+
+        } catch (error) {
+            showError(error.response.data.message || "Something went wrong");
+        }
+    }
+
+    useEffect(() => {
+        if (search.trim() === "") {
+            fetchDatas();
+        }
+    }, [search])
 
     //Pagination
     const prePage = () => {
@@ -368,6 +393,24 @@ const Staff = () => {
                             <div>
                                 <div className="section-title" style={{ fontSize: 15 }}>Company staff Accounts</div>
                                 <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 1 }}>Manage existing administrator accounts</div>
+                            </div>
+
+                            <div className="search-box float-end">
+
+                                <form onSubmit={handleSubmitSearch}>
+                                    <div className="search-box float-end">
+                                        <input
+                                            type="text"
+                                            name="search"
+                                            className="form-control"
+                                            placeholder="Search by name or role..."
+                                            value={search}
+                                            onChange={(e) => setSearch(e.target.value)}
+                                        />
+                                        <i className="bi bi-search" />
+                                    </div>
+                                </form>
+
                             </div>
 
                             <div>
