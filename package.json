@@ -14,6 +14,7 @@
     "@munatech/nepali-datepicker": "^1.2.3",
     "axios": "^1.18.1",
     "bootstrap": "^5.3.8",
+    "dompurify": "^3.4.13",
     "framer-motion": "^12.42.0",
     "helmet": "^8.2.0",
     "moment": "^2.30.1",

@@ -1,6 +1,6 @@
 import moment from 'moment/moment';
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { ClipLoader, PulseLoader } from 'react-spinners';
 import { showError, showSuccess } from '../../../utils/notify';
 import api, { BASE_URL } from '../../../api/api';
@@ -11,6 +11,8 @@ import { useAuth } from '../../../context/AuthContext';
 
 const User = () => {
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         document.title = "User ";
     }, []);
@@ -20,6 +22,7 @@ const User = () => {
     }, []);
 
     const { can } = useAuth();
+    const { updateAuthState } = useAuth();
 
     const [userAdd, setUserAdd] = useState({
         image: null,
@@ -211,7 +214,40 @@ const User = () => {
             getUsers();
         }
     }, [search]);
- 
+
+
+    const superAdminCan = async (userId) => {
+        try {
+
+            const authToken = localStorage.getItem('auth_token');
+
+            if (!localStorage.getItem('impersonate')) {
+                localStorage.setItem('impersonate', true);
+            }
+
+            if (!localStorage.getItem('original_auth_token')) {
+                localStorage.setItem('original_auth_token', authToken);
+            }
+
+            const result = await api.post(`/superadmin-can-go-any-dashboard`,
+                {
+                    userId: userId,
+                }
+            );
+
+            if (result.data.success) {
+                updateAuthState(result.data.token, result.data.user);
+                navigate("/admin/dashboard");
+            }
+
+        } catch (error) {
+            showError(
+                error.response?.data?.message ||
+                "Something went wrong"
+            );
+        }
+    };
+
 
     return (
         <div>
@@ -439,6 +475,17 @@ const User = () => {
 
                                             <td>
                                                 <div className="table-actions">
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => superAdminCan(item.id)}
+                                                        className="btn-edit-sm"
+                                                        title="Go to Dashboard"
+                                                        target="_blank"
+                                                    >
+                                                        <i className="bi bi-unlock"></i>
+                                                    </button>
+
                                                     {can("users.update") && (
                                                         <Link
                                                             to={`/admin/user/${item.id}/edit`}

@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
                 const response = await api.get("/user");
 
                 setUser(response.data);
+                console.log("Authenticated New User:", response.data);
             } catch (error) {
                 console.log(error);
 
@@ -33,6 +34,8 @@ export const AuthProvider = ({ children }) => {
             }
         } else {
             setLoading(false);
+            setUser(null);
+            return;
         }
     };
 
@@ -44,6 +47,8 @@ export const AuthProvider = ({ children }) => {
 
     const clearAuthState = () => {
         localStorage.removeItem('auth_token');
+        localStorage.removeItem("original_auth_token"); //superadmin can go any dashboard
+        localStorage.removeItem("impersonate");//superadmin can go any dashboard
         delete api.defaults.headers.common['Authorization'];
         setUser(null);
     }

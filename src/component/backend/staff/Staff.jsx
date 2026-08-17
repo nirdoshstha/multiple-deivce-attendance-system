@@ -504,7 +504,7 @@ const Staff = () => {
                                             )
                                         }) :
                                             <tr>
-                                                <td colSpan={6} className='text-danger'><p>No Data Found !!</p></td>
+                                                <td colSpan={6} className='text-danger text-center'><p>No Data Found !!</p></td>
                                             </tr>
 
                                     }
@@ -514,7 +514,9 @@ const Staff = () => {
                             </table>
 
                             {/* Pagination */}
-                            <div className="pagination-area">
+
+                            {
+                                datas.length > 0 ? <div className="pagination-area">
 
                                 <button
                                     className="prev page-numbers"
@@ -543,7 +545,9 @@ const Staff = () => {
                                     <i class="bi bi-chevron-double-right"></i>
                                 </button>
 
-                            </div>
+                            </div> : ''
+                            }
+                            
                         </div>
                         <div id="emptyState" style={{ display: 'none', textAlign: 'center', padding: 36, color: '#94A3B8' }}>
                             <i className="bi bi-person-x" style={{ fontSize: 36, marginBottom: 10, display: 'block' }} />

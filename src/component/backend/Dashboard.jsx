@@ -6,6 +6,8 @@ import { Link } from 'react-router';
 import { ClipLoader, PulseLoader } from 'react-spinners';
 import * as bootstrap from "bootstrap";
 import moment from 'moment/moment';
+// import noimage from '../../../public/no_image.jpg'
+import DOMPurify from 'dompurify'
 import noimage from '../../../public/no_image2.jpg'
 
 import NepaliCalendar, { getTodayBs } from "@krbaidik/react-nepali-patro";
@@ -18,7 +20,10 @@ const Dashboard = () => {
 
     const token = localStorage.getItem("auth_token");
 
+    const isImpersonate = localStorage.getItem('impersonate');
+
     const [selected, setSelected] = useState("");
+    const [calendars, setCalendars] = useState([]);
 
     const { user, updateAuthState } = useAuth();
     const [previewImage, setPreviewImage] = useState(false);
@@ -42,8 +47,6 @@ const Dashboard = () => {
         }
     }, [user]);
 
-
-
     const handleInput = (e) => {
         const { name, value, files } = e.target;
 
@@ -54,13 +57,11 @@ const Dashboard = () => {
         setGetUser({ ...getUser, [name]: files?.length ? files[0] : value });
     }
 
-
     const [changePassword, setChangePassword] = useState({
         password: "",
         new_password: "",
         cnew_password: "",
     })
-
 
     const submitChangePassword = async (e) => {
         e.preventDefault();
@@ -78,10 +79,6 @@ const Dashboard = () => {
             showError(error.response.data.message);
         }
     }
-
-
-
-
 
     const submitAuthProfileUpdate = async (e) => {
         e.preventDefault();
@@ -103,6 +100,7 @@ const Dashboard = () => {
             // Update AuthContext
             updateAuthState(
                 localStorage.getItem("auth_token"),
+                localStorage.getItem("token_superadmin"),
                 result.data.user
             );
 
@@ -123,60 +121,98 @@ const Dashboard = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        getCalendarHolidays();
+    }, []);
+
+    const todayBs = getTodayBs();
+
+    const [year, setYear] = useState(todayBs.year);
+    const [month, setMonth] = useState(todayBs.month);
+
+    const getCalendarHolidays = async () => {
+        try {
+            const result = await api.get("/calendars", {
+                params: {
+                    year: year,
+                    month: month,
+                },
+            });
+
+            setCalendars(result.data.data);
+
+            console.log(result.data);
+        } catch (error) {
+            showError(
+                error.response?.data?.message || "Something went wrong"
+            );
+        }
+    };
+
+
+    const backToSuperAdmin = () => {
+        const originalAuthToken = localStorage.getItem("original_auth_token");
+
+        if (!originalAuthToken) {
+            showError("Original Super Admin token not found.");
+            return;
+        }
+
+        // Restore original Super Admin token
+        localStorage.setItem("auth_token", originalAuthToken);
+
+        // Remove impersonation information
+        localStorage.removeItem("original_auth_token");
+        localStorage.removeItem("impersonate");
+
+        // Update Axios token immediately
+        api.defaults.headers.common.Authorization =
+            `Bearer ${originalAuthToken}`;
+
+        // Go back to dashboard
+        window.location.href = "/admin/dashboard";
+    };
+
+    const stripHtml = (html = "") => {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        return doc.body.textContent || "";
+    };
     return (
         <div>
             {/* Page Header */}
-            <div className="page-header">
-                <div className="page-title">Admin Dashboard</div>
-                <div className="page-sub">Welcome back, <span className='text-primary'>{user.name || ""}</span>  Here's what's happening today.</div>
+            <div className='d-flex justify-content-between'>
+                <div className="page-header">
+                    <div className="page-title">Admin Dashboard</div>
+                    <div className="page-sub">Welcome back, <span className='text-primary'>{user.name || ""}</span>  Here's what's happening today.</div>
+                </div>
+                {/* {isImpersonate &&
+                    <div className=''>
+                        <button type='button' className='theme-toggle-btn'>Back To SuperAdmin</button>
+                    </div>
+                } */}
+
+                {localStorage.getItem("impersonate") === "true" && (
+                    <button
+                        type="button"
+                        className="theme-toggle-btn"
+                        onClick={backToSuperAdmin}
+                    >
+                        <i className="bi bi-arrow-left me-2"></i>
+                        Back to Super Admin
+                    </button>
+                )}
             </div>
             {/* STAT CARDS */}
             <div className='row'>
-                <div className='col-lg-12 mb-5'>
-                    <div className='row'>
-                        <div className='col-lg-3 g-3'>
-                            <div className="stat-card blue">
-                                <div className="stat-icon"><i className="bi bi-shield-person-fill" /></div>
-                                <div className="stat-value" id="stat-admin-count">4</div>
-                                <div className="stat-label">Total Admins</div>
-                                <div className="stat-change up"><i className="bi bi-arrow-up-short" /> +2 this month</div>
-                            </div>
-                        </div>
-                        <div className='col-lg-3 g-3'>
-                            <div className="stat-card green">
-                                <div className="stat-icon"><i className="bi bi-people-fill" /></div>
-                                <div className="stat-value">12,847</div>
-                                <div className="stat-label">Total Users</div>
-                                <div className="stat-change up"><i className="bi bi-arrow-up-short" /> +8.3% growth</div>
-                            </div>
-                        </div>
-                        <div className='col-lg-3 g-3'>
-                            <div className="stat-card amber">
-                                <div className="stat-icon"><i className="bi bi-activity" /></div>
-                                <div className="stat-value">99.8%</div>
-                                <div className="stat-label">System Uptime</div>
-                                <div className="stat-change up"><i className="bi bi-arrow-up-short" /> Stable</div>
-                            </div>
-                        </div>
-                        <div className='col-lg-3 g-3'>
 
-                            <div className="stat-card cyan">
-                                <div className="stat-icon"><i className="bi bi-hdd-fill" /></div>
-                                <div className="stat-value">68%</div>
-                                <div className="stat-label">Storage Used</div>
-                                <div className="stat-change down"><i className="bi bi-arrow-down-short" /> 32% free</div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div className='col-lg-12'>
-                    <div className="section-header">
+                <div className='col-lg-8'>
+                    {/* <div className="section-header">
                         <div>
-                            <div className="section-title">Holiday & Events</div>
+                            <div className="section-title">Holiday & Events Management</div>
                             <div className="section-sub"> Edit your holiday & events update in the Calendar</div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <NepaliCalendar
                         year={getTodayBs().year}
@@ -186,10 +222,100 @@ const Dashboard = () => {
                             Authorization: `Bearer ${token}`,
                         }}
                         onDateClick={setSelected}
-                        brandColor="rgb(53, 184, 255)"
+                        brandColor="linear-gradient(135deg, #2563EB, #06B6D4);"
                         onError={(error) => console.error(error)}
-                        canAddEvent={false}
+                        canAddEvent={true}
                     />
+                </div>
+
+                <div className='col-lg-4 mb-5'>
+                    <div className='row'>
+                        <div className="col-lg-12">
+                            {
+                                calendars.slice(0, 6).map((item) => {
+                                    return (
+                                        <div key={item.id} className="calendar-event-card d-flex align-items-center mb-2">
+                                            {/* Image */}
+                                            <div className="event-image-box flex-shrink-0">
+
+                                                {
+                                                    item.image ?
+                                                        <img
+                                                            src={item.image}
+                                                            alt="Fav"
+                                                            className="event-image"
+                                                            style={{ objectFit: "cover" }}
+                                                        />
+                                                        :
+                                                        <img
+                                                            src={noimage}
+                                                            alt="Fav"
+                                                            className="event-image"
+                                                            style={{ objectFit: "cover" }}
+                                                        />
+                                                }
+
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="event-content flex-grow-1">
+                                                <div className="d-flex align-items-center gap-2 flex-wrap">
+
+                                                    {/* Title */}
+                                                    <h5 className="event-title mb-0">
+                                                        {/* <i className="bi bi-calendar3"></i> */}
+                                                        <span className='text-muted'>{item.date || ""}</span><br />
+                                                        {item.title || ""}
+                                                    </h5>
+                                                </div>
+                                                <div className="event-date">
+
+                                                    {/* <p className='textcolor textheight textmargin'>
+                                                        <div dangerouslySetInnerHTML={{
+                                                            __html: DOMPurify.sanitize(item.description?.length > 40
+                                                                ? item.about.description.substring(0, 40) + "....."
+                                                                : item.description || ""),
+                                                        }} /></p> */}
+                                                    <p className="bottomlast">
+                                                        {item.description ? stripHtml(item.description).slice(0, 35) + "..." : ""}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    )
+                                })
+                            }
+
+                        </div>
+                        {/* <div className='col-lg-12 g-4'>
+                            <div className="stat-card green">
+                                <div className="stat-icon"><i className="bi bi-people-fill" /></div>
+                                <div className="stat-value">12,847</div>
+                                <div className="stat-label">Total Users</div>
+                                <div className="stat-change up"><i className="bi bi-arrow-up-short" /> +8.3% growth</div>
+                            </div>
+                        </div>
+                        <div className='col-lg-12 g-4'>
+                            <div className="stat-card amber">
+                                <div className="stat-icon"><i className="bi bi-activity" /></div>
+                                <div className="stat-value">99.8%</div>
+                                <div className="stat-label">System Uptime</div>
+                                <div className="stat-change up"><i className="bi bi-arrow-up-short" /> Stable</div>
+                            </div>
+                        </div> */}
+                        {/* <div className='col-lg-12 g-4'>
+
+                            <div className="stat-card cyan">
+                                <div className="stat-icon"><i className="bi bi-hdd-fill" /></div>
+                                <div className="stat-value">68%</div>
+                                <div className="stat-label">Storage Used</div>
+                                <div className="stat-change down"><i className="bi bi-arrow-down-short" /> 32% free</div>
+                            </div>
+                        </div> */}
+                    </div>
+
                 </div>
             </div>
 

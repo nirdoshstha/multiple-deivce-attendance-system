@@ -11,8 +11,8 @@ import { useAuth } from '../../../context/AuthContext';
 
 const Company = () => {
     useEffect(() => {
-            document.title = "Company";
-        }, []);
+        document.title = "Company";
+    }, []);
 
     const { can } = useAuth();
 
@@ -234,16 +234,16 @@ const Company = () => {
 
                             <div style={{ display: 'flex', gap: 10, marginTop: "20px" }}>
                                 {
-                                    // can("companys.store") && (
-                                    !loading ?
-                                        <button type='submit' className="btn-primary">
-                                            <i className="bi bi-check2-circle" /> Save Changes
-                                        </button>
-                                        :
-                                        <button type="button" className="btn-primary" disabled>
-                                            <ClipLoader color='color' size={20} /><i className="bi bi-check2-circle" /> Saving...
-                                        </button>
-                                    // )
+                                    can("companys.store") && (
+                                        !loading ?
+                                            <button type='submit' className="btn-primary">
+                                                <i className="bi bi-check2-circle" /> Save Changes
+                                            </button>
+                                            :
+                                            <button type="button" className="btn-primary" disabled>
+                                                <ClipLoader color='color' size={20} /><i className="bi bi-check2-circle" /> Saving...
+                                            </button>
+                                    )
                                 }
 
 

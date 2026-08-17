@@ -38,6 +38,8 @@ import Attendance from './component/backend/attendance/Attendance'
 import AttendanceShow from './component/backend/attendance/AttendanceShow'
 import StaffEdit from './component/backend/staff/StaffEdit'
 import AttendanceLog from './component/backend/attendance/AttendanceLog'
+import Menu from './component/backend/menus/Menu'
+import MenuEdit from './component/backend/menus/MenuEdit'
 
 const App = () => {
   const { can } = useAuth();
@@ -54,6 +56,10 @@ const App = () => {
 
         <Route element={<PrivateRoutes />}>
           <Route path="/admin" element={<MasterLayout />}>
+
+            {/* Menus Brand */}
+            <Route path='menu' element={<Menu />} />
+            <Route path='menu/edit/:id' element={<MenuEdit />} />
 
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="setting" element={<Setting />} />
@@ -108,7 +114,7 @@ const App = () => {
             {/* Staff Attendance */}
             <Route path='attendance' element={<Attendance />} />
             <Route path='attendance/show/:id' element={<AttendanceShow />} />
-            <Route path='attendance-logs' element={<AttendanceLog/>} />
+            <Route path='attendance-logs' element={<AttendanceLog />} />
             {/* <Route path='staff/trashed' element={<AttendanceTrashed />} /> */}
 
 

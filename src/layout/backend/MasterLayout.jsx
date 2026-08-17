@@ -4,6 +4,8 @@ import { Link, NavLink, Outlet } from 'react-router';
 import { useAuth } from '../../context/AuthContext';
 import { BASE_URL } from '../../api/api';
 
+import noimage from '../../../public/no_image2.jpg'
+
 
 //theme change
 const themes = ['', 'theme-forest', 'theme-violet', 'theme-rose', 'theme-amber', 'theme-dark'];
@@ -79,6 +81,10 @@ const MasterLayout = () => {
                     </div>
                 </div>
                 <nav className="sidebar-nav">
+                    <div className="nav-item">
+                        <NavLink to="menu"
+                            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-house-door" /> Menus</NavLink>
+                    </div>
                     <div className="nav-section-label">Overview</div>
                     <div className="nav-item">
                         <NavLink to="dashboard"
@@ -351,7 +357,11 @@ const MasterLayout = () => {
                         <button className="icon-btn" title="Messages">
                             <i className="bi bi-chat-dots" />
                         </button>
-                        <img src={`${BASE_URL}/uploads/user/${user.image}`} alt="Profile" className="navbar-avatar" />
+                        {
+                            user.image ? <img src={`${BASE_URL}/uploads/user/${user.image}`} alt="Profile" className="navbar-avatar" /> :
+                                <img src={noimage} alt="Profile" className="navbar-avatar" />
+                        }
+
                         {/* <img src="https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8&size=80" alt="Profile" className="navbar-avatar" /> */}
                     </div>
                 </header>

@@ -3,6 +3,8 @@ import { Link } from 'react-router'
 import { showError } from './../../../utils/notify';
 import api, { BASE_URL } from './../../../api/api';
 
+import noimage from '../../../../public/no_image2.jpg'
+
 const AttendanceLog = () => {
 
     const [logs, setLogs] = useState([]);
@@ -63,17 +65,20 @@ const AttendanceLog = () => {
                                     <tbody>
 
                                         {
-                                            logs.map((log,index) => {
+                                            logs.length === 0 ? (
+                                                <tr><td colSpan={7} className="text-center  text-danger py-4">No Attendance Logs found for this date.</td></tr>
+                                            ) : (
+                                           logs && logs.map((log, index) => {
                                                 return (
                                                     <tr key={log.id} >
-                                                        <td className="font-mono text-muted">{index +1}</td>
+                                                        <td className="font-mono text-muted">{index + 1}</td>
                                                         <td>
                                                             <div className="admin-name-cell">
                                                                 <div
                                                                     className="avatar-initials"
                                                                     style={{ background: "#141414aa" }}
                                                                 >
-                                                                    {log.staff.image ? (
+                                                                    {log.staff?.image ? (
                                                                         <img
                                                                             src={`${BASE_URL}/uploads/staff/${log.staff?.image}`}
                                                                             alt="Profile"
@@ -112,7 +117,7 @@ const AttendanceLog = () => {
                                                         <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>{log.raw_data} </td>
                                                     </tr>
                                                 )
-                                            })
+                                            }) )
                                         }
 
 
