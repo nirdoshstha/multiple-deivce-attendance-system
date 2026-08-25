@@ -6,16 +6,17 @@ import api from '../../../api/api';
 const DeviceEdit = () => {
 
     useEffect(() => {
-            document.title = "Device Edit";
-        }, []);
+        document.title = "Device Edit";
+    }, []);
 
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const[brands, setBrands] = useState([]);
+    const [brands, setBrands] = useState([]);
     const [device, setDevice] = useState({
         name: "",
-        website: ""
+        device_brand_id: "",
+        type: ""
     });
     const [loading, setLoading] = useState(false);
 
@@ -67,10 +68,6 @@ const DeviceEdit = () => {
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="form-row">
-                        <div className="form-group">
-                            <label className="form-label">Device Name</label>
-                            <input type="text" name='name' value={device.name} onChange={handleInput} className="form-control" placeholder="First name" />
-                        </div>
 
                         <div className="form-group">
                             <label className="form-label"> Device Brand Name</label>
@@ -80,13 +77,24 @@ const DeviceEdit = () => {
                                 value={device.device_brand_id}
                                 onChange={handleInput}
                             >
-                                 
+
                                 {brands.map((item) => (
                                     <option key={item.id} value={item.id}>
                                         {item.name}
                                     </option>
                                 ))}
                             </select>
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">Device Name</label>
+                            <input type="text" name='name' value={device.name} onChange={handleInput} className="form-control" placeholder="First name" />
+                        </div>
+
+
+                        <div className="form-group">
+                            <label className="form-label">Device Type</label>
+                            <input type="text" name='type' value={device.type} onChange={handleInput} className="form-control" placeholder="First name" />
                         </div>
 
                     </div>

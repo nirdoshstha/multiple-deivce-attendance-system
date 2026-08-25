@@ -14,8 +14,10 @@ const MenuEdit = () => {
 
     const [menus, setMenus] = useState([]);
     const [menu, setMenu] = useState({
-        name: "",
-        website: ""
+         parent_id:"",
+                name:"",
+                route:"",
+                rank:""
     });
     const [loading, setLoading] = useState(false);
 
@@ -61,23 +63,18 @@ const MenuEdit = () => {
                         </div>
                         </div>
                         <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>Update your company information</div>
-
                     </div>
 
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="form-row">
-                        <div className="form-group">
-                            <label className="form-label">menu Name</label>
-                            <input type="text" name='name' value={menu.name} onChange={handleInput} className="form-control" placeholder="First name" />
-                        </div>
 
                         <div className="form-group">
-                            <label className="form-label"> menu menu Name</label>
+                            <label className="form-label"> Parent Name</label>
                             <select
-                                name="menu_menu_id"
+                                name="parent_id"
                                 className="form-select mb-3"
-                                value={menu.menu_id}
+                                value={menu.parent_id}
                                 onChange={handleInput}
                             >
 
@@ -89,10 +86,29 @@ const MenuEdit = () => {
                             </select>
                         </div>
 
+                         <div className="form-group">
+                            <label className="form-label">Menu Name</label>
+                            <input type="text" name='name' value={menu.name} onChange={handleInput} className="form-control" placeholder="Menu name" />
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">Route Name</label>
+                            <input type="text" name='route' value={menu.route} onChange={handleInput} className="form-control" placeholder="Route name" />
+                        </div>
+
+                         <div className="form-group">
+                            <label className="form-label">Rank</label>
+                            <input type="text" name='rank' value={menu.rank} onChange={handleInput} className="form-control" placeholder="Rank" />
+                        </div>
+
+                        
+                        <div className="form-group">
+                            <label className="form-label">Icon</label>
+                            <input type="text" name='icon' value={menu.icon} onChange={handleInput} className="form-control" placeholder="Route name" />
+                        </div>
+
+                    
                     </div>
-
-
-
 
 
                     <div className="divider" />

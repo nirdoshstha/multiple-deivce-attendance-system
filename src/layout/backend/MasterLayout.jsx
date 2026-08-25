@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import '../../assets/backend/style.css'
 import { Link, NavLink, Outlet } from 'react-router';
 import { useAuth } from '../../context/AuthContext';
@@ -19,6 +19,7 @@ const MasterLayout = () => {
     const [staffMenuOpen, setStaffMenuOpen] = useState(false);
     const [userDeviceOpen, setUserDeviceOpen] = useState(false);
     const [userCompanyOpen, setUserCompanyOpen] = useState(false);
+    const [leaveOpen, setLeaveOpen] = useState(false);
 
     const isMenuActive =
         location.pathname.startsWith("/admin/user") ||
@@ -26,6 +27,10 @@ const MasterLayout = () => {
         location.pathname.startsWith("/admin/designation") ||
         location.pathname.startsWith("/admin/vendor") ||
         location.pathname.startsWith("/admin/company");
+
+    const isLeaveActive =
+        location.pathname.startsWith("/admin/leave-type") ||
+        location.pathname.startsWith("/admin/leave-application");
 
     const isStaffActive =
         location.pathname.startsWith("/admin/staff") ||
@@ -142,6 +147,50 @@ const MasterLayout = () => {
                             >
                                 <i className="bi bi-briefcase" /> Vendors
                             </NavLink>
+
+
+                        </div>
+                    </div>
+
+                     <div className={`nav-item ${leaveOpen ? "open" : ""}`}>
+                        <button
+                            className={`nav-link nav-dropdown ${isLeaveActive ? "active" : ""}`}
+                            onClick={() => setLeaveOpen(!leaveOpen)}
+                        >
+                            <span>
+                                <i className="bi bi-people" /> Leave Management
+                            </span>
+
+                            <i
+                                className={`bi ${leaveOpen ? "bi-chevron-down" : "bi-chevron-right"
+                                    }`}
+                            />
+                        </button>
+
+                        <div className={`submenu ${leaveOpen ? "show" : ""}`} style={{ marginTop: "5px" }}>
+                            <NavLink
+                                to="leave-type"
+                                className={({ isActive }) =>
+                                    isActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-person" /> Leave Types
+                            </NavLink>
+
+                            <NavLink
+                                to="leave-application"
+                                className={({ isActive }) =>
+                                    isActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-person" /> Leave Application
+                            </NavLink>
+
+                            
+
+                            
+
+                           
 
 
                         </div>

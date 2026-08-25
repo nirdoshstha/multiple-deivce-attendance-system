@@ -5,26 +5,65 @@ import { Link } from 'react-router';
 import confirmDelete from '../../../utils/confirmDelete';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../api/api';
-import axios from 'axios';
+// import axios from 'axios';
+
+import Form from 'react-bootstrap/Form';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 
 const CompanyDevice = () => {
 
     useEffect(() => {
-            document.title = "Company Device";
-        }, []);
+        document.title = "Company Device";
+    }, []);
 
     const { can } = useAuth();
 
     const [loading, setLoading] = useState(false);
     const [device, setDevice] = useState({});
     const [devices, setDevices] = useState([]);
+    const [deviceName, setDeviceName] = useState([]);
+    const [deviceBrand, setDeviceBrand] = useState([]);
+    const [companies, setCompanies] = useState([]);
 
     const [trashed, setTrashed] = useState(0);
     const [brands, setBrands] = useState([]);
 
-    const handleInput = (e) => {
-        setDevice({ ...device, [e.target.name]: e.target.value })
+        const handleInput = async (e) => { 
+            const { name, value } = e.target;
+
+            setDevice((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+
+            if (name === "device_brand_id") {
+        // Clear previous device selection
+        setDevice((prev) => ({
+            ...prev,
+            device_brand_id: value,
+            device_id: ""
+        }));
+
+        if (!value) {
+            setDeviceName([]);
+            return;
+        }
+
+        try {
+            const response = await api.get(`/devices/by-brand`, {
+                params: {
+                    device_brand_id: value
+                }
+            });
+             
+
+            setDeviceName(response.data.devices || []);
+        } catch (error) {
+            console.error("Error fetching devices:", error);
+            setDeviceName([]);
+        }
     }
+        };
     useEffect(() => {
         fetchDatas();
     }, []);
@@ -40,7 +79,15 @@ const CompanyDevice = () => {
             fetchDatas();
             setDevice({
                 name: "",
-                website: ""
+                company_id: "",
+                device_brand_id: "",
+                device_id: "",
+                serial_no: "",
+                port: "",
+                api_key: "",
+                device_code: "",
+                api_url: "",
+                ip: ""
             });
 
 
@@ -72,36 +119,20 @@ const CompanyDevice = () => {
 
 
 
-    const fetchDatas = async (e) => {
+    const fetchDatas = async () => {
         try {
             const result = await api.get(`/company-devices`)
             console.log(result);
             setDevices(result.data.devices);
+            setDeviceName(result.data.device_name)
+            setDeviceBrand(result.data.device_brand)
+            setCompanies(result.data.companies);
             setTrashed(result.data.trashed);
         } catch (error) {
             showError(error.response.data.message);
         }
 
-        // try {
-        //     const url = `https://mockend.com/api/mockend/demo/posts`;
-        //     const response = await fetch(url);
-        //     const data = await response.json();
-        //     console.log(data.title)
-        //     setDevices(data)
-
-        // } catch (error) {
-        //       showError('something went wrong');
-        // }
-
-        // try {
-
-        //     axios.get(`https://jsonplaceholder.typicode.com/users`).then((response) => {
-        //         setDevices(response.data)
-        //     })
-
-        // } catch (error) {
-        //     showError('something went wrong');
-        // }
+         
     }
 
 
@@ -119,62 +150,160 @@ const CompanyDevice = () => {
 
                         <form onSubmit={handleSubmit}  >
                             <div className="form-group">
-                                <label className="form-label"> Company Device Name</label>
-                                <input type="text" name='name' value={device?.name} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
+
+                                <FloatingLabel
+                                    controlId="floatingSelectGrid"
+                                    label="Device Name (eg: Branch Office HK Vision)"
+                                >
+                                    <input type="text" name='name' value={device?.name} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
+                                </FloatingLabel>
                             </div>
 
 
 
 
                             <div className="form-group">
-                                <label className="form-label"> Company Name (id)</label>
-                                <input type="number" name='company_id' value={device?.company_id} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
+                                <label className="form-label"> Company Name</label>
+
+
+                                <FloatingLabel
+                                    controlId="floatingSelectGrid"
+                                    label="Company Name"
+                                >
+                                    <Form.Select name="company_id" onChange={handleInput} aria-label="Floating label select example" className="mb-3">
+                                        <option>Please Select Company</option>
+                                        {
+                                            companies.map((item) => {
+                                                return (
+                                                    <option value={item.id} key={item.id}>{item.name}</option>
+                                                )
+                                            })
+                                        }
+                                    </Form.Select>
+                                    
+                                </FloatingLabel>
                             </div>
                             <div className="form-group">
-                                <label className="form-label"> Device Brand Id(Name)</label>
-                                <input type="number" name='device_brand_id' value={device?.device_brand_id} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
+                                {/* <label className="form-label"> Device Brand Id(Name)</label>
+                                <input type="number" name='device_brand_id' value={device?.device_brand_id} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" /> */}
+                                <FloatingLabel
+                                    controlId="floatingSelectGrid"
+                                    label="Device Brand"
+                                >
+                                    {/* <Form.Select name="device_brand_id" value={device?.device_brand_id || ""} onChange={handleInput} aria-label="Floating label select example" className="mb-3">
+                                        <option>Please Select Device Brand</option>
+                                        {
+                                            deviceBrand.map((item) => {
+                                                return (
+                                                    <option value={item.id} key={item.id}>{item.name}</option>
+                                                )
+                                            })
+                                        }
+                                    </Form.Select> */}
+
+                                    <Form.Select
+                                        name="device_brand_id"
+                                        value={device?.device_brand_id || ""}
+                                        onChange={handleInput}
+                                        className="mb-3"
+                                    >
+                                        <option value="">Please Select Device Brand</option>
+
+                                        {deviceBrand.map((item) => (
+                                            <option value={item.id} key={item.id}>
+                                                {item.name}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                </FloatingLabel>
+
                             </div>
 
                             <div className="form-group">
                                 <label className="form-label"> Device Id</label>
-                                <input type="number" name='device_id' value={device?.device_id} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
+                                <Form.Select name="device_id" value={device?.device_id || ""} onChange={handleInput} aria-label="Floating label select example" className="mb-3">
+                                    <option>Please Select Device</option>
+                                    {
+                                        deviceName.map((item) => {
+                                            return (
+                                                <option value={item.id} key={item.id}>{item.name}</option>
+                                            )
+                                        })
+                                    }
+                                </Form.Select>
                             </div>
 
-                            <div className="form-group">
+                            {/* <div className="form-group">
                                 <label className="form-label"> Serial Number</label>
-                                <input type="number" name='serial_no' value={device?.serial_no} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
-                            </div>
+                                <input type="text" name='serial_no' value={device?.serial_no} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. ZKTK40PRO001" />
+                            </div> */}
 
-                            <div className="form-group">
+                             <FloatingLabel
+                                    controlId="floatingSelectGrid"
+                                    label="Serial Number (eg:ZKTK40PRO001)"
+                                >
+                                    <input type="text" name='serial_no' value={device?.serial_no} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. ZKTK40PRO001" />
+                                </FloatingLabel>
+
+                            {/* <div className="form-group">
                                 <label className="form-label"> Port</label>
                                 <input type="number" name='port' value={device?.port} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
-                            </div>
-                            <div className="form-group">
+                            </div> */}
+
+                            <FloatingLabel
+                                    controlId="floatingSelectGrid"
+                                    label="PORT (eg:4370)"
+                                >
+                                    <input type="text" name='port' value={device?.port} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 4370" />
+                                </FloatingLabel>
+
+
+                            {/* <div className="form-group">
                                 <label className="form-label"> API KEY</label>
                                 <input type="number" name='api_key' value={device?.api_key} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
-                            </div>
+                            </div> */}
 
-                            <div className="form-group">
+                             <FloatingLabel
+                                    controlId="floatingSelectGrid"
+                                    label="API KEY (eg:123456)"
+                                >
+                                    <input type="text" name='api_key' value={device?.api_key} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 123456" />
+                                </FloatingLabel>
+
+                            {/* <div className="form-group">
                                 <label className="form-label"> Device Code</label>
-                                <input type="text" name='device_code' value={device?.device_code} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
-                            </div>
-                            <div className="form-group">
+                                <input type="text" name='device_code' value={device?.device_code} onChange={handleInput} className="form-control" placeholder="e.g. Alex Rivera" />
+                            </div> */}
+                            <FloatingLabel
+                                    controlId="floatingSelectGrid"
+                                    label="Device Code (eg:ZKT-001)"
+                                >
+                                    <input type="text" name='device_code' value={device?.device_code} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 1ZKT-001" />
+                                </FloatingLabel>
+
+                            {/* <div className="form-group">
                                 <label className="form-label"> API URL</label>
                                 <input type="text" name='api_url' value={device?.api_url} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
-                            </div>
-                            <div className="form-group">
+                            </div> */}
+
+                             <FloatingLabel
+                                    controlId="floatingSelectGrid"
+                                    label="API URL (eg: http://192.168.1.201/api)"
+                                >
+                                    <input type="text" name='api_url' value={device?.api_url} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 1ZKT-001" />
+                                </FloatingLabel>
+
+                            {/* <div className="form-group">
                                 <label className="form-label">IP</label>
                                 <input type="text" name='ip' value={device?.ip} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
-                            </div>
+                            </div> */}
 
-
-
-                            <div className="form-group">
-                                <label className="form-label"> Device Type</label>
-                                <input type="text" name='type' value={device?.type} onChange={handleInput} className="form-control" id="newAdminName" placeholder="www.example.com" />
-
-                            </div>
-
+                            <FloatingLabel
+                                    controlId="floatingSelectGrid"
+                                    label="IP ADDRESS (eg: 192.168.1.201)"
+                                >
+                                    <input type="text" name='ip' value={device?.ip} onChange={handleInput} className="form-control"  placeholder="e.g. 192.168.1.201" />
+                                </FloatingLabel> 
 
 
                             {
@@ -221,6 +350,7 @@ const CompanyDevice = () => {
                                         <th>Device Name</th>
                                         <th>Company Named</th>
                                         <th>Device Brand</th>
+                                        <th>Serial No</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -235,11 +365,15 @@ const CompanyDevice = () => {
                                                     </td>
 
                                                     <td>
-                                                        {device.ip}
+                                                        {device.company?.name}
                                                     </td>
 
                                                     <td>
-                                                        {device.device_brand_id}
+                                                        {device.brand?.name}
+                                                    </td>
+
+                                                    <td>
+                                                        {device.serial_no}
                                                     </td>
 
                                                     <td>

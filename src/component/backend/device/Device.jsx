@@ -10,8 +10,8 @@ const Device = () => {
 
 
     useEffect(() => {
-            document.title = "Devices";
-        }, []);
+        document.title = "Devices";
+    }, []);
     const { can } = useAuth();
 
     const [loading, setLoading] = useState(false);
@@ -158,6 +158,7 @@ const Device = () => {
                                         <th>Name</th>
                                         <th>Device Brand</th>
                                         <th>Type</th>
+                                        <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -177,6 +178,10 @@ const Device = () => {
 
                                                     <td>
                                                         {device.type}
+                                                    </td>
+
+                                                    <td>
+                                                        {device.status === 1 ? 'Active' : Inactive}
                                                     </td>
 
                                                     <td>

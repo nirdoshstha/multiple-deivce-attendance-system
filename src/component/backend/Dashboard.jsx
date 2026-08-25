@@ -122,16 +122,8 @@ const Dashboard = () => {
         }
     };
 
-    useEffect(() => {
-        getCalendarHolidays();
-    }, []);
 
-    const todayBs = getTodayBs();
-
-    const [year, setYear] = useState(todayBs.year);
-    const [month, setMonth] = useState(todayBs.month);
-
-    const getCalendarHolidays = async () => {
+    const getCalendarHolidays = async (year, month) => {
         try {
             const result = await api.get("/calendars", {
                 params: {
@@ -225,6 +217,9 @@ const Dashboard = () => {
                         brandColor="linear-gradient(135deg, #2563EB, #06B6D4);"
                         onError={(error) => console.error(error)}
                         canAddEvent={true}
+                        onMonthChange={(year, month) => {
+                            getCalendarHolidays(year, month);
+                        }}
                     />
                 </div>
 

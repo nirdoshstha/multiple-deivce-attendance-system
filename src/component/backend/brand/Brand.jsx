@@ -9,8 +9,8 @@ import api from '../../../api/api';
 const Brand = () => {
 
     useEffect(() => {
-            document.title = "Brand";
-        }, []);
+        document.title = "Brand";
+    }, []);
 
     const { can } = useAuth();
 
@@ -139,7 +139,7 @@ const Brand = () => {
                                 <thead>
                                     <tr>
                                         <th>S.no</th>
-                                        <th>Role</th>
+                                        <th>Device Name</th>
                                         <th>Slug</th>
                                         <th>Website</th>
                                         <th>Actions</th>

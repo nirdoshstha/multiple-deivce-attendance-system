@@ -1,162 +1,237 @@
-import React, { useEffect, useState } from 'react'
-import { PulseLoader } from 'react-spinners';
-import { showError, showSuccess } from '../../../utils/notify';
-import { Link } from 'react-router';
-import confirmDelete from '../../../utils/confirmDelete';
-import { useAuth } from '../../../context/AuthContext';
-import api from '../../../api/api';
+import { useEffect, useState } from "react";
+import { PulseLoader } from "react-spinners";
+import { showError, showSuccess } from "../../../utils/notify";
+import confirmDelete from "../../../utils/confirmDelete";
+import { useAuth } from "../../../context/AuthContext";
+import api from "../../../api/api";
+import Accordion from "react-bootstrap/Accordion";
+import {Link} from "react-router"
 
 const Menu = () => {
+  useEffect(() => {
+    document.title = "Menus";
+  }, []);
+  const { can } = useAuth();
 
+  const [loading, setLoading] = useState(false);
+  const [menu, setMenu] = useState({
+    parent_id: "",
+    name: "",
+    rank: "",
+    route: "",
+    icon:""
+  });
+  const [menus, setMenus] = useState([]);
+  const [category, setCategory] = useState([]);
 
-    useEffect(() => {
-        document.title = "Menus";
-    }, []);
-    const { can } = useAuth();
+  const handleInput = (e) => {
+    setMenu({ ...menu, [e.target.name]: e.target.value });
+  };
+  useEffect(() => {
+    fetchDatas();
+  }, []);
 
-    const [loading, setLoading] = useState(false);
-    const [menu, setMenu] = useState({});
-    const [menus, setMenus] = useState([]);
-    const [category, setCategory] = useState([]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-    const handleInput = (e) => {
-        setMenu({ ...menu, [e.target.name]: e.target.value })
+    try {
+      const result = await api.post(`/menus`, menu);
+      showSuccess(result.data.message);
+      fetchDatas();
+      setMenu({
+        parent_id: "",
+        name: "",
+        route: "",
+        rank: "",
+        icon:""
+      });
+    } catch (error) {
+      showError(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
-    useEffect(() => {
-        fetchDatas();
-    }, []);
+  };
 
+  const deletemenu = async (id) => {
+    const confirmed = await confirmDelete();
+    if (!confirmed) return;
+    setLoading(true);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        setLoading(true);
-
-        try {
-            const result = await api.post(`/menus`, menu)
-            showSuccess(result.data.message);
-            fetchDatas();
-            setMenu({});
-
-
-        } catch (error) {
-            showError(error.response.data.message)
-        }
-        finally {
-            setLoading(false)
-        }
+    try {
+      const result = await api.delete(`/menus/${id}`);
+      showSuccess(result.data.message);
+      fetchDatas();
+    } catch (error) {
+      showError(error.response.data.message);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const deletemenu = async (id) => {
-        const confirmed = await confirmDelete();
-        if (!confirmed) return;
-        setLoading(true);
-
-        try {
-            const result = await api.delete(`/menus/${id}`)
-            showSuccess(result.data.message);
-            fetchDatas();
-        } catch (error) {
-            showError(error.response.data.message);
-            setLoading(false);
-        }
-        finally {
-            setLoading(false);
-        }
+  const fetchDatas = async (e) => {
+    try {
+      const result = await api.get(`/menus`);
+       console.log(result);
+      setMenus(result.data.menus);
+      setCategory(result.data.category);
+    } catch (error) {
+      showError(error.response.data.message);
     }
+  };
+  return (
+    <div>
+      <div className="admin-mgmt">
+        <div className="admin-mgmt-grid">
+          {/* Create Admin Form */}
+          <div className="glass-card create-admin-card">
+            <div className="count-badge-row d-flex justify-content-between">
+              <button class="theme-toggle-btn" title="Cycle theme">
+                <i
+                  className="bi bi-plus-circle"
+                  style={{ fontSize: "14px" }}
+                ></i>{" "}
+                Create New Menu{" "}
+              </button>
+              <div className="count-icon">
+                <i className="bi bi-shield-person-fill" /> {menus?.length || 0}
+              </div>
+            </div>
 
+            <form onSubmit={handleSubmit}>
+              <div className="form-group mb-3"> 
+                <select
+                  name="parent_id"
+                  className="form-select"
+                  onChange={handleInput}
+                >
+                  <option value=""> Please Select Parent</option>
+                  {category.map((item) => {
+                    return <option key={item.id} value={item.id}> {item.name}</option>;
+                  })}
+                </select>
+              </div>
 
+           
 
-    const fetchDatas = async (e) => {
-        try {
-            const result = await api.get(`/menus`)
-            // console.log(result);
-            setMenus(result.data.menus);
-            setCategory(result.data.category)
-        } catch (error) {
-            showError(error.response.data.message);
-        }
-    }
-    return (
-        <div>
-            <div className="admin-mgmt">
-                <div className="admin-mgmt-grid">
-                    {/* Create Admin Form */}
-                    <div className="glass-card create-admin-card">
-                        <div className="count-badge-row d-flex justify-content-between">
-                            <button class="theme-toggle-btn" title="Cycle theme"><i className="bi bi-plus-circle" style={{ fontSize: "14px" }}></i> Create New menu menu </button>
-                            <div className="count-icon"><i className="bi bi-shield-person-fill" />  {menus?.length || 0}</div>
-                        </div>
+               <div className="form-floating">
 
+                <input
+                  type="text"
+                  name="name"
+                  value={menu?.name}
+                  onChange={handleInput}
+                  className="form-control"
+                  id="menuName"
+                  placeholder="Menu Name"
+                />
+                <label for="menuName"> Menu Name</label>
+              </div>
 
-                        <form onSubmit={handleSubmit}  >
+             <div className="form-floating">
+                <input
+                  type="text"
+                  name="route"
+                  value={menu?.route}
+                  onChange={handleInput}
+                  className="form-control"
+                  id="route"
+                  placeholder="Route Name"
+                />
+                <label for="route"> Route Name</label>
+              </div>
 
-                            <div className="form-group mb-3">
-                                <label className="form-label"> Category</label>
+               <div className="form-floating"> 
+                <input
+                  type="number"
+                  name="rank"
+                  value={menu?.rank}
+                  onChange={handleInput}
+                  className="form-control"
+                  id="rank"
+                  placeholder="Rank"
+                />
+                <label for="rank">Rank</label>
+              </div>
 
-                                <select name='parent_id' className='form-select' onChange={handleInput}>
-                                    <option value=""> Please Select Parent</option>
-                                    {
-                                        category.map((item, index) => {
-                                            return (
-                                                <option value={item.id}> {item.name}</option>
+               <div className="form-floating">  
+                <input
+                  type="text"
+                  name="icon"
+                  value={menu?.icon}
+                  onChange={handleInput}
+                  className="form-control"
+                  id="icon"
+                  placeholder="bi bi-users"
+                />
+                <label for="icon"> Icon (eg: bi bi-users)</label>
+              </div>
+
+              {can("menus.store") && (
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  style={{ width: "100%", justifyContent: "center" }}
+                >
+                  {loading ? (
+                    <PulseLoader color="white" loading={true} size={12} />
+                  ) : (
+                    ""
+                  )}
+                  <i className="bi bi-person-plus-fill" /> Create menu Account
+                </button>
+              )}
+            </form>
+          </div>
+          {/* Admin List */}
+          <div className="glass-card-solid admin-list-card">
+            <div className="admin-table-header">
+              <div>
+                <div className="section-title" style={{ fontSize: 15 }}>
+                  Menu Accounts
+                </div>
+                <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 1 }}>
+                  Manage existing administrator accounts
+                </div>
+              </div>
+               
+            </div>
+            <div style={{ overflowX: "auto" }}>
+              
+
+                            {category.map((item, index) => {
+                                return (
+                                <Accordion defaultActiveKey="0">
+                                  
+                                    <Accordion.Item eventKey={item.id}>
+                                    <Accordion.Header className="">  <label class="form-label me-2"># {index +1}</label>
+                                     {
+                                            can("menus.update") && (
+                                                <Link to={`/admin/menu/edit/${item.id}`} className="btn-edit-sm me-2" title="Edit" >
+                                                    <i className="bi bi-pencil"></i>
+                                                </Link>
                                             )
-                                        })
-                                    }
-
-                                </select>
-                            </div>
-
-                            <div className="form-group mb-3">
-                                <label className="form-label"> Menu Name</label>
-
-                                <input type="text" name='name' value={menu?.name} onChange={handleInput} className="form-control" id="newAdminName" placeholder="Menu Name" />
-                            </div>
-
-                            <div className="form-group">
-                                <label className="form-label"> Route Name</label>
-                                <input type="text" name='route' value={menu?.route} onChange={handleInput} className="form-control" id="newAdminName" placeholder="Route Name" />
-                            </div>
-
-                            <div className="form-group">
-                                <label className="form-label">Rank</label>
-                                <input type="number" name='rank' value={menu?.rank} onChange={handleInput} className="form-control" id="newAdminName" placeholder="Rank" />
-                            </div>
+                                        }
 
 
-                            {
-                                can("menus.store") && (
-                                    <button type='submit' className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                                        {loading ? <PulseLoader
-                                            color='white'
-                                            loading={true}
-                                            size={12}
-                                        /> : ''}
-                                        <i className="bi bi-person-plus-fill" /> Create menu Account
-                                    </button>
-                                )
-                            }
+                                        {
+                                            can("menus.destroy") && (
+                                                <button className="btn-danger-sm me-2" onClick={() => deletemenu(item.id)} title="Delete"><i className="bi bi-trash3" /></button>
+                                            )
+                                        } 
+                                        
+                                        <label class="form-label">{item.name} <span className="gap-5"> ({item.sub_categories?.length || 0})</span></label>   
+                                      
 
-
-                        </form>
-                    </div>
-                    {/* Admin List */}
-                    <div className="glass-card-solid admin-list-card">
-                        <div className="admin-table-header">
-                            <div>
-                                <div className="section-title" style={{ fontSize: 15 }}>menu Accounts</div>
-                                <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 1 }}>Manage existing administrator accounts</div>
-                            </div>
-                            <div className="search-box">
-                                <i className="bi bi-search" />
-                                <input type="text" className="form-control" id="adminSearch" placeholder="Search admins..." oninput="filterAdmins()" />
-                            </div>
-                        </div>
-                        <div style={{ overflowX: 'auto' }}>
-                            <table class="admin-table" id="adminTable">
+                                       
+                                    </Accordion.Header>
+                                    
+                                        <Accordion.Body>
+                                            <table class="admin-table" id="adminTable">
                                 <thead>
                                     <tr>
-                                        <th>S.no</th>
-                                        <th>Parent Name</th>
+                                        <th>S.no</th> 
                                         <th>Name</th>
                                         <th>Route Name</th>
                                         <th>Rank</th>
@@ -165,12 +240,11 @@ const Menu = () => {
                                     </tr>
                                 </thead>
                                 <tbody id="adminTableBody">
-                                    {
-                                        menus.map((menu, index) => {
+                                            {
+                                        item.sub_categories?.map((menu, index) => {
                                             return (
                                                 <tr key={menu.id}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{menu.parent?.name}</td>
+                                                    <td>{index + 1}</td> 
                                                     <td>
                                                         {menu.name}
                                                     </td>
@@ -181,7 +255,7 @@ const Menu = () => {
                                                     </td>
 
                                                     <td>
-                                                        {menu.icon}
+                                                       <i className={menu.icon}></i> 
                                                     </td>
 
                                                     <td>
@@ -207,20 +281,39 @@ const Menu = () => {
                                             )
                                         })
                                     }
+                                  </tbody>
 
-
-                                </tbody>
-                            </table>
-                        </div>
-                        <div id="emptyState" style={{ display: 'none', textAlign: 'center', padding: 36, color: '#94A3B8' }}>
-                            <i className="bi bi-person-x" style={{ fontSize: 36, marginBottom: 10, display: 'block' }} />
-                            No admins found.
-                        </div>
-                    </div>
-                </div>
+                                  
+                                  </table>
+                                    
+                                        </Accordion.Body>
+                                    </Accordion.Item> 
+                                    
+                                </Accordion>
+                                );
+                            })}
+              
             </div>
+            <div
+              id="emptyState"
+              style={{
+                display: "none",
+                textAlign: "center",
+                padding: 36,
+                color: "#94A3B8",
+              }}
+            >
+              <i
+                className="bi bi-person-x"
+                style={{ fontSize: 36, marginBottom: 10, display: "block" }}
+              />
+              No admins found.
+            </div>
+          </div>
         </div>
-    )
-}
+      </div>
+    </div>
+  );
+};
 
-export default Menu
+export default Menu;

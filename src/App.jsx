@@ -40,6 +40,9 @@ import StaffEdit from './component/backend/staff/StaffEdit'
 import AttendanceLog from './component/backend/attendance/AttendanceLog'
 import Menu from './component/backend/menus/Menu'
 import MenuEdit from './component/backend/menus/MenuEdit'
+import LeaveType from './component/backend/leavetype/LeaveType'
+import LeaveTypeEdit from './component/backend/leavetype/LeaveTypeEdit'
+import LeaveApplication from './component/backend/leave-application/LeaveApplication'
 
 const App = () => {
   const { can } = useAuth();
@@ -68,6 +71,11 @@ const App = () => {
 
             <Route path="user" element={<User />} />
             <Route path="user/:id/edit" element={can('users.show') ? <UserEdit /> : <Error403 />} />
+
+            {/* Leave Management */}
+            <Route path="leave-type" element={<LeaveType/>} />
+            <Route path="leave-type/edit/:id" element={<LeaveTypeEdit/>} />
+            <Route path="leave-application" element={<LeaveApplication/>} />
 
             {/* Role */}
             <Route path="role" element={<Role />} />
