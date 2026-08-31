@@ -217,7 +217,7 @@ const StaffEdit = () => {
                                                 previewImage
                                                     ? previewImage
                                                     : staff.image
-                                                        ? `${BASE_URL}/uploads/staff/${staff.image}`
+                                                        ?  `${BASE_URL}/uploads/user/${staff.image}`
                                                         : "/no_image2.jpg"
                                             }
                                             alt="Staff"

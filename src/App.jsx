@@ -43,6 +43,7 @@ import MenuEdit from './component/backend/menus/MenuEdit'
 import LeaveType from './component/backend/leavetype/LeaveType'
 import LeaveTypeEdit from './component/backend/leavetype/LeaveTypeEdit'
 import LeaveApplication from './component/backend/leave-application/LeaveApplication'
+import DeviceManager from './component/backend/company-device/DeviceManager'
 
 const App = () => {
   const { can } = useAuth();
@@ -73,9 +74,9 @@ const App = () => {
             <Route path="user/:id/edit" element={can('users.show') ? <UserEdit /> : <Error403 />} />
 
             {/* Leave Management */}
-            <Route path="leave-type" element={<LeaveType/>} />
-            <Route path="leave-type/edit/:id" element={<LeaveTypeEdit/>} />
-            <Route path="leave-application" element={<LeaveApplication/>} />
+            <Route path="leave-type" element={<LeaveType />} />
+            <Route path="leave-type/edit/:id" element={<LeaveTypeEdit />} />
+            <Route path="leave-application" element={<LeaveApplication />} />
 
             {/* Role */}
             <Route path="role" element={<Role />} />
@@ -101,9 +102,11 @@ const App = () => {
 
             {/* Company Devices */}
 
+            <Route path='device-manager' element={<DeviceManager />} />
             <Route path='company-device' element={<CompanyDevice />} />
             <Route path='company-device/:id' element={<CompanyDeviceShow />} />
             <Route path='company-device/trashed' element={<CompanyDeviceTrashed />} />
+
 
             {/* Device Brand */}
             <Route path='device-brand' element={<Brand />} />

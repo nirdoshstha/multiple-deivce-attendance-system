@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { PulseLoader } from 'react-spinners';
 import { showError, showSuccess } from '../../../utils/notify';
 import { Link } from 'react-router';
@@ -9,6 +9,14 @@ import api from '../../../api/api';
 
 import Form from 'react-bootstrap/Form';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
+
+
+const statusColors = {
+    online: "bg-success text-light",
+    offline: "bg-danger text-light",
+    mismatch: "bg-danger text-light",
+    unknown: "bg-danger text-light",
+};
 
 const CompanyDevice = () => {
 
@@ -28,42 +36,42 @@ const CompanyDevice = () => {
     const [trashed, setTrashed] = useState(0);
     const [brands, setBrands] = useState([]);
 
-        const handleInput = async (e) => { 
-            const { name, value } = e.target;
+    const handleInput = async (e) => {
+        const { name, value } = e.target;
 
-            setDevice((prev) => ({
-                ...prev,
-                [name]: value,
-            }));
-
-            if (name === "device_brand_id") {
-        // Clear previous device selection
         setDevice((prev) => ({
             ...prev,
-            device_brand_id: value,
-            device_id: ""
+            [name]: value,
         }));
 
-        if (!value) {
-            setDeviceName([]);
-            return;
-        }
+        if (name === "device_brand_id") {
+            // Clear previous device selection
+            setDevice((prev) => ({
+                ...prev,
+                device_brand_id: value,
+                device_id: ""
+            }));
 
-        try {
-            const response = await api.get(`/devices/by-brand`, {
-                params: {
-                    device_brand_id: value
-                }
-            });
-             
+            if (!value) {
+                setDeviceName([]);
+                return;
+            }
 
-            setDeviceName(response.data.devices || []);
-        } catch (error) {
-            console.error("Error fetching devices:", error);
-            setDeviceName([]);
+            try {
+                const response = await api.get(`/devices/by-brand`, {
+                    params: {
+                        device_brand_id: value
+                    }
+                });
+
+
+                setDeviceName(response.data.devices || []);
+            } catch (error) {
+                console.error("Error fetching devices:", error);
+                setDeviceName([]);
+            }
         }
-    }
-        };
+    };
     useEffect(() => {
         fetchDatas();
     }, []);
@@ -117,8 +125,6 @@ const CompanyDevice = () => {
         }
     }
 
-
-
     const fetchDatas = async () => {
         try {
             const result = await api.get(`/company-devices`)
@@ -132,8 +138,100 @@ const CompanyDevice = () => {
             showError(error.response.data.message);
         }
 
-         
+
     }
+
+    // Device Manager Start
+    // const [devices, setDevices] = useState([]);
+    // const [loading, setLoading] = useState(true);
+    const [busyId, setBusyId] = useState(null); // which device row is mid-action
+    const [messages, setMessages] = useState({}); // deviceId -> last result/error text
+
+
+    // const listDevices = () => api.get("/company-devices").then((r) => r.data.data);
+
+    const listDevices = async () => {
+        const result = await api.get(`/company-devices`);
+        return result.data.devices;
+    };
+
+    // const checkDeviceConnection = (id) =>
+    //   api.post(`/company-devices/${id}/check-connection`).then((r) => r.data);
+
+    const checkDeviceConnection = async (id) => {
+        const result = await api.post(`/company-devices/${id}/check-connection`)
+        // console.log(result)
+    }
+
+    // const syncDevice = (id) =>
+    //   api.post(`/company-devices/${id}/sync`).then((r) => r.data.data);
+
+    const syncDevice = async (id) => {
+        const result = await api.post(`/company-devices/${id}/sync`)
+        console.log(result)
+    }
+
+
+    const loadDevices = useCallback(async () => {
+        setLoading(true);
+        try {
+            setDevices(await listDevices());
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadDevices();
+    }, [loadDevices]);
+
+    const handleCheckConnection = async (device) => {
+        setBusyId(device.id);
+        setMessages((m) => ({ ...m, [device.id]: null }));
+        try {
+            const result = await checkDeviceConnection(device.id);
+            setMessages((m) => ({
+                ...m,
+                [device.id]: `Online — serial confirmed (${result.serial_no})`,
+            }));
+        } catch (err) {
+            // setMessages((m) => ({
+            //     ...m,
+            //     [device.id]: err.response?.data?.message ?? "Could not reach device",
+            // }));
+            showError(err.response.data.message ?? "Coud not reach device")
+        } finally {
+            setBusyId(null);
+            loadDevices();
+        }
+    };
+
+    const handleSync = async (device) => {
+        setBusyId(device.id);
+        setMessages((m) => ({ ...m, [device.id]: null }));
+        try {
+            const summary = await syncDevice(device.id);
+            setMessages((m) => ({
+                ...m,
+                [device.id]: `Synced: ${summary.logs_inserted} new punch(es), ${summary.days_recomputed} day(s) recomputed`,
+            }));
+        } catch (err) {
+            // setMessages((m) => ({
+            //     ...m,
+            //     [device.id]: err.response?.data?.message ?? "Sync failed",
+            // }));
+            showError(err.response.data.message ?? "Sync failed")
+        } finally {
+            setBusyId(null);
+        }
+    };
+
+    // if (loading) return <p className="text-sm text-gray-500">Loading devices…</p>;
+
+
+    //Device Manager End
 
 
     return (
@@ -180,7 +278,7 @@ const CompanyDevice = () => {
                                             })
                                         }
                                     </Form.Select>
-                                    
+
                                 </FloatingLabel>
                             </div>
                             <div className="form-group">
@@ -238,12 +336,12 @@ const CompanyDevice = () => {
                                 <input type="text" name='serial_no' value={device?.serial_no} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. ZKTK40PRO001" />
                             </div> */}
 
-                             <FloatingLabel
-                                    controlId="floatingSelectGrid"
-                                    label="Serial Number (eg:ZKTK40PRO001)"
-                                >
-                                    <input type="text" name='serial_no' value={device?.serial_no} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. ZKTK40PRO001" />
-                                </FloatingLabel>
+                            <FloatingLabel
+                                controlId="floatingSelectGrid"
+                                label="Serial Number (eg:ZKTK40PRO001)"
+                            >
+                                <input type="text" name='serial_no' value={device?.serial_no} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. ZKTK40PRO001" />
+                            </FloatingLabel>
 
                             {/* <div className="form-group">
                                 <label className="form-label"> Port</label>
@@ -251,11 +349,11 @@ const CompanyDevice = () => {
                             </div> */}
 
                             <FloatingLabel
-                                    controlId="floatingSelectGrid"
-                                    label="PORT (eg:4370)"
-                                >
-                                    <input type="text" name='port' value={device?.port} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 4370" />
-                                </FloatingLabel>
+                                controlId="floatingSelectGrid"
+                                label="PORT (eg:4370)"
+                            >
+                                <input type="text" name='port' value={device?.port} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 4370" />
+                            </FloatingLabel>
 
 
                             {/* <div className="form-group">
@@ -263,35 +361,35 @@ const CompanyDevice = () => {
                                 <input type="number" name='api_key' value={device?.api_key} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
                             </div> */}
 
-                             <FloatingLabel
-                                    controlId="floatingSelectGrid"
-                                    label="API KEY (eg:123456)"
-                                >
-                                    <input type="text" name='api_key' value={device?.api_key} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 123456" />
-                                </FloatingLabel>
+                            <FloatingLabel
+                                controlId="floatingSelectGrid"
+                                label="API KEY (eg:123456)"
+                            >
+                                <input type="text" name='api_key' value={device?.api_key} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 123456" />
+                            </FloatingLabel>
 
                             {/* <div className="form-group">
                                 <label className="form-label"> Device Code</label>
                                 <input type="text" name='device_code' value={device?.device_code} onChange={handleInput} className="form-control" placeholder="e.g. Alex Rivera" />
                             </div> */}
                             <FloatingLabel
-                                    controlId="floatingSelectGrid"
-                                    label="Device Code (eg:ZKT-001)"
-                                >
-                                    <input type="text" name='device_code' value={device?.device_code} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 1ZKT-001" />
-                                </FloatingLabel>
+                                controlId="floatingSelectGrid"
+                                label="Device Code (eg:ZKT-001)"
+                            >
+                                <input type="text" name='device_code' value={device?.device_code} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 1ZKT-001" />
+                            </FloatingLabel>
 
                             {/* <div className="form-group">
                                 <label className="form-label"> API URL</label>
                                 <input type="text" name='api_url' value={device?.api_url} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
                             </div> */}
 
-                             <FloatingLabel
-                                    controlId="floatingSelectGrid"
-                                    label="API URL (eg: http://192.168.1.201/api)"
-                                >
-                                    <input type="text" name='api_url' value={device?.api_url} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 1ZKT-001" />
-                                </FloatingLabel>
+                            <FloatingLabel
+                                controlId="floatingSelectGrid"
+                                label="API URL (eg: http://192.168.1.201/api)"
+                            >
+                                <input type="text" name='api_url' value={device?.api_url} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 1ZKT-001" />
+                            </FloatingLabel>
 
                             {/* <div className="form-group">
                                 <label className="form-label">IP</label>
@@ -299,11 +397,11 @@ const CompanyDevice = () => {
                             </div> */}
 
                             <FloatingLabel
-                                    controlId="floatingSelectGrid"
-                                    label="IP ADDRESS (eg: 192.168.1.201)"
-                                >
-                                    <input type="text" name='ip' value={device?.ip} onChange={handleInput} className="form-control"  placeholder="e.g. 192.168.1.201" />
-                                </FloatingLabel> 
+                                controlId="floatingSelectGrid"
+                                label="IP ADDRESS (eg: 192.168.1.201)"
+                            >
+                                <input type="text" name='ip' value={device?.ip} onChange={handleInput} className="form-control" placeholder="e.g. 192.168.1.201" />
+                            </FloatingLabel>
 
 
                             {
@@ -343,14 +441,14 @@ const CompanyDevice = () => {
                             </div>
                         </div>
                         <div style={{ overflowX: 'auto' }}>
-                            <table class="admin-table" id="adminTable">
+                            <table class="admin-table table table-striped" id="adminTable">
                                 <thead>
                                     <tr>
                                         <th>S.no</th>
-                                        <th>Device Name</th>
-                                        <th>Company Named</th>
-                                        <th>Device Brand</th>
-                                        <th>Serial No</th>
+                                        <th>Device Details</th>
+                                        {/* <th>Company Named</th>
+                                        <th>Device Brand</th> */}
+                                        {/* <th>Serial No</th> */}
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -361,23 +459,54 @@ const CompanyDevice = () => {
                                                 <tr key={device.id}>
                                                     <td>{index + 1}</td>
                                                     <td>
-                                                        {device.name}
+                                                        <div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-medium">{device.name}</span>
+                                                                <span
+                                                                    className={`rounded-full px-2 py-0.5 text-xs ${statusColors[device.status] ?? statusColors.unknown
+                                                                        }`}
+                                                                >
+                                                                    {device.status ?? "unknown"}
+                                                                </span>
+                                                            </div>
+                                                            <div className="text-sm text-gray-500">
+                                                                Serial: <span style={{ fontSize: "12px", color: "#94a3b8", marginTop: "1px" }}> {device.serial_no}</span>, Brand: <span style={{ fontSize: "12px", color: "#94a3b8", marginTop: "1px" }}> {device.brand?.name}</span>,  IP: <span style={{ fontSize: "12px", color: "#94a3b8", marginTop: "1px" }}> {device.ip}</span> Port :<span style={{ fontSize: "12px", color: "#94a3b8", marginTop: "1px" }}>{device.port}</span>
+                                                            </div>
+                                                            {messages[device.id] && (
+                                                                <div className="mt-1 text-xs text-gray-600">{messages[device.id]}</div>
+                                                            )}
+                                                        </div>
                                                     </td>
 
-                                                    <td>
+                                                    {/* <td>
                                                         {device.company?.name}
                                                     </td>
 
                                                     <td>
                                                         {device.brand?.name}
-                                                    </td>
+                                                    </td> */}
 
-                                                    <td>
-                                                        {device.serial_no}
-                                                    </td>
+                                                    {/* <td>
+                                                        <span style={{ fontSize: "12px", color: "#94a3b8", marginTop: "1px" }}> {device.serial_no}</span>
+                                                    </td> */}
 
                                                     <td>
                                                         <div className="table-actions">
+
+                                                            <button
+                                                                onClick={() => handleCheckConnection(device)}
+                                                                disabled={busyId === device.id}
+                                                                className="btn-edit-sm rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50"
+                                                            >
+                                                                <i className="bi bi-plug me-1 fs-6"></i> {busyId === device.id ? "…" : "Connect"}
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleSync(device)}
+                                                                disabled={busyId === device.id}
+                                                                className="btn-danger-sm rounded-md bg-blue-600 px-3 py-1.5 text-sm disabled:opacity-50"
+                                                            >
+                                                                <i className="bi bi-arrow-repeat fs-6"></i> {busyId === device.id ? "…" : "Sync"}
+                                                            </button>
 
                                                             {
                                                                 can("company-devices.show") && (
@@ -404,6 +533,9 @@ const CompanyDevice = () => {
                                                             }
                                                         </div>
                                                     </td>
+                                                    {messages[device.id] && (
+                                                        <div className="mt-1 text-xs text-gray-600">{messages[device.id]}</div>
+                                                    )}
                                                 </tr>
                                             )
                                         }) :

@@ -276,7 +276,7 @@ const Attendance = () => {
                                                                 <td>
                                                                     <div className="d-flex align-items-center gap-3">
                                                                         <div className="staff-avatar" style={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden' }}>
-                                                                            <img src={staff.image ? `${BASE_URL}/uploads/staff/${staff.image}` : noimage} alt={staff.name} width={40} />
+                                                                            <img src={staff.image ? `${BASE_URL}/uploads/user/${staff.image}` : noimage} alt={staff.name} width={40} />
                                                                         </div>
                                                                         <div>
                                                                             <div className="admin-name">{staff.name}</div>
@@ -503,9 +503,18 @@ const Attendance = () => {
 
                                                     const dayString = String(day).padStart(2, "0");
 
+                                                    // These two lines must exist before `leave` uses fullDate
+                                                    const monthString = String(month).padStart(2, "0");
+                                                    const fullDate = `${year}-${monthString}-${dayString}`;
+
                                                     // Attendance
                                                     const attendance = staff.attendances.find(a =>
                                                         a.date.split("-")[2] === dayString
+                                                    );  
+
+                                                    // Leave — check if THIS DAY falls inside the leave's date_from/date_to range
+                                                    const leave = staff.leaves?.find(l =>
+                                                        fullDate >= l.date_from && fullDate <= l.date_to
                                                     );
 
                                                     // Holiday
@@ -514,10 +523,12 @@ const Attendance = () => {
                                                         h.is_holiday
                                                     );
 
+                                                    
+
                                                     return (
                                                         <td key={day} className="cell">
 
-                                                            {attendance && attendance.check_in ? (
+                                                            {attendance && attendance?.check_in ? (
                                                                 <div
                                                                     className="punch present m-1"
                                                                     data-tip={`${attendance.check_in?.slice(0, 5) ?? ''} - ${attendance.check_out?.slice(0, 5) ?? ''} = ${attendance.working_minutes ?? 0} min`}
@@ -525,7 +536,13 @@ const Attendance = () => {
                                                                     ✓
                                                                 </div>
 
-                                                            ) : holiday ? (
+                                                            ): leave ? (
+
+                                                                <div className="punch holiday m-1" title={leave.leave_type?.name ?? 'Leave'} data-tip={leave.reason ?? ''}>
+                                                                    {leave.leave_type?.name ?? 'Leave'}
+                                                                </div>
+
+                                                            )  : holiday ? (
 
                                                                 <div className="punch holiday m-1" title={holiday.title}>
                                                                     {holiday.title}

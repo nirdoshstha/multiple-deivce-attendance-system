@@ -25,4 +25,15 @@ const api = axios.create({
     },
 });
 
+// Assumes an auth token/interceptor is already set up elsewhere in your app
+// (e.g. Sanctum cookie auth or an Authorization header interceptor).
+
+// export const listDevices = () => api.get("/company-devices").then((r) => r.data.data);
+
+// export const checkDeviceConnection = (id) =>
+//   api.post(`/company-devices/${id}/check-connection`).then((r) => r.data);
+
+// export const syncDevice = (id) =>
+//   api.post(`/company-devices/${id}/sync`).then((r) => r.data.data);
+
 export default api;

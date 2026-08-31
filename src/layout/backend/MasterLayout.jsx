@@ -152,7 +152,7 @@ const MasterLayout = () => {
                         </div>
                     </div>
 
-                     <div className={`nav-item ${leaveOpen ? "open" : ""}`}>
+                    <div className={`nav-item ${leaveOpen ? "open" : ""}`}>
                         <button
                             className={`nav-link nav-dropdown ${isLeaveActive ? "active" : ""}`}
                             onClick={() => setLeaveOpen(!leaveOpen)}
@@ -186,11 +186,11 @@ const MasterLayout = () => {
                                 <i className="bi bi-person" /> Leave Application
                             </NavLink>
 
-                            
 
-                            
 
-                           
+
+
+
 
 
                         </div>
@@ -228,6 +228,15 @@ const MasterLayout = () => {
                                 } style={{ color: "light" }}
                             >
                                 <i className="bi bi-gender-ambiguous" /> Company Devices
+                            </NavLink>
+
+                            <NavLink
+                                to="device-manager"
+                                className={({ isActive }) =>
+                                    isActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-gender-ambiguous" /> Devices Manager
                             </NavLink>
 
 
