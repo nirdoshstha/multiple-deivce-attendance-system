@@ -107,7 +107,7 @@ const Brand = () => {
 
 
                             {
-                                can("brands.store") && (
+                                can("device-brand.store") && (
                                     <button type='submit' className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
                                         {loading ? <PulseLoader
                                             color='white'
@@ -167,7 +167,7 @@ const Brand = () => {
                                                         <div className="table-actions">
 
                                                             {
-                                                                can("brands.update") && (
+                                                                can("device-brand.update") && (
                                                                     <Link to={`/admin/device-brand/edit/${brand.id}`} className="btn-edit-sm" title="Edit" >
                                                                         <i className="bi bi-pencil"></i>
                                                                     </Link>
@@ -176,7 +176,7 @@ const Brand = () => {
 
 
                                                             {
-                                                                can("brands.destroy") && (
+                                                                can("device-brand.destroy") && (
                                                                     <button className="btn-danger-sm" onClick={() => deleteBrand(brand.id)} title="Delete"><i className="bi bi-trash3" /></button>
                                                                 )
                                                             }

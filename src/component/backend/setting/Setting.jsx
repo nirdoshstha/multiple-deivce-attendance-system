@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import api, { BASE_URL } from '../../../api/api';
 import { showError, showSuccess } from '../../../utils/notify';
+import { useAuth } from '../../../context/AuthContext';
 
 const Setting = () => {
-
+    const { can } = useAuth();
     useEffect(() => {
-            document.title = "Setting";
-        }, []);
+        document.title = "Setting";
+    }, []);
 
     const [settings, setSettings] = useState({
         logo: null,
@@ -80,7 +81,7 @@ const Setting = () => {
 
         try {
             const res = isEdit
-                // ? await api.post("/settings/update", formData) //we have create and update post in store so ..
+                // ? await api.post("/setting/update", formData) //we have create and update post in store so ..
                 ? await api.post("/settings", formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
@@ -107,7 +108,7 @@ const Setting = () => {
                         Website Settings
                     </div>
                     <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>
-                        Update your website information and social media links. 
+                        Update your website information and social media links.
                     </div>
                 </div>
 
@@ -133,7 +134,7 @@ const Setting = () => {
                                             src={
                                                 logoPreview ||
                                                 (settings.logo
-                                                    ? `${BASE_URL}/uploads/settings/${settings.logo}`
+                                                    ? `${BASE_URL}/uploads/setting/${settings.logo}`
                                                     : "/no-image.jpg")
                                             }
                                             alt="Fav" className="setting-preview-image"
@@ -163,7 +164,7 @@ const Setting = () => {
                                             src={
                                                 favPreview
                                                     ? favPreview
-                                                    : `${BASE_URL}/uploads/settings/${settings.fav_icon}`
+                                                    : `${BASE_URL}/uploads/setting/${settings.fav_icon}`
                                             }
                                             alt="Fav Icon"
                                             className="setting-preview-image"
@@ -172,7 +173,7 @@ const Setting = () => {
                                             src={
                                                 favPreview ||
                                                 (settings.fav_icon
-                                                    ? `${BASE_URL}/uploads/settings/${settings.fav_icon}`
+                                                    ? `${BASE_URL}/uploads/setting/${settings.fav_icon}`
                                                     : "/no-image.jpg")
                                             }
                                             alt="Fav Icon" className="setting-preview-image"
@@ -194,7 +195,7 @@ const Setting = () => {
                                 type="text"
                                 className="form-control"
                                 name="slogan"
-                                value={settings.slogan}
+                                value={settings.slogan || ''}
                                 onChange={handleChange}
                                 placeholder="Enter website slogan"
                             />
@@ -206,7 +207,7 @@ const Setting = () => {
                                 type="text"
                                 className="form-control"
                                 name="address"
-                                value={settings.address}
+                                value={settings.address || ''}
                                 onChange={handleChange}
                                 placeholder="Company Address"
                             />
@@ -222,7 +223,7 @@ const Setting = () => {
                                 type="email"
                                 className="form-control"
                                 name="email"
-                                value={settings.email}
+                                value={settings.email || ''}
                                 onChange={handleChange}
                                 placeholder="info@example.com"
                             />
@@ -234,7 +235,7 @@ const Setting = () => {
                                 type="text"
                                 className="form-control"
                                 name="phone"
-                                value={settings.phone}
+                                value={settings.phone || ''}
                                 onChange={handleChange}
                                 placeholder="Phone Number"
                             />
@@ -246,7 +247,7 @@ const Setting = () => {
                                 type="text"
                                 className="form-control"
                                 name="mobile"
-                                value={settings.mobile}
+                                value={settings.mobile || ''}
                                 onChange={handleChange}
                                 placeholder="Mobile Number"
                             />
@@ -267,10 +268,10 @@ const Setting = () => {
                         <div className="form-group">
                             <label className="form-label">Facebook</label>
                             <input
-                                type="url"
+                                type="text"
                                 className="form-control"
                                 name="facebook"
-                                value={settings.facebook}
+                                value={settings.facebook || ''}
                                 onChange={handleChange}
                                 placeholder="https://facebook.com/..."
                             />
@@ -279,10 +280,10 @@ const Setting = () => {
                         <div className="form-group">
                             <label className="form-label">Twitter / X</label>
                             <input
-                                type="url"
+                                type="text"
                                 className="form-control"
                                 name="twitter"
-                                value={settings.twitter}
+                                value={settings.twitter || ''}
                                 onChange={handleChange}
                                 placeholder="https://x.com/..."
                             />
@@ -291,10 +292,10 @@ const Setting = () => {
                         <div className="form-group">
                             <label className="form-label">Instagram</label>
                             <input
-                                type="url"
+                                type="text"
                                 className="form-control"
                                 name="instagram"
-                                value={settings.instagram}
+                                value={settings.instagram || ''}
                                 onChange={handleChange}
                                 placeholder="https://instagram.com/..."
                             />
@@ -307,10 +308,10 @@ const Setting = () => {
                         <div className="form-group">
                             <label className="form-label">YouTube</label>
                             <input
-                                type="url"
+                                type="text"
                                 className="form-control"
                                 name="youtube"
-                                value={settings.youtube}
+                                value={settings.youtube || ''}
                                 onChange={handleChange}
                                 placeholder="https://youtube.com/..."
                             />
@@ -322,7 +323,7 @@ const Setting = () => {
                                 type="text"
                                 className="form-control"
                                 name="whatsapp"
-                                value={settings.whatsapp}
+                                value={settings.whatsapp || ''}
                                 onChange={handleChange}
                                 placeholder="+97798XXXXXXXX"
                             />
@@ -334,7 +335,7 @@ const Setting = () => {
                                 type="text"
                                 className="form-control"
                                 name="viber"
-                                value={settings.viber}
+                                value={settings.viber || ''}
                                 onChange={handleChange}
                                 placeholder="+97798XXXXXXXX"
                             />
@@ -348,7 +349,7 @@ const Setting = () => {
                                 type="text"
                                 className="form-control"
                                 name="google_map"
-                                value={settings.google_map}
+                                value={settings.google_map || ''}
                                 onChange={handleChange}
                                 placeholder="Google Map Embed URL"
                             />
@@ -356,10 +357,10 @@ const Setting = () => {
                         <div className="form-group">
                             <label className="form-label">LinkedIn</label>
                             <input
-                                type="url"
+                                type="text"
                                 className="form-control"
                                 name="linkedin"
-                                value={settings.linkedin}
+                                value={settings.linkedin || ''}
                                 onChange={handleChange}
                                 placeholder="https://linkedin.com/in/..."
                             />
@@ -382,7 +383,7 @@ const Setting = () => {
                                 type="text"
                                 className="form-control"
                                 name="recaptcha_key"
-                                value={settings.recaptcha_key}
+                                value={settings.recaptcha_key || ''}
                                 onChange={handleChange}
                                 placeholder="Google reCAPTCHA Site Key"
                             />
@@ -394,7 +395,7 @@ const Setting = () => {
                                 type="text"
                                 className="form-control"
                                 name="recaptcha_secret"
-                                value={settings.recaptcha_secret}
+                                value={settings.recaptcha_secret || ''}
                                 onChange={handleChange}
                                 placeholder="Google reCAPTCHA Secret Key"
                             />
@@ -403,15 +404,20 @@ const Setting = () => {
 
                     <div className="divider" />
 
-                    <div style={{ display: "flex", gap: 10 }}>
-                        <button type="submit" className="btn-primary">
-                            <i className="bi bi-check2-circle"></i> Save Changes
-                        </button>
-
-                        <button type="reset" className="btn-secondary">
+                    {
+                        can("settings.store") && (
+                            <div style={{ display: "flex", gap: 10 }}>
+                                <button type="submit" className="btn-primary">
+                                    <i className="bi bi-check2-circle"></i> Save Changes
+                                </button>
+                                {/* <button type="reset" className="btn-secondary">
                             <i className="bi bi-arrow-counterclockwise"></i> Reset
-                        </button>
-                    </div>
+                        </button> */}
+                            </div>
+                        )
+                    }
+
+
                 </form>
 
 

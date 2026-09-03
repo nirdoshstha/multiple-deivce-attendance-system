@@ -202,214 +202,232 @@ const Attendance = () => {
                         <button data-view="monthly"><i className="bi bi-grid-3x3-gap" /> Monthly Report</button>
                     </div>
 
-                    <form className="d-flex align-items-end gap-2 flex-wrap" onSubmit={handleSubmitByDate}>
-                        <div>
-                            <label className="field-label">Date (B.S.)</label>
-                            <Picker
-                                value={date}
-                                onChange={(value) => setDate(value)}
-                                placeholder="Pick a Nepali Date"
-                            />
-                        </div>
-                        <button type="submit" className="theme-toggle-btn" disabled={loading}>
-                            {loading ? (
-                                <>
-                                    <ClipLoader color="white" size={20} />
-                                    <span className="ms-2">Searching...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <i className="bi bi-search" /> Search
-                                </>
-                            )}
-                        </button>
-                    </form>
+                    {
+                        can("attendance.search_by_date") && (
+                            <form className="d-flex align-items-end gap-2 flex-wrap" onSubmit={handleSubmitByDate}>
+                                <div>
+                                    <label className="field-label">Date (B.S.)</label>
+                                    <Picker
+                                        value={date}
+                                        onChange={(value) => setDate(value)}
+                                        placeholder="Pick a Nepali Date"
+                                    />
+                                </div>
+                                <button type="submit" className="theme-toggle-btn" disabled={loading}>
+                                    {loading ? (
+                                        <>
+                                            <ClipLoader color="white" size={20} />
+                                            <span className="ms-2">Searching...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-search" /> Search
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                        )
+                    }
+
                 </div>
 
                 {/* ============ DAILY VIEW ============ */}
-                <div className="view active" id="view-daily">
-                    <div className="panel mb-4">
-                        <form onSubmit={handleSubmit}>
-                            <div className="p-3 p-md-4">
-                                <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-                                    <div className="d-flex align-items-center gap-2">
-                                        <i className="bi bi-calendar3 text-muted" />
-                                        <span className="font-mono small text-muted">
-                                            Showing records for{" "}
-                                            <strong style={{ color: 'var(--teal-900)' }}>
-                                                {date ? `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}` : "-"}
-                                            </strong>
-                                        </span>
+                {
+                    can("attendance.search_by_date") && (
+                        <div className="view active" id="view-daily">
+                            <div className="panel mb-4">
+                                <form onSubmit={handleSubmit}>
+                                    <div className="p-3 p-md-4">
+                                        <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                                            <div className="d-flex align-items-center gap-2">
+                                                <i className="bi bi-calendar3 text-muted" />
+                                                <span className="font-mono small text-muted">
+                                                    Showing records for{" "}
+                                                    <strong style={{ color: 'var(--teal-900)' }}>
+                                                        {date ? `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}` : "-"}
+                                                    </strong>
+                                                </span>
+                                            </div>
+
+                                            <div className="d-flex gap-2">
+                                                <Link className="btn-ghost"><i className="bi bi-printer" /> Print</Link>
+                                                <button type='submit' className="theme-toggle-btn"><i className="bi bi-save" /> Save</button>
+                                            </div>
+                                        </div>
+                                        <div className="table-responsive">
+                                            <table className="attn-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th style={{ width: 56 }}>S.No</th>
+                                                        <th>Staff</th>
+                                                        {/* <th>Role</th> */}
+                                                        <th>Check In</th>
+                                                        <th>Check Out</th>
+                                                        <th>Status</th>
+                                                        <th>Note</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {loading ? (
+                                                        <tr><td colSpan={7} className="text-center text-muted py-4">Loading...</td></tr>
+                                                    ) : staffs.length === 0 ? (
+                                                        <tr><td colSpan={7} className="text-center text-muted py-4">No staff found for this date.</td></tr>
+                                                    ) :
+                                                        disabled ? (
+                                                            <tr><td colSpan={7} className="text-center text-danger py-4"> Today is Holiday.</td></tr>
+                                                        )
+                                                            : (
+                                                                staffs.map((staff, index) => (
+                                                                    <tr key={staff.id}>
+                                                                        <td className="font-mono text-muted">{index + 1}</td>
+                                                                        <td>
+                                                                            <div className="d-flex align-items-center gap-3">
+                                                                                <div className="staff-avatar" style={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden' }}>
+                                                                                    <img src={staff.image ? `${BASE_URL}/uploads/user/${staff.image}` : noimage} alt={staff.name} width={40} />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <div className="admin-name">{staff.name}</div>
+                                                                                    <div className="admin-email">{staff.email || "Email not available"}</div>
+                                                                                    <div className="staff-row-meta">{staff.designation?.name} </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        {/* <td></td> */}
+                                                                        <td>
+                                                                            <div className="time-input-wrap">
+
+                                                                                <input
+                                                                                    type="time"
+                                                                                    name="check_in"
+                                                                                    className={`control ${attendances.find(a => a.staff_id === staff.id)?.check_in
+                                                                                        ? "punch present"
+                                                                                        : "punch absent"
+                                                                                        }`}
+                                                                                    value={attendances.find(a => a.staff_id === staff.id)?.check_in || ""}
+                                                                                    onChange={(e) =>
+                                                                                        handleAttendanceChange(staff.id, "check_in", e.target.value)
+                                                                                    }
+                                                                                />
+
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div className="time-input-wrap">
+                                                                                <input
+                                                                                    type="time"
+                                                                                    name="check_out"
+                                                                                    disabled={disabled}
+                                                                                    className={`control ${attendances.find(a => a.staff_id === staff.id)?.check_out
+                                                                                        ? "punch present"
+                                                                                        : "punch absent"
+                                                                                        }`}
+                                                                                    value={attendances.find(a => a.staff_id === staff.id)?.check_out || ""}
+                                                                                    onChange={(e) => handleAttendanceChange(staff.id, "check_out", e.target.value)}
+                                                                                />
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <select
+                                                                                className="control"
+                                                                                name='status'
+                                                                                disabled={disabled}
+                                                                                value={attendances.find(a => a.staff_id === staff.id)?.status || "present"}
+                                                                                onChange={(e) => handleAttendanceChange(staff.id, "status", e.target.value)}
+                                                                            >
+                                                                                <option value="absent">Absent</option>
+                                                                                <option value="present">Present</option>
+                                                                                <option value="leave">Leave</option>
+                                                                                <option value="holiday">Holiday</option>
+                                                                                <option value="halfday">Half Day</option>
+                                                                                <option value="weekend">Weekend</option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <td>
+                                                                            <input
+                                                                                type="text"
+                                                                                name="remarks"
+                                                                                disabled={disabled}
+                                                                                className="control"
+                                                                                value={attendances.find(a => a.staff_id === staff.id)?.remarks || ""}
+                                                                                onChange={(e) => handleAttendanceChange(staff.id, "remarks", e.target.value)}
+                                                                            />
+                                                                        </td>
+                                                                    </tr>
+                                                                ))
+                                                            )}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-
-                                    <div className="d-flex gap-2">
-                                        <Link className="btn-ghost"><i className="bi bi-printer" /> Print</Link>
-                                        <button type='submit' className="theme-toggle-btn"><i className="bi bi-save" /> Save</button>
-                                    </div>
-                                </div>
-                                <div className="table-responsive">
-                                    <table className="attn-table">
-                                        <thead>
-                                            <tr>
-                                                <th style={{ width: 56 }}>S.No</th>
-                                                <th>Staff</th>
-                                                {/* <th>Role</th> */}
-                                                <th>Check In</th>
-                                                <th>Check Out</th>
-                                                <th>Status</th>
-                                                <th>Note</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {loading ? (
-                                                <tr><td colSpan={7} className="text-center text-muted py-4">Loading...</td></tr>
-                                            ) : staffs.length === 0 ? (
-                                                <tr><td colSpan={7} className="text-center text-muted py-4">No staff found for this date.</td></tr>
-                                            ) :
-                                                disabled ? (
-                                                    <tr><td colSpan={7} className="text-center text-danger py-4"> Today is Holiday.</td></tr>
-                                                )
-                                                    : (
-                                                        staffs.map((staff, index) => (
-                                                            <tr key={staff.id}>
-                                                                <td className="font-mono text-muted">{index + 1}</td>
-                                                                <td>
-                                                                    <div className="d-flex align-items-center gap-3">
-                                                                        <div className="staff-avatar" style={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden' }}>
-                                                                            <img src={staff.image ? `${BASE_URL}/uploads/user/${staff.image}` : noimage} alt={staff.name} width={40} />
-                                                                        </div>
-                                                                        <div>
-                                                                            <div className="admin-name">{staff.name}</div>
-                                                                            <div className="admin-email">{staff.email || "Email not available"}</div>
-                                                                            <div className="staff-row-meta">{staff.designation?.name} </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                                {/* <td></td> */}
-                                                                <td>
-                                                                    <div className="time-input-wrap">
-
-                                                                        <input
-                                                                            type="time"
-                                                                            name="check_in"
-                                                                            className={`control ${attendances.find(a => a.staff_id === staff.id)?.check_in
-                                                                                ? "punch present"
-                                                                                : "punch absent"
-                                                                                }`}
-                                                                            value={attendances.find(a => a.staff_id === staff.id)?.check_in || ""}
-                                                                            onChange={(e) =>
-                                                                                handleAttendanceChange(staff.id, "check_in", e.target.value)
-                                                                            }
-                                                                        />
-
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div className="time-input-wrap">
-                                                                        <input
-                                                                            type="time"
-                                                                            name="check_out"
-                                                                            disabled={disabled}
-                                                                            className={`control ${attendances.find(a => a.staff_id === staff.id)?.check_out
-                                                                                ? "punch present"
-                                                                                : "punch absent"
-                                                                                }`}
-                                                                            value={attendances.find(a => a.staff_id === staff.id)?.check_out || ""}
-                                                                            onChange={(e) => handleAttendanceChange(staff.id, "check_out", e.target.value)}
-                                                                        />
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <select
-                                                                        className="control"
-                                                                        name='status'
-                                                                        disabled={disabled}
-                                                                        value={attendances.find(a => a.staff_id === staff.id)?.status || "present"}
-                                                                        onChange={(e) => handleAttendanceChange(staff.id, "status", e.target.value)}
-                                                                    >
-                                                                        <option value="absent">Absent</option>
-                                                                        <option value="present">Present</option>
-                                                                        <option value="leave">Leave</option>
-                                                                        <option value="holiday">Holiday</option>
-                                                                        <option value="halfday">Half Day</option>
-                                                                        <option value="weekend">Weekend</option>
-                                                                    </select>
-                                                                </td>
-                                                                <td>
-                                                                    <input
-                                                                        type="text"
-                                                                        name="remarks"
-                                                                        disabled={disabled}
-                                                                        className="control"
-                                                                        value={attendances.find(a => a.staff_id === staff.id)?.remarks || ""}
-                                                                        onChange={(e) => handleAttendanceChange(staff.id, "remarks", e.target.value)}
-                                                                    />
-                                                                </td>
-                                                            </tr>
-                                                        ))
-                                                    )}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                </form>
                             </div>
-                        </form>
-                    </div>
-                </div>
+                        </div>
+                    )
+                }
+
 
                 {/* ============ MONTHLY VIEW ============ */}
-                <div className="view" id="view-monthly">
-                    <div className="panel">
-                        <div className="panel-head">
-                            <div>
-                                <div className="eyebrow">Term overview</div>
-                                <h2 className="panel-title">Biometric attendance report</h2>
-                            </div>
 
-                            <form className="d-flex align-items-end gap-2 flex-wrap" onSubmit={handleMonthlySubmit}>
-                                <div>
-                                    <label className="field-label">Month</label>
-                                    <select
-                                        className="control month-select"
-                                        value={month}
-                                        onChange={(e) => setMonth(Number(e.target.value))}
-                                    >
-                                        {MONTHS.map((m) => (
-                                            <option key={m.value} value={m.value}>{m.label}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="field-label">Year</label>
-                                    <input
-                                        type="number"
-                                        className="control"
-                                        style={{ width: 100 }}
-                                        value={year}
-                                        onChange={(e) => setYear(Number(e.target.value))}
-                                    />
-                                </div>
-                                <button type="submit" className="btn-search" disabled={monthlyLoading}>
-                                    <i className="bi bi-search" /> {monthlyLoading ? "Searching..." : "Search"}
-                                </button>
-                            </form>
-                        </div>
-
-                        <div className="p-3 p-md-4">
-                            <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-3">
-                                <div>
-                                    <div className="font-display fw-semibold" style={{ color: 'var(--teal-900)', fontSize: '1.05rem' }}>
-                                        {MONTHS.find(m => m.value === Number(month))?.label}, {year}
+                {
+                    can("attendance.search_by_month") && (
+                        <div className="view" id="view-monthly">
+                            <div className="panel">
+                                <div className="panel-head">
+                                    <div>
+                                        <div className="eyebrow">Term overview</div>
+                                        <h2 className="panel-title">Biometric attendance report</h2>
                                     </div>
-                                    {/* <div className="legend mt-2">
+
+                                    {
+                                        can("attendance.search_by_month") && (
+                                            <form className="d-flex align-items-end gap-2 flex-wrap" onSubmit={handleMonthlySubmit}>
+                                                <div>
+                                                    <label className="field-label">Month</label>
+                                                    <select
+                                                        className="control month-select"
+                                                        value={month}
+                                                        onChange={(e) => setMonth(Number(e.target.value))}
+                                                    >
+                                                        {MONTHS.map((m) => (
+                                                            <option key={m.value} value={m.value}>{m.label}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label className="field-label">Year</label>
+                                                    <input
+                                                        type="number"
+                                                        className="control"
+                                                        style={{ width: 100 }}
+                                                        value={year}
+                                                        onChange={(e) => setYear(Number(e.target.value))}
+                                                    />
+                                                </div>
+                                                <button type="submit" className="btn-search" disabled={monthlyLoading}>
+                                                    <i className="bi bi-search" /> {monthlyLoading ? "Searching..." : "Search"}
+                                                </button>
+                                            </form>
+                                        )
+                                    }
+
+                                </div>
+
+                                <div className="p-3 p-md-4">
+                                    <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-3">
+                                        <div>
+                                            <div className="font-display fw-semibold" style={{ color: 'var(--teal-900)', fontSize: '1.05rem' }}>
+                                                {MONTHS.find(m => m.value === Number(month))?.label}, {year}
+                                            </div>
+                                            {/* <div className="legend mt-2">
                                         <span><span className="dot" style={{ background: 'var(--sage-soft)', boxShadow: 'inset 0 0 0 1.5px var(--sage)' }} />Present</span>
                                         <span><span className="dot" style={{ background: 'var(--coral-soft)', boxShadow: 'inset 0 0 0 1.5px var(--coral)' }} />Absent</span>
                                         <span><span className="dot" style={{ background: '#fff', boxShadow: 'inset 0 0 0 1.5px var(--gold)' }} />Today</span>
                                     </div> */}
-                                </div>
-                                <button className="btn-gold"><i className="bi bi-cloud-arrow-down" /> Export</button>
-                            </div>
+                                        </div>
+                                        <button className="btn-gold"><i className="bi bi-cloud-arrow-down" /> Export</button>
+                                    </div>
 
-                            {/* <div className="heat-scroll">
+                                    {/* <div className="heat-scroll">
                                 <table className="heat-table">
                                     <thead>
                                         <tr>
@@ -456,124 +474,127 @@ const Attendance = () => {
                                     </tbody>
                                 </table>
                             </div> */}
-                            <div className="heat-scroll">
-                                <table className="heat-table">
-                                    <thead>
-                                        <tr>
-                                            <th className="name-col">Staff</th>
+                                    <div className="heat-scroll">
+                                        <table className="heat-table">
+                                            <thead>
+                                                <tr>
+                                                    <th className="name-col">Staff</th>
 
-                                            {days.map((day) => (
-                                                <th key={day} className="day-col">
-                                                    {String(day).padStart(2, "0")}
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    </thead>
+                                                    {days.map((day) => (
+                                                        <th key={day} className="day-col">
+                                                            {String(day).padStart(2, "0")}
+                                                        </th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
 
-                                    <tbody>
-                                        {monthlyStaffs.map((staff) => (
-                                            <tr key={staff.id}>
+                                            <tbody>
+                                                {monthlyStaffs.map((staff) => (
+                                                    <tr key={staff.id}>
 
-                                                {/* Staff Details */}
-                                                <td className="name-col">
-                                                    <div className="staff-row-name">
-                                                        {staff.name}
-                                                    </div>
+                                                        {/* Staff Details */}
+                                                        <td className="name-col">
+                                                            <div className="staff-row-name">
+                                                                {staff.name}
+                                                            </div>
 
-                                                    <div className="staff-row-meta">
-                                                        {staff.designation?.name} Present: {staff.attendances.length}
-                                                    </div>
+                                                            <div className="staff-row-meta">
+                                                                {staff.designation?.name} Present: {staff.attendances.length}
+                                                            </div>
 
 
 
-                                                    <div className="staff-row-meta">
-                                                        Hours:{" "}
-                                                        {(
-                                                            staff.attendances.reduce(
-                                                                (sum, a) => sum + (a.working_minutes || 0),
-                                                                0
-                                                            ) / 60
-                                                        ).toFixed(2)}{" "}
-                                                        hr
-                                                    </div>
-                                                </td>
-
-                                                {/* Attendance Day Wise */}
-                                                {days.map((day) => {
-
-                                                    const dayString = String(day).padStart(2, "0");
-
-                                                    // These two lines must exist before `leave` uses fullDate
-                                                    const monthString = String(month).padStart(2, "0");
-                                                    const fullDate = `${year}-${monthString}-${dayString}`;
-
-                                                    // Attendance
-                                                    const attendance = staff.attendances.find(a =>
-                                                        a.date.split("-")[2] === dayString
-                                                    );  
-
-                                                    // Leave — check if THIS DAY falls inside the leave's date_from/date_to range
-                                                    const leave = staff.leaves?.find(l =>
-                                                        fullDate >= l.date_from && fullDate <= l.date_to
-                                                    );
-
-                                                    // Holiday
-                                                    const holiday = holidays.find(h =>
-                                                        h.date.split("-")[2] === dayString &&
-                                                        h.is_holiday
-                                                    );
-
-                                                    
-
-                                                    return (
-                                                        <td key={day} className="cell">
-
-                                                            {attendance && attendance?.check_in ? (
-                                                                <div
-                                                                    className="punch present m-1"
-                                                                    data-tip={`${attendance.check_in?.slice(0, 5) ?? ''} - ${attendance.check_out?.slice(0, 5) ?? ''} = ${attendance.working_minutes ?? 0} min`}
-                                                                > {attendance.check_in?.slice(0, 5) ?? ''} - {attendance.check_out?.slice(0, 5) ?? ''} <br /> = {(attendance.working_minutes / 60).toFixed(2) ?? 0} Hr
-                                                                    ✓
-                                                                </div>
-
-                                                            ): leave ? (
-
-                                                                <div className="punch holiday m-1" title={leave.leave_type?.name ?? 'Leave'} data-tip={leave.reason ?? ''}>
-                                                                    {leave.leave_type?.name ?? 'Leave'}
-                                                                </div>
-
-                                                            )  : holiday ? (
-
-                                                                <div className="punch holiday m-1" title={holiday.title}>
-                                                                    {holiday.title}
-                                                                </div>
-
-                                                            ) : (
-
-                                                                <div className="punch absent m-1">
-                                                                    ✕
-                                                                </div>
-
-                                                            )}
-
+                                                            <div className="staff-row-meta">
+                                                                Hours:{" "}
+                                                                {(
+                                                                    staff.attendances.reduce(
+                                                                        (sum, a) => sum + (a.working_minutes || 0),
+                                                                        0
+                                                                    ) / 60
+                                                                ).toFixed(2)}{" "}
+                                                                hr
+                                                            </div>
                                                         </td>
-                                                    );
 
-                                                })}
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                                        {/* Attendance Day Wise */}
+                                                        {days.map((day) => {
 
-                            <div className="d-flex flex-wrap gap-3 mt-4 pt-3" style={{ borderTop: '1px solid var(--line)' }}>
-                                <span className="summary-pill"><i className="bi bi-check-circle me-1" />
-                                    {monthlyStaffs.reduce((sum, s) => sum + s.attendances.length, 0)} Present
-                                </span>
+                                                            const dayString = String(day).padStart(2, "0");
+
+                                                            // These two lines must exist before `leave` uses fullDate
+                                                            const monthString = String(month).padStart(2, "0");
+                                                            const fullDate = `${year}-${monthString}-${dayString}`;
+
+                                                            // Attendance
+                                                            const attendance = staff.attendances.find(a =>
+                                                                a.date.split("-")[2] === dayString
+                                                            );
+
+                                                            // Leave — check if THIS DAY falls inside the leave's date_from/date_to range
+                                                            const leave = staff.leaves?.find(l =>
+                                                                fullDate >= l.date_from && fullDate <= l.date_to
+                                                            );
+
+                                                            // Holiday
+                                                            const holiday = holidays.find(h =>
+                                                                h.date.split("-")[2] === dayString &&
+                                                                h.is_holiday
+                                                            );
+
+
+
+                                                            return (
+                                                                <td key={day} className="cell">
+
+                                                                    {attendance && attendance?.check_in ? (
+                                                                        <div
+                                                                            className="punch present m-1"
+                                                                            data-tip={`${attendance.check_in?.slice(0, 5) ?? ''} - ${attendance.check_out?.slice(0, 5) ?? ''} = ${attendance.working_minutes ?? 0} min`}
+                                                                        > {attendance.check_in?.slice(0, 5) ?? ''} - {attendance.check_out?.slice(0, 5) ?? ''} <br /> = {(attendance.working_minutes / 60).toFixed(2) ?? 0} Hr
+                                                                            ✓
+                                                                        </div>
+
+                                                                    ) : leave ? (
+
+                                                                        <div className="punch holiday m-1" title={leave.leave_type?.name ?? 'Leave'} data-tip={leave.reason ?? ''}>
+                                                                            {leave.leave_type?.name ?? 'Leave'}
+                                                                        </div>
+
+                                                                    ) : holiday ? (
+
+                                                                        <div className="punch holiday m-1" title={holiday.title}>
+                                                                            {holiday.title}
+                                                                        </div>
+
+                                                                    ) : (
+
+                                                                        <div className="punch absent m-1">
+                                                                            ✕
+                                                                        </div>
+
+                                                                    )}
+
+                                                                </td>
+                                                            );
+
+                                                        })}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div className="d-flex flex-wrap gap-3 mt-4 pt-3" style={{ borderTop: '1px solid var(--line)' }}>
+                                        <span className="summary-pill"><i className="bi bi-check-circle me-1" />
+                                            {monthlyStaffs.reduce((sum, s) => sum + s.attendances.length, 0)} Present
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    )
+                }
+
             </div>
         </div>
     )

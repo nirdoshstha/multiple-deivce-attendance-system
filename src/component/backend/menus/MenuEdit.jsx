@@ -14,10 +14,10 @@ const MenuEdit = () => {
 
     const [menus, setMenus] = useState([]);
     const [menu, setMenu] = useState({
-         parent_id:"",
-                name:"",
-                route:"",
-                rank:""
+        parent_id: "",
+        name: "",
+        route: "",
+        rank: ""
     });
     const [loading, setLoading] = useState(false);
 
@@ -29,7 +29,7 @@ const MenuEdit = () => {
         try {
             const result = await api.get(`/menus/${id}`)
             setMenu(result.data.menu);
-            setMenus(result.data.menus)
+            setMenus(result.data.parents)
             console.log(result)
         } catch (error) {
             showError(error.response.data.message || "Something went wrong")
@@ -77,6 +77,7 @@ const MenuEdit = () => {
                                 value={menu.parent_id}
                                 onChange={handleInput}
                             >
+                                <option value=""> Self Parent</option>
 
                                 {menus.map((item) => (
                                     <option key={item.id} value={item.id}>
@@ -86,7 +87,7 @@ const MenuEdit = () => {
                             </select>
                         </div>
 
-                         <div className="form-group">
+                        <div className="form-group">
                             <label className="form-label">Menu Name</label>
                             <input type="text" name='name' value={menu.name} onChange={handleInput} className="form-control" placeholder="Menu name" />
                         </div>
@@ -96,18 +97,18 @@ const MenuEdit = () => {
                             <input type="text" name='route' value={menu.route} onChange={handleInput} className="form-control" placeholder="Route name" />
                         </div>
 
-                         <div className="form-group">
+                        <div className="form-group">
                             <label className="form-label">Rank</label>
                             <input type="text" name='rank' value={menu.rank} onChange={handleInput} className="form-control" placeholder="Rank" />
                         </div>
 
-                        
+
                         <div className="form-group">
                             <label className="form-label">Icon</label>
                             <input type="text" name='icon' value={menu.icon} onChange={handleInput} className="form-control" placeholder="Route name" />
                         </div>
 
-                    
+
                     </div>
 
 

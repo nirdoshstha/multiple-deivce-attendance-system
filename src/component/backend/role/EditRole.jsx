@@ -7,8 +7,8 @@ import { ClipLoader } from 'react-spinners';
 const EditRole = () => {
 
     useEffect(() => {
-            document.title = "Role Edit";
-        }, []);
+        document.title = "Role Edit";
+    }, []);
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -171,7 +171,7 @@ const EditRole = () => {
                                     <Link to={`/admin/role`} type='submit' className="btn-primary text-decoration-none">
                                         <i class="bi bi-house-door"></i> Back To Role
                                     </Link>
-                                    
+
                                 </div>
 
                                 <form onSubmit={handleSubmit}>
@@ -205,13 +205,13 @@ const EditRole = () => {
 
 
                         {/* Image */}
-                        
+
                     </div>
                 </div>
 
             </div>
 
-            
+
 
         </div>
     )

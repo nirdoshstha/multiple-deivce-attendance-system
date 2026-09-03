@@ -60,7 +60,7 @@ const Trashed = () => {
     //     }
     // }
 
-    const deleteVendor = async (id) => { 
+    const deleteVendor = async (id) => {
         const confirmed = await confirmDelete();
         if (!confirmed) return;
 
@@ -153,26 +153,26 @@ const Trashed = () => {
 
                                             <td>
                                                 <div className="table-actions">
-                                                    {/* {
-                                                        can("vendors.update") && ( */}
-                                                    <button onClick={() => restoreVendor(item.id)} className="btn-edit-sm text-decoration-none" title="Edit" >
-                                                        <i class="bi bi-arrow-counterclockwise fs-6"></i> Restore
+                                                    {
+                                                        can("vendor.restore") && (
+                                                            <button onClick={() => restoreVendor(item.id)} className="btn-edit-sm text-decoration-none" title="Edit" >
+                                                                <i class="bi bi-arrow-counterclockwise fs-6"></i> Restore
 
-                                                    </button>
-                                                    {/* )
-                                                    } */}
+                                                            </button>
+                                                        )
+                                                    }
 
 
-                                                    {/* {
-                                                        can("vendors.destroy") && ( */}
-                                                    <button
-                                                        onClick={() => deleteVendor(item.id)}
-                                                        className="btn-danger-sm"
-                                                        title="Delete"
-                                                    >
-                                                        <i className="bi bi-trash3"></i> Permanently Delete
-                                                    </button>
-                                                    {/* )} */}
+                                                    {
+                                                        can("vendor.delete_permanent") && (
+                                                            <button
+                                                                onClick={() => deleteVendor(item.id)}
+                                                                className="btn-danger-sm"
+                                                                title="Delete"
+                                                            >
+                                                                <i className="bi bi-trash3"></i> Permanently Delete
+                                                            </button>
+                                                        )}
                                                 </div>
                                             </td>
                                         </tr>

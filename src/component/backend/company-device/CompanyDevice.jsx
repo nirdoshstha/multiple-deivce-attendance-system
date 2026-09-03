@@ -159,17 +159,18 @@ const CompanyDevice = () => {
     //   api.post(`/company-devices/${id}/check-connection`).then((r) => r.data);
 
     const checkDeviceConnection = async (id) => {
-        const result = await api.post(`/company-devices/${id}/check-connection`)
-        // console.log(result)
-    }
+        const result = await api.post(`/company-devices/${id}/check-connection`);
+        return result.data; // { status: 'online', serial_no: '...' }
+    };
+
+    const syncDevice = async (id) => {
+        const result = await api.post(`/company-devices/${id}/sync`);
+        return result.data.data; // controller wraps the summary as { data: {...} }
+    };
 
     // const syncDevice = (id) =>
     //   api.post(`/company-devices/${id}/sync`).then((r) => r.data.data);
 
-    const syncDevice = async (id) => {
-        const result = await api.post(`/company-devices/${id}/sync`)
-        console.log(result)
-    }
 
 
     const loadDevices = useCallback(async () => {
@@ -187,21 +188,71 @@ const CompanyDevice = () => {
         loadDevices();
     }, [loadDevices]);
 
+    // const handleCheckConnection = async (device) => {
+    //     setBusyId(device.id);
+    //     setMessages((m) => ({
+    //         ...m,
+    //         [device.id]: null,
+    //     }));
+
+    //     try {
+    //         const result = await checkDeviceConnection(device.id);
+
+    //         console.log("Connection result:", result);
+
+    //         setMessages((m) => ({
+    //             ...m,
+    //             [device.id]: `Online — serial confirmed (${result?.serial_no ?? "Unknown"})`,
+    //         }));
+    //         showSuccess(result.data.message)
+    //     } catch (err) {
+    //         console.error("Connection error:", err);
+
+    //         showError(
+    //             err.response?.data?.message ?? "Could not reach device"
+    //         );
+    //     } finally {
+    //         setBusyId(null);
+    //         loadDevices();
+    //     }
+    // };
+
+    // const handleSync = async (device) => {
+    //     setBusyId(device.id);
+    //     setMessages((m) => ({ ...m, [device.id]: null }));
+    //     try {
+    //         const summary = await syncDevice(device.id);
+    //         setMessages((m) => ({
+    //             ...m,
+    //             [device.id]: `Synced: ${summary.logs_inserted} new punch(es), ${summary?.days_recomputed} day(s) recomputed`,
+    //         }));
+    //     } catch (err) {
+    //         // setMessages((m) => ({
+    //         //     ...m,
+    //         //     [device.id]: err.response?.data?.message ?? "Sync failed",
+    //         // }));
+    //         showError(err.response.data.message ?? "Sync failed")
+    //     } finally {
+    //         setBusyId(null);
+    //     }
+    // };
+
+
     const handleCheckConnection = async (device) => {
         setBusyId(device.id);
         setMessages((m) => ({ ...m, [device.id]: null }));
+
         try {
             const result = await checkDeviceConnection(device.id);
+            console.log(result)
             setMessages((m) => ({
                 ...m,
-                [device.id]: `Online — serial confirmed (${result.serial_no})`,
+                [device.id]: `Online — serial confirmed (${result?.serial_no ?? "Unknown"})`,
             }));
+            showSuccess(`Device connected — serial ${result?.serial_no ?? ""}`);
         } catch (err) {
-            // setMessages((m) => ({
-            //     ...m,
-            //     [device.id]: err.response?.data?.message ?? "Could not reach device",
-            // }));
-            showError(err.response.data.message ?? "Coud not reach device")
+            console.error("Connection error:", err);
+            showError(err.response?.data?.message ?? "Could not reach device");
         } finally {
             setBusyId(null);
             loadDevices();
@@ -211,23 +262,20 @@ const CompanyDevice = () => {
     const handleSync = async (device) => {
         setBusyId(device.id);
         setMessages((m) => ({ ...m, [device.id]: null }));
+
         try {
             const summary = await syncDevice(device.id);
             setMessages((m) => ({
                 ...m,
                 [device.id]: `Synced: ${summary.logs_inserted} new punch(es), ${summary.days_recomputed} day(s) recomputed`,
             }));
+            showSuccess("Sync completed");
         } catch (err) {
-            // setMessages((m) => ({
-            //     ...m,
-            //     [device.id]: err.response?.data?.message ?? "Sync failed",
-            // }));
-            showError(err.response.data.message ?? "Sync failed")
+            showError(err.response?.data?.message ?? "Sync failed");
         } finally {
             setBusyId(null);
         }
     };
-
     // if (loading) return <p className="text-sm text-gray-500">Loading devices…</p>;
 
 

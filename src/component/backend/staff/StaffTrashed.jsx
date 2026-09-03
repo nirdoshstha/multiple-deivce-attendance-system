@@ -141,26 +141,26 @@ const StaffTrashed = () => {
 
                                             <td>
                                                 <div className="table-actions">
-                                                    {/* {
-                                                        can("companys.update") && ( */}
-                                                    <button onClick={() => restoreStaff(staff.id)} className="btn-edit-sm text-decoration-none" title="Edit" >
-                                                        <i class="bi bi-arrow-counterclockwise fs-6"></i> Restore
+                                                    {
+                                                        can("staffs.restore") && (
+                                                            <button onClick={() => restoreStaff(staff.id)} className="btn-edit-sm text-decoration-none" title="Edit" >
+                                                                <i class="bi bi-arrow-counterclockwise fs-6"></i> Restore
 
-                                                    </button>
-                                                    {/* )
-                                                    } */}
+                                                            </button>
+                                                        )
+                                                    }
 
 
-                                                    {/* {
-                                                        can("companys.destroy") && ( */}
-                                                    <button
-                                                        onClick={() => deletePermanently(staff.id)}
-                                                        className="btn-danger-sm"
-                                                        title="Delete"
-                                                    >
-                                                        <i className="bi bi-trash3"></i> Permanently Delete
-                                                    </button>
-                                                    {/* )} */}
+                                                    {
+                                                        can("staffs.delete_permanent") && (
+                                                            <button
+                                                                onClick={() => deletePermanently(staff.id)}
+                                                                className="btn-danger-sm"
+                                                                title="Delete"
+                                                            >
+                                                                <i className="bi bi-trash3"></i> Permanently Delete
+                                                            </button>
+                                                        )}
                                                 </div>
                                             </td>
                                         </tr>

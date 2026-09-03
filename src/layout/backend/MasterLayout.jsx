@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import '../../assets/backend/style.css'
 import { Link, NavLink, Outlet } from 'react-router';
 import { useAuth } from '../../context/AuthContext';
-import { BASE_URL } from '../../api/api';
+import api, { BASE_URL } from '../../api/api';
 
 import noimage from '../../../public/no_image2.jpg'
+import { showError } from '../../utils/notify';
+import { ClipLoader } from 'react-spinners';
 
 
 //theme change
@@ -14,36 +16,14 @@ const themeNames = ['Ocean Blue', 'Forest Green', 'Violet Night', 'Rose Red', 'A
 const MasterLayout = () => {
     const { user, clearAuthState } = useAuth();
     const { can } = useAuth();
+    const [loading, setLoading] = useState(false);
 
-    const [userMenuOpen, setUserMenuOpen] = useState(false);
-    const [staffMenuOpen, setStaffMenuOpen] = useState(false);
-    const [userDeviceOpen, setUserDeviceOpen] = useState(false);
-    const [userCompanyOpen, setUserCompanyOpen] = useState(false);
-    const [leaveOpen, setLeaveOpen] = useState(false);
-
-    const isMenuActive =
-        location.pathname.startsWith("/admin/user") ||
-        location.pathname.startsWith("/admin/gender") ||
-        location.pathname.startsWith("/admin/designation") ||
-        location.pathname.startsWith("/admin/vendor") ||
-        location.pathname.startsWith("/admin/company");
-
-    const isLeaveActive =
-        location.pathname.startsWith("/admin/leave-type") ||
-        location.pathname.startsWith("/admin/leave-application");
-
-    const isStaffActive =
-        location.pathname.startsWith("/admin/staff") ||
-        location.pathname.startsWith("/admin/attendance");
-
-    const isDeviceActive =
-        location.pathname.startsWith("/admin/device-brand") ||
-        location.pathname.startsWith("/admin/devices");
-
-    const isCompanyActive =
-        location.pathname.startsWith("/admin/company") ||
-        location.pathname.startsWith("/admin/company-device");
-
+    const [openMenuId, setOpenMenuId] = useState(null);
+    const toggleMenu = (id) => {
+        setOpenMenuId(prev => (prev === id ? null : id));
+    };
+    const [menus, setMenus] = useState([]);
+    const [openMenus, setOpenMenus] = useState({}); // { [menuId]: true/false }
 
     const [themeIdx, setThemeIdx] = useState(0);
 
@@ -62,6 +42,30 @@ const MasterLayout = () => {
         setThemeIdx(next);
     };
 
+
+    useEffect(() => {
+        getMenus();
+    }, []);
+
+    const getMenus = async () => {
+        setLoading(true)
+        try {
+            const result = await api.get(`/menus`);
+            setMenus(result.data.category);
+        } catch (error) {
+            showError(error.response?.data?.message || 'Something went wrong');
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
+
+    const isMenuActive = (menu) =>
+        menu.sub_categories?.some(sub =>
+            location.pathname.startsWith(`/admin/${sub.route}`)
+        );
+
     const [collapsed, setCollapsed] = useState(false);
 
     const handleSidebarToggle = () => {
@@ -71,6 +75,7 @@ const MasterLayout = () => {
             setCollapsed(!collapsed);
         }
     };
+
 
     return (
         <>
@@ -86,10 +91,101 @@ const MasterLayout = () => {
                     </div>
                 </div>
                 <nav className="sidebar-nav">
-                    <div className="nav-item">
+
+
+                    {menus.map((menu) => {
+                        if (menu.permission && !can(menu.permission)) return null;
+
+                        const hasChildren = menu.sub_categories?.length > 0;
+                        const isOpen = openMenuId === menu.id;
+                        const active = isMenuActive(menu);
+
+                        if (!hasChildren) {
+                            return (
+                                <div className="nav-item" key={menu.id}>
+                                    <NavLink
+                                        to={menu.route}
+                                        className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                                    >
+                                        <i className={menu.icon} /> {menu.name}
+                                    </NavLink>
+                                </div>
+                            );
+                        }
+
+                        return (
+                            <div className={`nav-item ${isOpen ? "open" : ""}`} key={menu.id}>
+                                <button
+                                    className={`nav-link nav-dropdown ${active ? "active" : ""}`}
+                                    onClick={() => toggleMenu(menu.id)}
+                                >
+                                    <span>
+                                        <i className={menu.icon} /> {menu.name}
+                                    </span>
+                                    <i className={`bi ${isOpen ? "bi-chevron-down" : "bi-chevron-right"}`} />
+                                </button>
+
+                                <div className={`submenu ${isOpen ? "show" : ""}`} style={{ marginTop: "5px" }}>
+                                    {menu.sub_categories
+                                        .filter(sub => !sub.permission || can(sub.permission))
+                                        .map((submenu) => (
+                                            <NavLink
+                                                key={submenu.id}
+                                                to={submenu.route}
+                                                className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                                            >
+                                                <i className={submenu.icon} /> {submenu.name}
+                                            </NavLink>
+                                        ))}
+                                </div>
+                            </div>
+                        );
+                    })}
+
+
+                    {/* <div className={`nav-item ${leaveOpen ? "open" : ""}`}>
+                        <button
+                            className={`nav-link nav-dropdown ${isLeaveActive ? "active" : ""}`}
+                            onClick={() => setLeaveOpen(!leaveOpen)}
+                        >
+                            <span>
+                                <i className="bi bi-people" /> Leave Management
+                            </span>
+
+                            <i
+                                className={`bi ${leaveOpen ? "bi-chevron-down" : "bi-chevron-right"
+                                    }`}
+                            />
+                        </button>
+
+                        <div className={`submenu ${leaveOpen ? "show" : ""}`} style={{ marginTop: "5px" }}>
+                            <NavLink
+                                to="leave-type"
+                                className={({ isActive }) =>
+                                    isActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-person" /> Leave Types
+                            </NavLink>
+
+                            <NavLink
+                                to="leave-application"
+                                className={({ isActive }) =>
+                                    isActive ? "nav-link active" : "nav-link"
+                                } style={{ color: "light" }}
+                            >
+                                <i className="bi bi-person" /> Leave Application
+                            </NavLink>
+
+                        </div>
+                    </div> */}
+
+
+                    {/* <div className="nav-item">
                         <NavLink to="menu"
                             className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-house-door" /> Menus</NavLink>
                     </div>
+
                     <div className="nav-section-label">Overview</div>
                     <div className="nav-item">
                         <NavLink to="dashboard"
@@ -186,13 +282,6 @@ const MasterLayout = () => {
                                 <i className="bi bi-person" /> Leave Application
                             </NavLink>
 
-
-
-
-
-
-
-
                         </div>
                     </div>
 
@@ -283,7 +372,6 @@ const MasterLayout = () => {
                         </div>
                     </div>
 
-
                     <div className="nav-item">
                         <NavLink to="role" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-people" /> Roles & Permissions</NavLink>
                     </div>
@@ -294,7 +382,6 @@ const MasterLayout = () => {
                     <div className="nav-item">
                         <NavLink to="about" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}><i className="bi bi-bar-chart-line" /> About Us <span className="nav-badge">New</span></NavLink>
                     </div>
-
 
                     <div className="nav-section-label">Staffs</div>
                     <div className={`nav-item ${staffMenuOpen ? "open" : ""}`}>
@@ -340,14 +427,9 @@ const MasterLayout = () => {
                                 <i className="bi bi-gender-ambiguous" /> Staff Attendance Logs
                             </NavLink>
 
-
-
-
-
                         </div>
                     </div>
                     <div className="nav-section-label">System</div>
-
                     {
                         can("settings.store") && (
                             <div className="nav-item">
@@ -361,7 +443,7 @@ const MasterLayout = () => {
                     </div>
                     <div className="nav-item">
                         <a href="#" className="nav-link"><i className="bi bi-question-circle" /> Help</a>
-                    </div>
+                    </div> */}
                 </nav>
                 <div className="sidebar-footer">
                     <div className="sidebar-user">

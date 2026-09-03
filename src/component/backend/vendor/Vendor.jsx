@@ -12,8 +12,8 @@ import { useAuth } from '../../../context/AuthContext';
 const Vendor = () => {
 
     useEffect(() => {
-            document.title = "Vendor";
-        }, []);
+        document.title = "Vendor";
+    }, []);
 
     const { can } = useAuth();
 
@@ -235,16 +235,16 @@ const Vendor = () => {
 
                             <div style={{ display: 'flex', gap: 10, marginTop: "20px" }}>
                                 {
-                                     can("vendors.store") && (
-                                    !loading ?
-                                        <button type='submit' className="btn-primary">
-                                            <i className="bi bi-check2-circle" /> Save Changes
-                                        </button>
-                                        :
-                                        <button type="button" className="btn-primary" disabled>
-                                            <ClipLoader color='color' size={20} /><i className="bi bi-check2-circle" /> Saving...
-                                        </button>
-                                     )
+                                    can("vendors.store") && (
+                                        !loading ?
+                                            <button type='submit' className="btn-primary">
+                                                <i className="bi bi-check2-circle" /> Save Changes
+                                            </button>
+                                            :
+                                            <button type="button" className="btn-primary" disabled>
+                                                <ClipLoader color='color' size={20} /><i className="bi bi-check2-circle" /> Saving...
+                                            </button>
+                                    )
                                 }
 
 
@@ -263,14 +263,19 @@ const Vendor = () => {
                             </div>
 
                             <div>
-                                <Link to={`/admin/vendor/trashed`} type="button" className="theme-toggle-btn gap-0 position-relative">
-                                    <i class="bi bi-trash3-fill text-light"></i>
-                                    <span className='badge ms-0'> Trashed</span>
-                                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {trashed || 0}+
-                                        <span className="visually-hidden">unread messages</span>
-                                    </span>
-                                </Link>
+                                {
+                                    can("vendor.delete_permanent") && (
+                                        <Link to={`/admin/vendor/trashed`} type="button" className="theme-toggle-btn gap-0 position-relative">
+                                            <i class="bi bi-trash3-fill text-light"></i>
+                                            <span className='badge ms-0'> Trashed</span>
+                                            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                {trashed || 0}+
+                                                <span className="visually-hidden">unread messages</span>
+                                            </span>
+                                        </Link>
+                                    )
+                                }
+
 
                             </div>
                         </div>

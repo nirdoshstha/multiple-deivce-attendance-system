@@ -387,17 +387,24 @@ const User = () => {
                             <form onSubmit={handleSubmitSearch}>
                                 <div className="search-box float-end">
 
-                                    <div className="search-box float-end">
-                                        <input
-                                            type="text"
-                                            name="search"
-                                            className="form-control"
-                                            placeholder="Search by name or role..."
-                                            value={search}
-                                            onChange={(e) => setSearch(e.target.value)}
-                                        />
-                                        <i className="bi bi-search" />
-                                    </div>
+
+
+                                    {
+                                        can('users.search') && (
+                                            <div className="search-box float-end">
+                                                <input
+                                                    type="text"
+                                                    name="search"
+                                                    className="form-control"
+                                                    placeholder="Search by name or role..."
+                                                    value={search}
+                                                    onChange={(e) => setSearch(e.target.value)}
+                                                />
+                                                <i className="bi bi-search" />
+                                            </div>
+                                        )
+                                    }
+
 
                                 </div>
                             </form>
