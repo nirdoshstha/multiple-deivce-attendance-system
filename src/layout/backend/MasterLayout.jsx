@@ -107,7 +107,7 @@ const MasterLayout = () => {
                                         to={menu.route}
                                         className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
                                     >
-                                        <i className={menu.icon} /> {menu.name}
+                                        <i className={menu.icon} /> {menu.display_name}
                                     </NavLink>
                                 </div>
                             );
@@ -120,23 +120,21 @@ const MasterLayout = () => {
                                     onClick={() => toggleMenu(menu.id)}
                                 >
                                     <span>
-                                        <i className={menu.icon} /> {menu.name}
+                                        <i className={menu.icon} /> <span className='px-2'>{menu.display_name}</span>
                                     </span>
                                     <i className={`bi ${isOpen ? "bi-chevron-down" : "bi-chevron-right"}`} />
                                 </button>
 
                                 <div className={`submenu ${isOpen ? "show" : ""}`} style={{ marginTop: "5px" }}>
-                                    {menu.sub_categories
-                                        .filter(sub => !sub.permission || can(sub.permission))
-                                        .map((submenu) => (
-                                            <NavLink
-                                                key={submenu.id}
-                                                to={submenu.route}
-                                                className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
-                                            >
-                                                <i className={submenu.icon} /> {submenu.name}
-                                            </NavLink>
-                                        ))}
+                                    {menu.sub_categories.map((submenu) => (
+                                        <NavLink
+                                            key={submenu.id}
+                                            to={submenu.route}
+                                            className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                                        >
+                                            <i className={submenu.icon} />{submenu.display_name}
+                                        </NavLink>
+                                    ))}
                                 </div>
                             </div>
                         );

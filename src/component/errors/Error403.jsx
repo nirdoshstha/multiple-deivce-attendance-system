@@ -26,9 +26,9 @@ const Error403 = () => {
             </p>
             <div className="d-flex justify-content-center gap-3 flex-wrap">
 
-              <Link to="/" className="btn btn-home">
+              <Link to="/admin/dashboard" className="btn btn-home">
                 <i className="bi bi-house-door-fill px-2"></i>
-                 Home
+                Home
               </Link>
 
               <button
@@ -36,7 +36,7 @@ const Error403 = () => {
                 onClick={() => navigate(-1)}
               >
                 <i className="bi bi-arrow-left-circle-fill px-2"></i>
-                 Go Back
+                Go Back
               </button>
             </div>
           </div>

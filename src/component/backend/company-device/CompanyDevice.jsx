@@ -541,7 +541,7 @@ const CompanyDevice = () => {
                                                     <td>
                                                         <div className="table-actions">
 
-                                                            <button
+                                                            {/* <button
                                                                 onClick={() => handleCheckConnection(device)}
                                                                 disabled={busyId === device.id}
                                                                 className="btn-edit-sm rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50"
@@ -554,7 +554,22 @@ const CompanyDevice = () => {
                                                                 className="btn-danger-sm rounded-md bg-blue-600 px-3 py-1.5 text-sm disabled:opacity-50"
                                                             >
                                                                 <i className="bi bi-arrow-repeat fs-6"></i> {busyId === device.id ? "…" : "Sync"}
-                                                            </button>
+                                                            </button> */}
+
+                                                            {/* <span className="text-xs text-gray-500"> */}
+                                                            <span className="btn-edit-sm rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50">
+                                                                {device.connection_mode === 'push'
+                                                                    ? `Push mode — last seen ${device.last_seen_at ? new Date(device.last_seen_at).toLocaleString() : 'never'}`
+                                                                    // : `Pull mode — ${device.ip}:${device.port}`}
+                                                                    : `Pullmode`}
+                                                            </span>
+
+                                                            {device.connection_mode !== 'push' && (
+                                                                <button onClick={() => handleSync(device)} disabled={busyId === device.id}
+                                                                    className="btn-danger-sm rounded-md bg-blue-600 px-3 py-1.5 text-sm disabled:opacity-50">
+                                                                    Sync
+                                                                </button>
+                                                            )}
 
                                                             {
                                                                 can("company-devices.show") && (

@@ -44,6 +44,8 @@ import LeaveType from './component/backend/leavetype/LeaveType'
 import LeaveTypeEdit from './component/backend/leavetype/LeaveTypeEdit'
 import LeaveApplication from './component/backend/leave-application/LeaveApplication'
 import DeviceManager from './component/backend/company-device/DeviceManager'
+import PermissionRoute from './component/PermissionRoute'
+import StaffDeviceLInk from './component/backend/staff-device-link/StaffDeviceLInk'
 
 const App = () => {
   const { can } = useAuth();
@@ -107,21 +109,33 @@ const App = () => {
             <Route path='company-device/:id' element={<CompanyDeviceShow />} />
             <Route path='company-device/trashed' element={<CompanyDeviceTrashed />} />
 
+ 
 
-            {/* Device Brand */}
-            <Route path='device-brand' element={<Brand />} />
-            <Route path='device-brand/edit/:id' element={<BrandEdit />} />
+            <Route path='error-403' element={<Error403 />} />
+
+
+            <Route element={<PermissionRoute permission="device-brand.index" />}>
+              <Route path='device-brand' element={<Brand />} />
+              <Route path='device-brand/edit/:id' element={<BrandEdit />} />
+            </Route>
+
+
+            {/* permission check, one per resource */}
+            <Route element={<PermissionRoute permission="staffs.index" />}>
+              <Route path='staff' element={<Staff />} />
+              <Route path='staff/:id' element={<StaffShow />} />
+              <Route path='staff/edit/:id' element={<StaffEdit />} />
+              <Route path='staff/trashed' element={<StaffTrashed />} />
+            </Route>
+
+
+            <Route path='staff-device-link' element={<StaffDeviceLInk />} />
 
             {/* Devices */}
             <Route path='device' element={<Device />} />
             <Route path='device/edit/:id' element={<DeviceEdit />} />
 
-            {/* Staffs */}
-            <Route path='staff' element={<Staff />} />
-            <Route path='staff/:id' element={<StaffShow />} />
-            <Route path='staff/edit/:id' element={<StaffEdit />} />
-            <Route path='staff/trashed' element={<StaffTrashed />} />
-
+           
             {/* Staff Attendance */}
             <Route path='attendance' element={<Attendance />} />
             <Route path='attendance/show/:id' element={<AttendanceShow />} />
@@ -132,7 +146,7 @@ const App = () => {
 
 
 
-          </Route>
+      </Route>
         </Route>
 
         <Route path="*" element={<div>404 Not Found</div>} />

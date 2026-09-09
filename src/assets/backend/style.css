@@ -868,6 +868,11 @@
      gap: 20px;
  }
 
+ .admin-device-grid {
+    display: grid;
+    grid-template-columns: 1220px 1fr; 
+}
+
  .create-admin-card {
      padding: 28px;
  }
