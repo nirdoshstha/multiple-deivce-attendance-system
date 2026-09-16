@@ -46,6 +46,7 @@ import LeaveApplication from './component/backend/leave-application/LeaveApplica
 import DeviceManager from './component/backend/company-device/DeviceManager'
 import PermissionRoute from './component/PermissionRoute'
 import StaffDeviceLInk from './component/backend/staff-device-link/StaffDeviceLInk'
+import LeaveIsApproved from './component/backend/leave-application/LeaveIsApproved'
 
 const App = () => {
   const { can } = useAuth();
@@ -79,6 +80,7 @@ const App = () => {
             <Route path="leave-type" element={<LeaveType />} />
             <Route path="leave-type/edit/:id" element={<LeaveTypeEdit />} />
             <Route path="leave-application" element={<LeaveApplication />} />
+            <Route path="is-leave-approved/:id" element={<LeaveIsApproved />} />
 
             {/* Role */}
             <Route path="role" element={<Role />} />
@@ -105,11 +107,12 @@ const App = () => {
             {/* Company Devices */}
 
             <Route path='device-manager' element={<DeviceManager />} />
+
             <Route path='company-device' element={<CompanyDevice />} />
             <Route path='company-device/:id' element={<CompanyDeviceShow />} />
             <Route path='company-device/trashed' element={<CompanyDeviceTrashed />} />
 
- 
+
 
             <Route path='error-403' element={<Error403 />} />
 
@@ -135,7 +138,7 @@ const App = () => {
             <Route path='device' element={<Device />} />
             <Route path='device/edit/:id' element={<DeviceEdit />} />
 
-           
+
             {/* Staff Attendance */}
             <Route path='attendance' element={<Attendance />} />
             <Route path='attendance/show/:id' element={<AttendanceShow />} />
@@ -146,7 +149,7 @@ const App = () => {
 
 
 
-      </Route>
+          </Route>
         </Route>
 
         <Route path="*" element={<div>404 Not Found</div>} />

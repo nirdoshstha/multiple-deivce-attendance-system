@@ -309,7 +309,7 @@ const CompanyDevice = () => {
 
 
                             <div className="form-group">
-                                <label className="form-label"> Company Name</label>
+                                {/* <label className="form-label"> Company Name</label> */}
 
 
                                 <FloatingLabel
@@ -366,7 +366,7 @@ const CompanyDevice = () => {
                             </div>
 
                             <div className="form-group">
-                                <label className="form-label"> Device Id</label>
+                                {/* <label className="form-label"> Device Id</label> */}
                                 <Form.Select name="device_id" value={device?.device_id || ""} onChange={handleInput} aria-label="Floating label select example" className="mb-3">
                                     <option>Please Select Device</option>
                                     {

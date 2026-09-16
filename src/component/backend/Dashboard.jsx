@@ -196,131 +196,15 @@ const Dashboard = () => {
                 )}
             </div>
             {/* STAT CARDS */}
-            <div className='row'>
 
-                <div className='col-lg-8'>
-                    {/* <div className="section-header">
-                        <div>
-                            <div className="section-title">Holiday & Events Management</div>
-                            <div className="section-sub"> Edit your holiday & events update in the Calendar</div>
-                        </div>
-                    </div> */}
-
-                    <NepaliCalendar
-                        year={getTodayBs().year}
-                        month={getTodayBs().month}
-                        api={`${BASE_URL}/api/calendars`}
-                        apiHeaders={{
-                            Authorization: `Bearer ${token}`,
-                        }}
-                        onDateClick={setSelected}
-                        brandColor="linear-gradient(135deg, #2563EB, #06B6D4);"
-                        onError={(error) => console.error(error)}
-                        canAddEvent={true}
-                        onMonthChange={(year, month) => {
-                            getCalendarHolidays(year, month);
-                        }}
-                    />
-                </div>
-
-                <div className='col-lg-4 mb-5'>
-                    <div className='row'>
-                        <div className="col-lg-12">
-                            {
-                                calendars.slice(0, 6).map((item) => {
-                                    return (
-                                        <div key={item.id} className="calendar-event-card d-flex align-items-center mb-2">
-                                            {/* Image */}
-                                            <div className="event-image-box flex-shrink-0">
-
-                                                {
-                                                    item.image ?
-                                                        <img
-                                                            src={item.image}
-                                                            alt="Fav"
-                                                            className="event-image"
-                                                            style={{ objectFit: "cover" }}
-                                                        />
-                                                        :
-                                                        <img
-                                                            src={noimage}
-                                                            alt="Fav"
-                                                            className="event-image"
-                                                            style={{ objectFit: "cover" }}
-                                                        />
-                                                }
-
-                                            </div>
-
-                                            {/* Content */}
-                                            <div className="event-content flex-grow-1">
-                                                <div className="d-flex align-items-center gap-2 flex-wrap">
-
-                                                    {/* Title */}
-                                                    <h5 className="event-title mb-0">
-                                                        {/* <i className="bi bi-calendar3"></i> */}
-                                                        <span className='text-muted'>{item.date || ""}</span><br />
-                                                        {item.title || ""}
-                                                    </h5>
-                                                </div>
-                                                <div className="event-date">
-
-                                                    {/* <p className='textcolor textheight textmargin'>
-                                                        <div dangerouslySetInnerHTML={{
-                                                            __html: DOMPurify.sanitize(item.description?.length > 40
-                                                                ? item.about.description.substring(0, 40) + "....."
-                                                                : item.description || ""),
-                                                        }} /></p> */}
-                                                    <p className="bottomlast">
-                                                        {item.description ? stripHtml(item.description).slice(0, 35) + "..." : ""}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-
-                                        </div>
-                                    )
-                                })
-                            }
-
-                        </div>
-                        {/* <div className='col-lg-12 g-4'>
-                            <div className="stat-card green">
-                                <div className="stat-icon"><i className="bi bi-people-fill" /></div>
-                                <div className="stat-value">12,847</div>
-                                <div className="stat-label">Total Users</div>
-                                <div className="stat-change up"><i className="bi bi-arrow-up-short" /> +8.3% growth</div>
-                            </div>
-                        </div>
-                        <div className='col-lg-12 g-4'>
-                            <div className="stat-card amber">
-                                <div className="stat-icon"><i className="bi bi-activity" /></div>
-                                <div className="stat-value">99.8%</div>
-                                <div className="stat-label">System Uptime</div>
-                                <div className="stat-change up"><i className="bi bi-arrow-up-short" /> Stable</div>
-                            </div>
-                        </div> */}
-                        {/* <div className='col-lg-12 g-4'>
-
-                            <div className="stat-card cyan">
-                                <div className="stat-icon"><i className="bi bi-hdd-fill" /></div>
-                                <div className="stat-value">68%</div>
-                                <div className="stat-label">Storage Used</div>
-                                <div className="stat-change down"><i className="bi bi-arrow-down-short" /> 32% free</div>
-                            </div>
-                        </div> */}
-                    </div>
-
-                </div>
-            </div>
 
             {/* ADMIN PROFILE SECTION */}
-            <div className="section-header">
+            {/* <div className="section-header">
                 <div>
                     <div className="section-title">Admin Profile</div>
                     <div className="section-sub">View and update your personal information</div>
                 </div>
-            </div>
+            </div> */}
             <div className="profile-section" style={{ marginBottom: 28 }}>
                 {/* Left: Profile Card */}
                 <div className="glass-card profile-left">
@@ -360,17 +244,21 @@ const Dashboard = () => {
                 </div>
                 {/* Right: Edit Form */}
                 <div className="glass-card-solid profile-right">
-                    <div style={{ marginBottom: 20 }}>
+                    {/* <div style={{ marginBottom: 20 }}>
                         <div className="section-title" style={{ fontSize: 15 }}>Edit Profile</div>
                         <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>Update your personal and password information</div>
-                    </div>
+                    </div> */}
 
                     <div>
                         <div className="admin-mgmt">
                             <div className="glass-card create-admin-card">
                                 <ul className="nav nav-pills mb-3 gap-4" id="pills-tab" role="tablist">
                                     <li className="nav-item" role="presentation">
-                                        <button className="nav-links active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Personal Information.</button>
+                                        <button className="nav-links active" id="pills-calendar-tab" data-bs-toggle="pill" data-bs-target="#pills-calendar" type="button" role="tab" aria-controls="pills-calendar" aria-selected="true">Holidays & Events Management.</button>
+                                    </li>
+
+                                    <li className="nav-item" role="presentation">
+                                        <button className="nav-links" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Personal Information.</button>
                                     </li>
 
                                     <li className="nav-item" role="presentation">
@@ -380,7 +268,104 @@ const Dashboard = () => {
 
                                 </ul>
                                 <div className="tab-content" id="pills-tabContent">
-                                    <div className="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabIndex={0}>
+
+                                    <div className="tab-pane fade show active" id="pills-calendar" role="tabpanel" aria-labelledby="pills-calendar-tab" tabIndex={0}>
+                                        <div className='row'>
+
+                                            <div className='col-lg-9'>
+                                                {/* <div className="section-header">
+                                                    <div>
+                                                        <div className="section-title">Holiday & Events Management</div>
+                                                        <div className="section-sub"> Edit your holiday & events update in the Calendar</div>
+                                                    </div>
+                                                </div> */}
+
+                                                <NepaliCalendar
+                                                    year={getTodayBs().year}
+                                                    month={getTodayBs().month}
+                                                    api={`${BASE_URL}/api/calendars`}
+                                                    apiHeaders={{
+                                                        Authorization: `Bearer ${token}`,
+                                                    }}
+                                                    onDateClick={setSelected}
+                                                    brandColor="linear-gradient(135deg, #2563EB, #06B6D4);"
+                                                    onError={(error) => console.error(error)}
+                                                    canAddEvent={true}
+                                                    onMonthChange={(year, month) => {
+                                                        getCalendarHolidays(year, month);
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div className='col-lg-3 mb-5'>
+                                                <div className='row'>
+                                                    <div className="col-lg-12">
+                                                        {
+                                                            calendars.slice(0, 6).map((item) => {
+                                                                return (
+                                                                    <div key={item.id} className="calendar-event-card d-flex align-items-center mb-2">
+                                                                        {/* Image */}
+                                                                        <div className="event-image-box flex-shrink-0">
+
+                                                                            {
+                                                                                item.image ?
+                                                                                    <img
+                                                                                        src={item.image}
+                                                                                        alt="Fav"
+                                                                                        className="event-image"
+                                                                                        style={{ objectFit: "cover" }}
+                                                                                    />
+                                                                                    :
+                                                                                    <img
+                                                                                        src={noimage}
+                                                                                        alt="Fav"
+                                                                                        className="event-image"
+                                                                                        style={{ objectFit: "cover" }}
+                                                                                    />
+                                                                            }
+
+                                                                        </div>
+
+                                                                        {/* Content */}
+                                                                        <div className="event-content flex-grow-1">
+                                                                            <div className="d-flex align-items-center gap-2 flex-wrap">
+
+                                                                                {/* Title */}
+                                                                                <h5 className="event-title mb-0">
+                                                                                    {/* <i className="bi bi-calendar3"></i> */}
+                                                                                    <span className='text-muted'>{item.date || ""}</span><br />
+                                                                                    {item.title || ""}
+                                                                                </h5>
+                                                                            </div>
+                                                                            <div className="event-date">
+
+                                                                                {/* <p className='textcolor textheight textmargin'>
+                                                        <div dangerouslySetInnerHTML={{
+                                                            __html: DOMPurify.sanitize(item.description?.length > 40
+                                                                ? item.about.description.substring(0, 40) + "....."
+                                                                : item.description || ""),
+                                                        }} /></p> */}
+                                                                                <p className="bottomlast">
+                                                                                    {item.description ? stripHtml(item.description).slice(0, 35) + "..." : ""}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="tab-pane fade show" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabIndex={0}>
                                         <form onSubmit={submitAuthProfileUpdate}>
                                             <div className="form-row">
                                                 <div className="form-group">

@@ -16,6 +16,7 @@ const MenuEdit = () => {
     const [menu, setMenu] = useState({
         parent_id: "",
         name: "",
+        display_name: "",
         route: "",
         rank: ""
     });
@@ -90,6 +91,11 @@ const MenuEdit = () => {
                         <div className="form-group">
                             <label className="form-label">Menu Name</label>
                             <input type="text" name='name' value={menu.name} onChange={handleInput} className="form-control" placeholder="Menu name" />
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">Display Name</label>
+                            <input type="text" name='display_name' value={menu.display_name} onChange={handleInput} className="form-control" placeholder="Menu name" />
                         </div>
 
                         <div className="form-group">

@@ -17,6 +17,7 @@ const Menu = () => {
   const [menu, setMenu] = useState({
     parent_id: "",
     name: "",
+    display_name: "",
     permission_id: '',
     rank: "",
     route: "",
@@ -44,6 +45,7 @@ const Menu = () => {
       setMenu({
         parent_id: "",
         name: "",
+        display_name: "",
         route: "",
         rank: "",
         icon: ""
@@ -147,28 +149,20 @@ const Menu = () => {
               </div>
 
               <div className="form-group mb-3">
-                <label htmlFor="permission_id">
-                  Permission
+                <label htmlFor="display_name">
+                  Display Name
                 </label>
 
-                <select
-                  name="permission_id"
-                  id="permission_id"
-                  className="form-control"
-                  value={menu.permission_id}
+                <input
+                  type="text"
+                  name="display_name"
+                  value={menu?.display_name}
                   onChange={handleInput}
-                >
-                  <option value="">Select Permission</option>
+                  className="form-control"
+                  id="display_name"
+                  placeholder="Display Name"
+                />
 
-                  {permissions?.map((permission) => (
-                    <option
-                      key={permission.id}
-                      value={permission.id}
-                    >
-                      {permission.name}
-                    </option>
-                  ))}
-                </select>
               </div>
 
               <div className="form-floating">
@@ -263,7 +257,7 @@ const Menu = () => {
                           )
                         }
 
-                        <label class="form-label">{item.name} <span className="gap-5"> ({item.sub_categories?.length || 0})</span>   <i className={`${item.icon} ms-4`}></i></label>
+                        <label class="form-label">{item.display_name} <span className="gap-5"> ({item.sub_categories?.length || 0})</span>   <i className={`${item.icon} ms-4`}></i></label>
 
 
 
