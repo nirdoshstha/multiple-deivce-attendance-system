@@ -17,9 +17,12 @@ const MenuEdit = () => {
         parent_id: "",
         name: "",
         display_name: "",
+        permission_id: "",
         route: "",
         rank: ""
     });
+
+    const [permissions, setPermissions] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -31,6 +34,7 @@ const MenuEdit = () => {
             const result = await api.get(`/menus/${id}`)
             setMenu(result.data.menu);
             setMenus(result.data.parents)
+            setPermissions(result.data.permissions);
             console.log(result)
         } catch (error) {
             showError(error.response.data.message || "Something went wrong")
@@ -81,6 +85,24 @@ const MenuEdit = () => {
                                 <option value=""> Self Parent</option>
 
                                 {menus.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                        {item.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label"> Permission Name</label>
+                            <select
+                                name="permission_id"
+                                className="form-select mb-3"
+                                value={menu.permission_id}
+                                onChange={handleInput}
+                            >
+                                <option value=""> Self Permission</option>
+
+                                {permissions.map((item) => (
                                     <option key={item.id} value={item.id}>
                                         {item.name}
                                     </option>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { showError, showSuccess } from '../../../utils/notify';
 import { Link } from 'react-router';
 import { useAuth } from '../../../context/AuthContext';

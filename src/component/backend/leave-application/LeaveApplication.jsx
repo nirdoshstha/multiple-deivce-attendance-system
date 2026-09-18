@@ -441,11 +441,12 @@ const LeaveApplication = () => {
                                                                         leave.is_approved === 2 ? <span className="status-pill px-2">Rejected</span> : <span className="status-pill px-2">Pending</span>
                                                             }
 
-                                                            {
+                                                            
 
-                                                                // <Link data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => setviewLeaveApproval(leave)} className="theme-toggle-btn" title="Approved/Rejected"><i className="bi bi-check2-circle fs-6"></i> </Link>
-                                                                <Link to={`/admin/is-leave-approved/${leave.id}`} className="theme-toggle-btn" title="Approved/Rejected"><i className="bi bi-check2-circle fs-6"></i> </Link>
-
+                                                                {
+                                                                    can("leave_is_approved") && (
+                                                                    <Link to={`/admin/is-leave-approved/${leave.id}`} className="theme-toggle-btn" title="Approved/Rejected"><i className="bi bi-check2-circle fs-6"></i> </Link>
+                                                                ) 
                                                             }
                                                         </div>
 

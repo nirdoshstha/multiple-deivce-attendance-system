@@ -115,9 +115,10 @@ const StaffTrashed = () => {
                                                     <div
                                                         className="avatar-initials"
                                                         style={{ background: "#141414aa" }}
+                                                        
                                                     >
                                                         {
-                                                            staff.image ? <img src={`${BASE_URL}/uploads/staff/${staff.image}`} alt="Profile" class="navbar-avatar" />
+                                                            staff?.user?.image ? <img src={`${BASE_URL}/uploads/user/${staff.user?.image}`} alt="Profile" class="navbar-avatar" />
                                                                 : <img alt="Profile" class="navbar-avatar" src={noimage} />
                                                         }
 

@@ -7,8 +7,8 @@ import moment from 'moment/moment';
 const StaffEdit = () => {
 
     useEffect(() => {
-            document.title = "Staff Edit";
-        }, []);
+        document.title = "Staff Edit";
+    }, []);
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -38,7 +38,7 @@ const StaffEdit = () => {
             setLoading(false);
         }
     }
- 
+
     const handleInput = (e) => {
         const { name, files, value } = e.target;
 
@@ -54,9 +54,20 @@ const StaffEdit = () => {
         setLoading(true);
 
         const formData = new FormData();
-        Object.keys(staff).forEach(key => {
-            formData.append(key, staff[key]);
+        const fields = [
+            'name', 'company_id', 'designation_id', 'gender', 'phone',
+            'email', 'address', 'working_hr'
+        ];
+
+        fields.forEach((field) => {
+            if (staff[field] !== undefined && staff[field] !== null) {
+                formData.append(field, staff[field]);
+            }
         });
+
+        if (staff.image instanceof File) {
+            formData.append('image', staff.image);
+        }
         try {
             formData.append("_method", "PUT");
 
@@ -113,15 +124,21 @@ const StaffEdit = () => {
                                                     <span className="info-label">Designation</span>
                                                     {/* <input type="text" name="designation_id" onChange={handleInput} className="form-control" value={staff.designation?.name || ""} /> */}
 
-                                                    <select name='designation_id' className='form-select' onChange={handleInput}>
+                                                    <select
+                                                        name="designation_id"
+                                                        className="form-select"
+                                                        value={staff.designation_id || ""}
+                                                        onChange={handleInput}
+                                                    >
+                                                        <option value="">Select designation</option>
                                                         {
-                                                            designation.map((designation)=> {
-                                                                return(
-                                                                    <option key={designation.id} value={designation.id} selected={designation.id === staff.designation.id} >{designation.name}</option>
+                                                            designation.map((designation) => {
+                                                                return (
+                                                                    <option key={designation.id} value={designation.id}>{designation.name}</option>
                                                                 )
                                                             })
                                                         }
-                                                        
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -137,7 +154,7 @@ const StaffEdit = () => {
                                                                 type="radio"
                                                                 name="gender"
                                                                 id="genderMale"
-                                                                value={staff.gender === "male" ? "male" : ""}
+                                                                value="male"
                                                                 onChange={handleInput}
                                                                 checked={staff.gender === "male"}
                                                             />
@@ -152,7 +169,7 @@ const StaffEdit = () => {
                                                                 type="radio"
                                                                 id="genderFemale"
                                                                 name="gender"
-                                                                value={staff.gender === "female" ? "female" : ""}
+                                                                value="female"
                                                                 onChange={handleInput}
                                                                 checked={staff.gender === "female"}
                                                             />
@@ -167,7 +184,7 @@ const StaffEdit = () => {
                                                                 type="radio"
                                                                 id="genderOther"
                                                                 name="gender"
-                                                                value={staff.gender === "other" ? "other" : ""}
+                                                                value="other"
                                                                 onChange={handleInput}
                                                                 checked={staff.gender === "other"}
                                                             />
@@ -216,8 +233,8 @@ const StaffEdit = () => {
                                             src={
                                                 previewImage
                                                     ? previewImage
-                                                    : staff.image
-                                                        ?  `${BASE_URL}/uploads/user/${staff.image}`
+                                                    : staff.user?.image
+                                                        ? `${BASE_URL}/uploads/user/${staff.user?.image}`
                                                         : "/no_image2.jpg"
                                             }
                                             alt="Staff"

@@ -10,8 +10,8 @@ import { useAuth } from '../../../context/AuthContext';
 const Role = () => {
 
     useEffect(() => {
-            document.title = "Role";
-        }, []);
+        document.title = "Role";
+    }, []);
 
     const { can } = useAuth();
     const [loading, setLoading] = useState(false);
@@ -260,9 +260,9 @@ const Role = () => {
                                                             {
                                                                 can("roles.update") && (
                                                                     <Link to={`/admin/role/edit/${role.id}`}
-                                                                        className="btn-edit-sm"
-                                                                        title="Edit">
-                                                                        <i className="bi bi-pencil"></i>
+                                                                        className="theme-toggle-btn text-decoration-none"
+                                                                        title="Edit Permission">
+                                                                        <i className="bi bi-pencil"></i>Assign Permission
                                                                     </Link>
                                                                 )
                                                             }

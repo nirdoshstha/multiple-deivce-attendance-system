@@ -30,7 +30,6 @@ const Staff = () => {
         gender: "",
         phone: "",
         address: "",
-        working_hr: ""
     });
     const [staffs, setStaffs] = useState([]);
     const [designations, setDesignations] = useState([]);
@@ -94,7 +93,6 @@ const Staff = () => {
                 address: "",
                 phone: "",
                 gender: "",
-                working_hr: "",
             });
             setPreviewImage(null);
 
@@ -196,7 +194,7 @@ const Staff = () => {
 
                             <div className="row mb-4">
                                 <div className="col-12">
-                                    <label className="form-label">Designation</label>
+                                    {/* <label className="form-label"> </label> */}
 
                                     <select
                                         name="company_id"
@@ -354,18 +352,7 @@ const Staff = () => {
                                 <label htmlFor="floatingAddress">Address</label>
                             </div>
 
-                            <div className="form-floating mb-3">
-                                <input
-                                    type="number"
-                                    name="working_hr"
-                                    value={staff.working_hr}
-                                    onChange={handleInput}
-                                    className="form-control"
-                                    id="floatingWorkingHr"
-                                    placeholder="Working Hour"
-                                />
-                                <label htmlFor="floatingWorkingHr">Working Hour</label>
-                            </div>
+
                             <div style={{ display: 'flex', gap: 10, marginTop: "20px" }}>
                                 {
                                     can("staffs.store") && (
@@ -518,36 +505,36 @@ const Staff = () => {
                             {
                                 datas.length > 0 ? <div className="pagination-area">
 
-                                <button
-                                    className="prev page-numbers"
-                                    onClick={prePage}
-                                    disabled={currentPage === 1}
-                                >
-                                    <i class="bi bi-chevron-double-left"></i>
-                                </button>
-
-                                {numbers.map((n) => (
                                     <button
-                                        key={n}
-                                        className={`page-numbers ${currentPage === n ? "active" : ""
-                                            }`}
-                                        onClick={() => changeCPage(n)}
+                                        className="prev page-numbers"
+                                        onClick={prePage}
+                                        disabled={currentPage === 1}
                                     >
-                                        {n}
+                                        <i class="bi bi-chevron-double-left"></i>
                                     </button>
-                                ))}
 
-                                <button
-                                    className="next page-numbers"
-                                    onClick={nextPage}
-                                    disabled={currentPage === npage}
-                                >
-                                    <i class="bi bi-chevron-double-right"></i>
-                                </button>
+                                    {numbers.map((n) => (
+                                        <button
+                                            key={n}
+                                            className={`page-numbers ${currentPage === n ? "active" : ""
+                                                }`}
+                                            onClick={() => changeCPage(n)}
+                                        >
+                                            {n}
+                                        </button>
+                                    ))}
 
-                            </div> : ''
+                                    <button
+                                        className="next page-numbers"
+                                        onClick={nextPage}
+                                        disabled={currentPage === npage}
+                                    >
+                                        <i class="bi bi-chevron-double-right"></i>
+                                    </button>
+
+                                </div> : ''
                             }
-                            
+
                         </div>
                         <div id="emptyState" style={{ display: 'none', textAlign: 'center', padding: 36, color: '#94A3B8' }}>
                             <i className="bi bi-person-x" style={{ fontSize: 36, marginBottom: 10, display: 'block' }} />

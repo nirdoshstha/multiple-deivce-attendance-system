@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { ClipLoader, PulseLoader } from 'react-spinners';
+import { useEffect, useState } from 'react'
 import { showError, showSuccess } from '../../../utils/notify';
-import { Link } from 'react-router';
-import confirmDelete from '../../../utils/confirmDelete';
 import { useAuth } from '../../../context/AuthContext';
 import api, { BASE_URL } from '../../../api/api';
 
 import noimage from '../../../../public/no_image2.jpg'
-import axios from 'axios';
 
 const Staff = () => {
 
@@ -45,6 +41,7 @@ const Staff = () => {
         }));
     };
 
+    const toTimeInputValue = (time) => time ? time.slice(0, 5) : "";
 
 
     useEffect(() => {
@@ -69,8 +66,11 @@ const Staff = () => {
                     staff_id: staffId,
                     company_device_id: link.company_device_id,
                     device_user_id: link.device_user_id,
+                    duty_start_time: link.duty_start_time,
+                    duty_end_time: link.duty_end_time
                 });
                 console.log(result);
+
             }
 
             showSuccess("Biometric IDs saved successfully.");
@@ -87,18 +87,35 @@ const Staff = () => {
         }
     };
 
+
+
+
     const fetchDatas = async () => {
         try {
-            const result = await api.get(`/staffs`)
-            console.log(result);
-            setStaffs(result.data.staffs);
+            const result = await api.get(`/staffs`);
+            const staffList = result.data.staffs;
+
+            setStaffs(staffList);
             setDevices(result.data.devices);
 
-        } catch (error) {
-            showError(error.response.data.message);
-        }
+            const initialLinks = {};
+            staffList.forEach((staff) => {
+                const link = staff.device_links?.[0];
+                if (link) {
+                    initialLinks[staff.id] = {
+                        company_device_id: String(link.company_device_id ?? ""),
+                        device_user_id: link.device_user_id ?? "",
+                        duty_start_time: toTimeInputValue(link.duty_start_time),
+                        duty_end_time: toTimeInputValue(link.duty_end_time),
+                    };
+                }
+            });
+            setDeviceLinks(initialLinks);
 
-    }
+        } catch (error) {
+            showError(error.response?.data?.message || "Something went wrong");
+        }
+    };
 
     const handleSubmitSearch = async (e) => {
         e.preventDefault();
@@ -182,6 +199,8 @@ const Staff = () => {
                                             <th>Company Named</th>
                                             <th>Devices</th>
                                             <th>Biometric ID</th>
+                                            <th>Duty Start Time</th>
+                                            <th>Duty End Time</th>
                                         </tr>
                                     </thead>
                                     <tbody id="adminTableBody">
@@ -248,6 +267,7 @@ const Staff = () => {
                                                         <td>
                                                             <div className="form-floating">
                                                                 <input
+                                                                    name='device_user_id'
                                                                     type="text"
                                                                     value={deviceLinks[staff.id]?.device_user_id || ""}
                                                                     onChange={(e) =>
@@ -265,6 +285,47 @@ const Staff = () => {
                                                             </div>
                                                         </td>
 
+                                                        <td>
+                                                            <div className="form-floating">
+                                                                <input
+                                                                    name='duty_start_time'
+                                                                    type="time"
+                                                                    value={deviceLinks[staff.id]?.duty_start_time || ""}
+                                                                    onChange={(e) =>
+                                                                        handleDeviceLinkInput(
+                                                                            staff.id,
+                                                                            "duty_start_time",
+                                                                            e.target.value
+                                                                        )
+                                                                    }
+                                                                    className="form-control"
+                                                                    placeholder="Biometric ID"
+                                                                />
+
+                                                                <label>Duty Start Time</label>
+                                                            </div>
+                                                        </td>
+
+                                                        <td>
+                                                            <div className="form-floating">
+                                                                <input
+                                                                    name='duty_end_time'
+                                                                    type="time"
+                                                                    value={deviceLinks[staff.id]?.duty_end_time || ""}
+                                                                    onChange={(e) =>
+                                                                        handleDeviceLinkInput(
+                                                                            staff.id,
+                                                                            "duty_end_time",
+                                                                            e.target.value
+                                                                        )
+                                                                    }
+                                                                    className="form-control"
+                                                                    placeholder="Biometric ID"
+                                                                />
+
+                                                                <label>Duty End Time</label>
+                                                            </div>
+                                                        </td>
 
 
 

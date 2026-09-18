@@ -5,7 +5,8 @@ import confirmDelete from "../../../utils/confirmDelete";
 import { useAuth } from "../../../context/AuthContext";
 import api from "../../../api/api";
 import Accordion from "react-bootstrap/Accordion";
-import { Link } from "react-router"
+import { Link } from "react-router";
+import Select from "react-select";
 
 const Menu = () => {
   useEffect(() => {
@@ -17,7 +18,6 @@ const Menu = () => {
   const [menu, setMenu] = useState({
     parent_id: "",
     name: "",
-    display_name: "",
     permission_id: '',
     rank: "",
     route: "",
@@ -30,8 +30,81 @@ const Menu = () => {
   const handleInput = (e) => {
     setMenu({ ...menu, [e.target.name]: e.target.value });
   };
+
+  const permissionOptions = permissions.map((permission) => ({
+    value: String(permission.id),
+    label: permission.name,
+  }));
+  const parentOptions = category.map((parent) => ({
+    value: String(parent.id),
+    label: parent.display_name || parent.name,
+  }));
+  const selectedPermission = permissionOptions.find(
+    (option) => option.value === String(menu.permission_id),
+  ) ?? null;
+  const selectedParent = parentOptions.find(
+    (option) => option.value === String(menu.parent_id),
+  ) ?? null;
+  const selectStyles = {
+    control: (baseStyles) => ({
+      ...baseStyles,
+      backgroundColor: '#fff',
+    }),
+    menu: (baseStyles) => ({
+      ...baseStyles,
+      backgroundColor: '#fff',
+    }),
+  };
+
+  const handlePermissionChange = (option) => {
+    setMenu((currentMenu) => ({
+      ...currentMenu,
+      permission_id: option?.value ?? '',
+    }));
+  };
+
+  const handleParentChange = (option) => {
+    setMenu((currentMenu) => ({
+      ...currentMenu,
+      parent_id: option?.value ?? '',
+    }));
+  };
+
+  async function fetchDatas() {
+    try {
+      const result = await api.get('/menus');
+      setMenus(Array.isArray(result.data?.menus) ? result.data.menus : []);
+      setCategory(Array.isArray(result.data?.category) ? result.data.category : []);
+      setPermissions(Array.isArray(result.data?.permissions) ? result.data.permissions : []);
+    } catch (error) {
+      showError(error.response?.data?.message || 'Unable to load menus.');
+    }
+  }
+
   useEffect(() => {
-    fetchDatas();
+    let isMounted = true;
+
+    const loadInitialData = async () => {
+      try {
+        const result = await api.get('/menus');
+
+        if (isMounted) {
+          setMenus(Array.isArray(result.data?.menus) ? result.data.menus : []);
+          setCategory(Array.isArray(result.data?.category) ? result.data.category : []);
+          setPermissions(Array.isArray(result.data?.permissions) ? result.data.permissions : []);
+        }
+      } catch (error) {
+        if (isMounted) {
+          showError(error.response?.data?.message || 'Unable to load menus.');
+        }
+      }
+    };
+
+    loadInitialData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleSubmit = async (e) => {
@@ -45,19 +118,19 @@ const Menu = () => {
       setMenu({
         parent_id: "",
         name: "",
-        display_name: "",
+        permission_id: '',
         route: "",
         rank: "",
         icon: ""
       });
     } catch (error) {
-      showError(error.response.data.message);
+      showError(error.response?.data?.message || 'Unable to save the menu.');
     } finally {
       setLoading(false);
     }
   };
 
-  const deletemenu = async (id) => {
+  const deleteMenu = async (id) => {
     const confirmed = await confirmDelete();
     if (!confirmed) return;
     setLoading(true);
@@ -67,38 +140,12 @@ const Menu = () => {
       showSuccess(result.data.message);
       fetchDatas();
     } catch (error) {
-      showError(error.response.data.message);
-      setLoading(false);
+      showError(error.response?.data?.message || 'Unable to delete the menu.');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchDatas = async (e) => {
-    try {
-      const result = await api.get(`/menus`);
-      // console.log(result);
-      setMenus(result.data.menus);
-      setCategory(result.data.category);
-    } catch (error) {
-      showError(error.response.data.message);
-    }
-  };
-
-  useEffect(() => {
-    const getPermissions = async () => {
-      try {
-        const response = await api.get(`/menus`);
-        console.log(response);
-
-        setPermissions(response.data.permissions);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getPermissions();
-  }, []);
   return (
     <div>
       <div className="admin-mgmt">
@@ -106,12 +153,12 @@ const Menu = () => {
           {/* Create Admin Form */}
           <div className="glass-card create-admin-card">
             <div className="count-badge-row d-flex justify-content-between">
-              <button class="theme-toggle-btn" title="Cycle theme">
+              <button type="button" className="theme-toggle-btn" title="Create a new menu">
                 <i
                   className="bi bi-plus-circle"
                   style={{ fontSize: "14px" }}
-                ></i>{" "}
-                Create New Menu{" "}
+                ></i>
+                Create New Menu
               </button>
               <div className="count-icon">
                 <i className="bi bi-shield-person-fill" /> {menus?.length || 0}
@@ -120,16 +167,33 @@ const Menu = () => {
 
             <form onSubmit={handleSubmit}>
               <div className="form-group mb-3">
-                <select
-                  name="parent_id"
-                  className="form-select"
-                  onChange={handleInput}
-                >
-                  <option value=""> Please Select Parent</option>
-                  {category.map((item) => {
-                    return <option key={item.id} value={item.id}> {item.name}</option>;
-                  })}
-                </select>
+                <Select
+                  inputId="parent_id"
+                  classNamePrefix="parent-select"
+                  options={parentOptions}
+                  value={selectedParent}
+                  onChange={handleParentChange}
+                  styles={selectStyles}
+                  placeholder="Search or select a parent menu"
+                  isClearable
+                  isSearchable
+                  noOptionsMessage={() => "No parent menus found"}
+                />
+              </div>
+
+              <div className="form-group mb-3">
+                <Select
+                  inputId="permission_id"
+                  classNamePrefix="permission-select"
+                  options={permissionOptions}
+                  value={selectedPermission}
+                  onChange={handlePermissionChange}
+                  styles={selectStyles}
+                  placeholder="Search or select a permission"
+                  isClearable
+                  isSearchable
+                  noOptionsMessage={() => "No permissions found"}
+                />
               </div>
 
 
@@ -145,24 +209,7 @@ const Menu = () => {
                   id="menuName"
                   placeholder="Menu Name"
                 />
-                <label for="menuName"> Menu Name</label>
-              </div>
-
-              <div className="form-group mb-3">
-                <label htmlFor="display_name">
-                  Display Name
-                </label>
-
-                <input
-                  type="text"
-                  name="display_name"
-                  value={menu?.display_name}
-                  onChange={handleInput}
-                  className="form-control"
-                  id="display_name"
-                  placeholder="Display Name"
-                />
-
+                <label htmlFor="menuName">Menu Name</label>
               </div>
 
               <div className="form-floating">
@@ -175,7 +222,7 @@ const Menu = () => {
                   id="route"
                   placeholder="Route Name"
                 />
-                <label for="route"> Route Name</label>
+                <label htmlFor="route">Route Name</label>
               </div>
 
               <div className="form-floating">
@@ -188,7 +235,7 @@ const Menu = () => {
                   id="rank"
                   placeholder="Rank"
                 />
-                <label for="rank">Rank</label>
+                <label htmlFor="rank">Rank</label>
               </div>
 
               <div className="form-floating">
@@ -201,7 +248,7 @@ const Menu = () => {
                   id="icon"
                   placeholder="bi bi-users"
                 />
-                <label for="icon"> Icon (eg: bi bi-users)</label>
+                <label htmlFor="icon">Icon (for example: bi bi-users)</label>
               </div>
 
               {can("menus.store") && (
@@ -210,11 +257,7 @@ const Menu = () => {
                   className="btn-primary"
                   style={{ width: "100%", justifyContent: "center" }}
                 >
-                  {loading ? (
-                    <PulseLoader color="white" loading={true} size={12} />
-                  ) : (
-                    ""
-                  )}
+                  {loading && <PulseLoader color="white" size={12} />}
                   <i className="bi bi-person-plus-fill" /> Create menu Account
                 </button>
               )}
@@ -238,10 +281,11 @@ const Menu = () => {
 
               {category.map((item, index) => {
                 return (
-                  <Accordion defaultActiveKey="0">
+                  <Accordion key={item.id} defaultActiveKey="0">
 
                     <Accordion.Item eventKey={item.id}>
-                      <Accordion.Header className="">  <label class="form-label me-2"># {index + 1}</label>
+                      <Accordion.Header>
+                        <span className="form-label me-2"># {index + 1}</span>
                         {
                           can("menus.update") && (
                             <Link to={`/admin/menu/edit/${item.id}`} className="btn-edit-sm me-2" title="Edit" >
@@ -253,11 +297,11 @@ const Menu = () => {
 
                         {
                           can("menus.destroy") && (
-                            <button className="btn-danger-sm me-2" onClick={() => deletemenu(item.id)} title="Delete"><i className="bi bi-trash3" /></button>
+                            <button type="button" className="btn-danger-sm me-2" onClick={() => deleteMenu(item.id)} title="Delete"><i className="bi bi-trash3" /></button>
                           )
                         }
 
-                        <label class="form-label">{item.display_name} <span className="gap-5"> ({item.sub_categories?.length || 0})</span>   <i className={`${item.icon} ms-4`}></i></label>
+                        <span className="form-label">{item.display_name} <span className="gap-5">({item.sub_categories?.length || 0})</span> <i className={`${item.icon} ms-4`} /></span>
 
 
 
@@ -265,7 +309,7 @@ const Menu = () => {
                       </Accordion.Header>
 
                       <Accordion.Body>
-                        <table class="admin-table" id="adminTable">
+                        <table className="admin-table">
                           <thead>
                             <tr>
                               <th>S.no</th>
@@ -276,7 +320,7 @@ const Menu = () => {
                               <th>Actions</th>
                             </tr>
                           </thead>
-                          <tbody id="adminTableBody">
+                          <tbody>
                             {
                               item.sub_categories?.map((menu, index) => {
                                 return (
@@ -309,7 +353,7 @@ const Menu = () => {
 
                                         {
                                           can("menus.destroy") && (
-                                            <button className="btn-danger-sm" onClick={() => deletemenu(menu.id)} title="Delete"><i className="bi bi-trash3" /></button>
+                                            <button type="button" className="btn-danger-sm" onClick={() => deleteMenu(menu.id)} title="Delete"><i className="bi bi-trash3" /></button>
                                           )
                                         }
                                       </div>
@@ -331,21 +375,15 @@ const Menu = () => {
               })}
 
             </div>
-            <div
-              id="emptyState"
-              style={{
-                display: "none",
-                textAlign: "center",
-                padding: 36,
-                color: "#94A3B8",
-              }}
-            >
+            {category.length === 0 && (
+              <div style={{ textAlign: "center", padding: 36, color: "#94A3B8" }}>
               <i
                 className="bi bi-person-x"
                 style={{ fontSize: 36, marginBottom: 10, display: "block" }}
               />
               No admins found.
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
