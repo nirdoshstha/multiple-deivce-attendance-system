@@ -54,70 +54,72 @@ const AttendanceLog = () => {
                                         <tr>
                                             <th style={{ width: 56 }}>S.No</th>
                                             <th>Staff</th>
-                                            {/* <th>Role</th> */}
+                                            <th>Attendance Type</th>
                                             <th>Date</th>
                                             <th>Punch time</th>
-                                            <th>Punch Type</th>
-                                            <th>Verification Type</th>
-                                            <th>Raw Data</th>
+                                            <th>Punch Type</th> 
                                         </tr>
                                     </thead>
                                     <tbody>
 
                                         {
-                                            logs.length === 0 ? (
-                                                <tr><td colSpan={7} className="text-center  text-danger py-4">No Attendance Logs found for this date.</td></tr>
+                                            loading ? (
+                                                <tr><td colSpan={7} className="text-center  text-danger py-4">Loading....</td></tr>
                                             ) : (
-                                           logs && logs.map((log, index) => {
-                                                return (
-                                                    <tr key={log.id} >
-                                                        <td className="font-mono text-muted">{index + 1}</td>
-                                                        <td>
-                                                            <div className="admin-name-cell">
-                                                                <div
-                                                                    className="avatar-initials"
-                                                                    style={{ background: "#141414aa" }}
-                                                                >
-                                                                    {log.staff?.image ? (
-                                                                        <img
-                                                                            src={`${BASE_URL}/uploads/staff/${log.staff?.image}`}
-                                                                            alt="Profile"
-                                                                            className="navbar-avatar"
-                                                                        />
-                                                                    ) : (
-                                                                        <img
-                                                                            src={noimage}
-                                                                            alt="Profile"
-                                                                            className="navbar-avatar"
-                                                                        />
-                                                                    )}
-                                                                </div>
-
-                                                                <div>
-                                                                    <div className="admin-name">
-                                                                        {log.staff?.name}
+                                                logs && logs.map((log, index) => {
+                                                    return (
+                                                        <tr key={log.id} >
+                                                            <td className="font-mono text-muted">{index + 1}</td>
+                                                            <td>
+                                                                <div className="admin-name-cell">
+                                                                    <div
+                                                                        className="avatar-initials"
+                                                                        style={{ background: "#141414aa" }}
+                                                                    >
+                                                                        {log.staff?.image ? (
+                                                                            <img
+                                                                                src={`${BASE_URL}/uploads/user/${log.staff?.user?.image}`}
+                                                                                alt="Profile"
+                                                                                className="navbar-avatar"
+                                                                            />
+                                                                        ) : (
+                                                                            <img
+                                                                                src={noimage}
+                                                                                alt="Profile"
+                                                                                className="navbar-avatar"
+                                                                            />
+                                                                        )}
                                                                     </div>
 
-                                                                    <div className="admin-email">
-                                                                        {log.staff?.email}
-                                                                    </div>
+                                                                    <div>
+                                                                        <div className="admin-name">
+                                                                            {log.staff?.name}
+                                                                        </div>
 
-                                                                    {/* <div className="admin-email">
+
+                                                                        <div className="admin-email">
+                                                                            {log.staff?.email}
+                                                                        </div>
+
+                                                                        {/* <div className="admin-email">
                                                                         {log.staff?.phone}
                                                                     </div> */}
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </td>
-                                                        {/* <td></td> */}
-                                                        <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>{log.date} </td>
-                                                        <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>{log.punch_time} </td>
-                                                        <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>{log.punch_type} </td>
-                                                        <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>{log.verification_type} </td>
+                                                            </td>
+                                                            <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>
+                                                                {log.attendance_type.toUpperCase()}
+                                                            </td>
+                                                            {/* <td></td> */}
+                                                            <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>{log.date} </td>
+                                                            <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>{log.time} </td>
+                                                            <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>{log.punch_state === 0 ? 'Check In' : 'Check Out'} </td>
+                                                            
 
-                                                        <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>{log.raw_data} </td>
-                                                    </tr>
-                                                )
-                                            }) )
+                                                            <td style={{ fontSize: "12px", color: " rgb(148, 163, 184)" }}>{log.raw_data} </td>
+                                                        </tr>
+                                                    )
+                                                }))
                                         }
 
 

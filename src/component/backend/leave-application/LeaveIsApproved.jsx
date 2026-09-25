@@ -132,7 +132,7 @@ const LeaveIsApproved = () => {
                                                             <button type="button" className="btn-danger">
                                                                 <i className="bi bi-x-circle"></i> Rejected
                                                             </button>
-                                                        ) : (
+                                                        ) :  (
                                                             <button type="button" className="btn btn-secondary">
                                                                 <i className="bi bi-hourglass-split fs-6"></i> Pending
                                                             </button>

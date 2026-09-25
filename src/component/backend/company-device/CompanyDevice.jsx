@@ -141,15 +141,11 @@ const CompanyDevice = () => {
 
     }
 
-    // Device Manager Start
-    // const [devices, setDevices] = useState([]);
-    // const [loading, setLoading] = useState(true);
+    
     const [busyId, setBusyId] = useState(null); // which device row is mid-action
     const [messages, setMessages] = useState({}); // deviceId -> last result/error text
 
-
-    // const listDevices = () => api.get("/company-devices").then((r) => r.data.data);
-
+ 
     const listDevices = async () => {
         const result = await api.get(`/company-devices`);
         return result.data.devices;
@@ -188,55 +184,7 @@ const CompanyDevice = () => {
         loadDevices();
     }, [loadDevices]);
 
-    // const handleCheckConnection = async (device) => {
-    //     setBusyId(device.id);
-    //     setMessages((m) => ({
-    //         ...m,
-    //         [device.id]: null,
-    //     }));
-
-    //     try {
-    //         const result = await checkDeviceConnection(device.id);
-
-    //         console.log("Connection result:", result);
-
-    //         setMessages((m) => ({
-    //             ...m,
-    //             [device.id]: `Online — serial confirmed (${result?.serial_no ?? "Unknown"})`,
-    //         }));
-    //         showSuccess(result.data.message)
-    //     } catch (err) {
-    //         console.error("Connection error:", err);
-
-    //         showError(
-    //             err.response?.data?.message ?? "Could not reach device"
-    //         );
-    //     } finally {
-    //         setBusyId(null);
-    //         loadDevices();
-    //     }
-    // };
-
-    // const handleSync = async (device) => {
-    //     setBusyId(device.id);
-    //     setMessages((m) => ({ ...m, [device.id]: null }));
-    //     try {
-    //         const summary = await syncDevice(device.id);
-    //         setMessages((m) => ({
-    //             ...m,
-    //             [device.id]: `Synced: ${summary.logs_inserted} new punch(es), ${summary?.days_recomputed} day(s) recomputed`,
-    //         }));
-    //     } catch (err) {
-    //         // setMessages((m) => ({
-    //         //     ...m,
-    //         //     [device.id]: err.response?.data?.message ?? "Sync failed",
-    //         // }));
-    //         showError(err.response.data.message ?? "Sync failed")
-    //     } finally {
-    //         setBusyId(null);
-    //     }
-    // };
-
+    
 
     const handleCheckConnection = async (device) => {
         setBusyId(device.id);
@@ -336,16 +284,7 @@ const CompanyDevice = () => {
                                     controlId="floatingSelectGrid"
                                     label="Device Brand"
                                 >
-                                    {/* <Form.Select name="device_brand_id" value={device?.device_brand_id || ""} onChange={handleInput} aria-label="Floating label select example" className="mb-3">
-                                        <option>Please Select Device Brand</option>
-                                        {
-                                            deviceBrand.map((item) => {
-                                                return (
-                                                    <option value={item.id} key={item.id}>{item.name}</option>
-                                                )
-                                            })
-                                        }
-                                    </Form.Select> */}
+                                     
 
                                     <Form.Select
                                         name="device_brand_id"
@@ -378,11 +317,7 @@ const CompanyDevice = () => {
                                     }
                                 </Form.Select>
                             </div>
-
-                            {/* <div className="form-group">
-                                <label className="form-label"> Serial Number</label>
-                                <input type="text" name='serial_no' value={device?.serial_no} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. ZKTK40PRO001" />
-                            </div> */}
+ 
 
                             <FloatingLabel
                                 controlId="floatingSelectGrid"
@@ -391,10 +326,7 @@ const CompanyDevice = () => {
                                 <input type="text" name='serial_no' value={device?.serial_no} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. ZKTK40PRO001" />
                             </FloatingLabel>
 
-                            {/* <div className="form-group">
-                                <label className="form-label"> Port</label>
-                                <input type="number" name='port' value={device?.port} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
-                            </div> */}
+                            
 
                             <FloatingLabel
                                 controlId="floatingSelectGrid"
@@ -403,11 +335,7 @@ const CompanyDevice = () => {
                                 <input type="text" name='port' value={device?.port} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 4370" />
                             </FloatingLabel>
 
-
-                            {/* <div className="form-group">
-                                <label className="form-label"> API KEY</label>
-                                <input type="number" name='api_key' value={device?.api_key} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. Alex Rivera" />
-                            </div> */}
+ 
 
                             <FloatingLabel
                                 controlId="floatingSelectGrid"
@@ -541,20 +469,7 @@ const CompanyDevice = () => {
                                                     <td>
                                                         <div className="table-actions">
 
-                                                            {/* <button
-                                                                onClick={() => handleCheckConnection(device)}
-                                                                disabled={busyId === device.id}
-                                                                className="btn-edit-sm rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50"
-                                                            >
-                                                                <i className="bi bi-plug me-1 fs-6"></i> {busyId === device.id ? "…" : "Connect"}
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleSync(device)}
-                                                                disabled={busyId === device.id}
-                                                                className="btn-danger-sm rounded-md bg-blue-600 px-3 py-1.5 text-sm disabled:opacity-50"
-                                                            >
-                                                                <i className="bi bi-arrow-repeat fs-6"></i> {busyId === device.id ? "…" : "Sync"}
-                                                            </button> */}
+                                                          
 
                                                             {/* <span className="text-xs text-gray-500"> */}
                                                             <span className="btn-edit-sm rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50">

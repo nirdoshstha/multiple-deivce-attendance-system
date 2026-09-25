@@ -265,7 +265,7 @@ const Staff = () => {
                                                         </td>
 
                                                         <td>
-                                                            <div className="form-floating">
+                                                           
                                                                 <input
                                                                     name='device_user_id'
                                                                     type="text"
@@ -281,12 +281,12 @@ const Staff = () => {
                                                                     placeholder="Biometric ID"
                                                                 />
 
-                                                                <label>Biometric ID</label>
-                                                            </div>
+                                                                {/* <label>Biometric ID</label> */}
+                                                           
                                                         </td>
 
                                                         <td>
-                                                            <div className="form-floating">
+                                                           
                                                                 <input
                                                                     name='duty_start_time'
                                                                     type="time"
@@ -302,12 +302,12 @@ const Staff = () => {
                                                                     placeholder="Biometric ID"
                                                                 />
 
-                                                                <label>Duty Start Time</label>
-                                                            </div>
+                                                                {/* <label>Duty Start Time</label> */}
+                                                             
                                                         </td>
 
                                                         <td>
-                                                            <div className="form-floating">
+                                                           
                                                                 <input
                                                                     name='duty_end_time'
                                                                     type="time"
@@ -323,8 +323,7 @@ const Staff = () => {
                                                                     placeholder="Biometric ID"
                                                                 />
 
-                                                                <label>Duty End Time</label>
-                                                            </div>
+                                                                 
                                                         </td>
 
 

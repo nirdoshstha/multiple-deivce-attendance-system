@@ -146,7 +146,7 @@ const User = () => {
             getUsers();
 
         } catch (error) {
-            showError(error.response.data.messsage || "Something went wrong")
+            showError(error.response.data.message || "Something went wrong")
         }
 
     }
