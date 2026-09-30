@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import { showError } from '../../../utils/notify';
+import { showError, showSuccess } from '../../../utils/notify';
 import api, { BASE_URL } from '../../../api/api';
 import moment from 'moment/moment';
 
@@ -16,6 +16,7 @@ const StaffEdit = () => {
 
     const [staff, setStaff] = useState({});
     const [designation, setDesignation] = useState([]);
+    const [branches, setBranches] = useState([]);
     const [loading, setLoading] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
 
@@ -31,6 +32,7 @@ const StaffEdit = () => {
             console.log(result)
             setStaff(result.data.staff);
             setDesignation(result.data.designations)
+            setBranches(result.data.branches)
         } catch (error) {
             showError(error.response.data.message)
         }
@@ -55,7 +57,7 @@ const StaffEdit = () => {
 
         const formData = new FormData();
         const fields = [
-            'name', 'company_id', 'designation_id', 'gender', 'phone',
+            'name', 'company_id', 'branch_id', 'designation_id', 'gender', 'phone',
             'email', 'address', 'working_hr'
         ];
 
@@ -76,6 +78,7 @@ const StaffEdit = () => {
                     "Content-Type": "multipart/form-data",
                 }
             });
+            showSuccess(result.data.message);
             navigate("/admin/staff")
         } catch (error) {
             showError(error.response.data.message || "something went wrong")
@@ -112,12 +115,6 @@ const StaffEdit = () => {
                                                     <input type="text" name="name" onChange={handleInput} className="form-control" value={staff.name || ""} />
                                                 </div>
                                             </div>
-                                            <div className='col-md-6'>
-                                                <div className="mb-2">
-                                                    <span className="info-label">Company Name</span>
-                                                    <input type="text" name="company_id" className="form-control" value={staff.company?.name || ""} readOnly />
-                                                </div>
-                                            </div>
 
                                             <div className='col-md-6'>
                                                 <div className="mb-2">
@@ -141,6 +138,34 @@ const StaffEdit = () => {
 
                                                     </select>
                                                 </div>
+                                            </div>
+
+                                            <div className='col-md-6'>
+                                                <div className="mb-2">
+                                                    <span className="info-label">Company Name</span>
+                                                    <input type="text" name="company_id" className="form-control" value={staff.company?.name || ""} readOnly />
+                                                </div>
+                                            </div>
+
+
+                                            <div className="col-6">
+                                                <select
+                                                    name="branch_id"
+                                                    className="form-select"
+                                                    value={staff.branch_id || ""}
+                                                    onChange={handleInput}
+                                                >
+                                                    <option>Select Branch</option>
+
+                                                    {branches.map((branch) => (
+                                                        <option
+                                                            key={branch.id}
+                                                            value={branch.id}
+                                                        >
+                                                            {branch.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </div>
 
                                             <div className='col-md-6'>

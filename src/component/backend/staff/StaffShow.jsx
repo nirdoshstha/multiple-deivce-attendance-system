@@ -64,6 +64,14 @@ const StaffShow = () => {
                                                 <h6>{staff.name || ""}</h6>
                                             </div>
                                         </div>
+
+                                        <div className='col-md-6'>
+                                            <div className="info-card mb-2">
+                                                <span className="info-label">Designation</span>
+                                                <h6>{staff.designation?.name || ""}</h6>
+                                            </div>
+                                        </div>
+
                                         <div className='col-md-6'>
                                             <div className="info-card mb-2">
                                                 <span className="info-label">Company Name</span>
@@ -73,8 +81,8 @@ const StaffShow = () => {
 
                                         <div className='col-md-6'>
                                             <div className="info-card mb-2">
-                                                <span className="info-label">Designation</span>
-                                                <h6>{staff.designation?.name || ""}</h6>
+                                                <span className="info-label">Branch Name</span>
+                                                <h6>{staff.branch?.name || ""}</h6>
                                             </div>
                                         </div>
 
@@ -105,13 +113,7 @@ const StaffShow = () => {
                                                 <h6>{staff.address || ""}</h6>
                                             </div>
                                         </div>
-
-                                        <div className='col-md-6'>
-                                            <div className="info-card mb-2">
-                                                <span className="info-label">Working Hr</span>
-                                                <h6>{staff.working_hr || ""}</h6>
-                                            </div>
-                                        </div>
+ 
                                     </div>
 
 

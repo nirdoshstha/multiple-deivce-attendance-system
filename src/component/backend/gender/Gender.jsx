@@ -9,8 +9,8 @@ import confirmDelete from '../../../utils/confirmDelete';
 const Gender = () => {
 
     useEffect(() => {
-            document.title = "Gender";
-        }, []);
+        document.title = "Gender";
+    }, []);
 
     const { can } = useAuth();
 
@@ -85,7 +85,7 @@ const Gender = () => {
                     {/* Create Admin Form */}
                     <div className="glass-card create-admin-card">
                         <div className="count-badge-row d-flex justify-content-between">
-                            <button class="theme-toggle-btn" title="Cycle theme"><i className="bi bi-plus-circle" style={{ fontSize: "14px" }}></i> Create New Role </button>
+                            <button class="theme-toggle-btn" title="Cycle theme"><i className="bi bi-plus-circle" style={{ fontSize: "14px" }}></i> Create New Gender </button>
                             <div className="count-icon"><i className="bi bi-shield-person-fill" />  {genders?.length || 0}</div>
                         </div>
 
@@ -119,7 +119,7 @@ const Gender = () => {
                     <div className="glass-card-solid admin-list-card">
                         <div className="admin-table-header">
                             <div>
-                                <div className="section-title" style={{ fontSize: 15 }}>Role Accounts</div>
+                                <div className="section-title" style={{ fontSize: 15 }}>Gender Accounts</div>
                                 <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 1 }}>Manage existing administrator accounts</div>
                             </div>
                             <div className="search-box">

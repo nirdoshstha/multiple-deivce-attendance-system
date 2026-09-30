@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { showError, showSuccess } from '../../../utils/notify';
-import api from '../../../api/api';
+import api, { BASE_URL } from '../../../api/api';
 
 const LeaveIsApproved = () => {
 
@@ -85,61 +85,132 @@ const LeaveIsApproved = () => {
                                 <table className="table table-sm table-bordered mb-0">
                                     <tbody>
                                         <tr>
-                                            <th width="35%"><label class="form-label"> Name</label></th>
-                                            <td id="modal_user"><label className="form-label"> {leaveDetail.user?.name || ""}</label></td>
-                                        </tr>
-                                        <tr>
-                                            <th width="35%"><label class="form-label"> Role </label></th>
-                                            <td id="modal_user"><label className="form-label"> {leaveDetail.role?.name || ""} </label></td>
-                                        </tr>
-                                        <tr>
-                                            <th><label class="form-label"> Leave Type </label></th>
-                                            <td id="modal_leave_type"><label className="form-label">{leaveDetail.leave_type?.name || ""}</label></td>
-                                        </tr>
+                                            <th width="35%">
+                                                <label className="form-label">Name</label>
+                                            </th>
 
-                                        <tr>
-                                            <th><label class="form-label">Leave Start / End  </label></th>
-                                            <td className='d-flex'>
-                                                <label className="form-label"><span>{leaveDetail.date_from || ""}</span></label>
-                                                <label className="form-label px-2"> TO</label>
-                                                <label className="form-label"> <span>{leaveDetail.date_to || ""}</span></label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><label class="form-label"> Total Requested Days</label></th>
-                                            <td>
-                                                <span><label className="form-label">{leaveDetail.total_days || 0} </label></span>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <th><label class="form-label">Approval Remarks</label></th>
-                                            <td>
-                                                <textarea name="approval_remarks" value={isApprove.approval_remarks || ""} onChange={handleInput} className="form-control" />
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <th><label class="form-label">Approve / Reject</label></th>
-                                            <td>
-                                                <div>
-                                                    {
-                                                        leaveDetail.is_approved == 1 ? (
-                                                            <button type="button" className="btn-success">
-                                                                <i className="bi bi-check2-circle fs-6"></i> Approved
-                                                            </button>
-                                                        ) : leaveDetail.is_approved == 2 ? (
-                                                            <button type="button" className="btn-danger">
-                                                                <i className="bi bi-x-circle"></i> Rejected
-                                                            </button>
-                                                        ) :  (
-                                                            <button type="button" className="btn btn-secondary">
-                                                                <i className="bi bi-hourglass-split fs-6"></i> Pending
-                                                            </button>
-                                                        )
+                                            <td className="position-relative">
+                                                {/* User Image */}
+                                                <img
+                                                    src={
+                                                        leaveDetail.user?.image
+                                                            ? `${BASE_URL}/uploads/user/${leaveDetail.user.image}`
+                                                            : `/no_image2.jpg`
                                                     }
-                                                </div>
+                                                    alt={leaveDetail.user?.name || "User"}
+                                                    className="rounded-circle border position-absolute"
+                                                    style={{
+                                                        width: "80px",
+                                                        height: "80px",
+                                                        objectFit: "cover",
+                                                        right: "10px",
+                                                        top: "10px",
+                                                    }}
+                                                />
 
+                                                {/* Name */}
+                                                <label className="form-label">
+                                                    {leaveDetail.user?.name || ""}
+                                                </label>
+                                            </td>
+                                        </tr>
+
+                                        {/* other rows... */}
+                                        
+
+                                        <tr>
+                                            <th>
+                                                <label className="form-label">Role</label>
+                                            </th>
+                                            <td>
+                                                <label className="form-label">
+                                                    {leaveDetail.role?.name || ""}
+                                                </label>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>
+                                                <label className="form-label">Leave Type</label>
+                                            </th>
+                                            <td>
+                                                <label className="form-label">
+                                                    {leaveDetail.leave_type?.name || ""}
+                                                </label>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>
+                                                <label className="form-label">Leave Start / End</label>
+                                            </th>
+                                            <td className="d-flex">
+                                                <label className="form-label">
+                                                    {leaveDetail.date_from || ""}
+                                                </label>
+
+                                                <label className="form-label px-2">
+                                                    TO
+                                                </label>
+
+                                                <label className="form-label">
+                                                    {leaveDetail.date_to || ""}
+                                                </label>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>
+                                                <label className="form-label">
+                                                    Total Requested Days
+                                                </label>
+                                            </th>
+                                            <td>
+                                                <label className="form-label">
+                                                    {leaveDetail.total_days || 0}
+                                                </label>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>
+                                                <label className="form-label">
+                                                    Approval Remarks
+                                                </label>
+                                            </th>
+                                            <td>
+                                                <textarea
+                                                    name="approval_remarks"
+                                                    value={isApprove.approval_remarks || ""}
+                                                    onChange={handleInput}
+                                                    className="form-control"
+                                                />
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>
+                                                <label className="form-label">
+                                                    Approve / Reject
+                                                </label>
+                                            </th>
+                                            <td>
+                                                {leaveDetail.is_approved == 1 ? (
+                                                    <button type="button" className="btn btn-success">
+                                                        <i className="bi bi-check2-circle fs-6"></i>{" "}
+                                                        Approved
+                                                    </button>
+                                                ) : leaveDetail.is_approved == 2 ? (
+                                                    <button type="button" className="btn btn-danger">
+                                                        <i className="bi bi-x-circle"></i>{" "}
+                                                        Rejected
+                                                    </button>
+                                                ) : (
+                                                    <button type="button" className="btn btn-secondary">
+                                                        <i className="bi bi-hourglass-split fs-6"></i>{" "}
+                                                        Pending
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     </tbody>

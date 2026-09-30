@@ -248,7 +248,7 @@ const LeaveApplication = () => {
                   isClearable
                 /> */}
 
-                                <Select
+                                {/* <Select
                                     name="role_id"
                                     options={optionRole}
                                     value={selectedRole}
@@ -265,7 +265,7 @@ const LeaveApplication = () => {
                                     placeholder="Select Role"
                                     className="mt-3"
                                     isClearable
-                                />
+                                /> */}
 
 
                                 {/* <label for="leaveName"> User Name</label> */}
@@ -441,12 +441,12 @@ const LeaveApplication = () => {
                                                                         leave.is_approved === 2 ? <span className="status-pill px-2">Rejected</span> : <span className="status-pill px-2">Pending</span>
                                                             }
 
-                                                            
 
-                                                                {
-                                                                    can("leave_is_approved") && (
+
+                                                            {
+                                                                can("leave_is_approved") && (
                                                                     <Link to={`/admin/is-leave-approved/${leave.id}`} className="theme-toggle-btn" title="Approved/Rejected"><i className="bi bi-check2-circle fs-6"></i> </Link>
-                                                                ) 
+                                                                )
                                                             }
                                                         </div>
 

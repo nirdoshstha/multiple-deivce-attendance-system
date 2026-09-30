@@ -34,6 +34,7 @@ const Staff = () => {
     const [staffs, setStaffs] = useState([]);
     const [designations, setDesignations] = useState([]);
     const [companies, setCompanies] = useState([]);
+    const [branches, setBranches] = useState([]);
     const [gender, setGender] = useState("");
 
     const [trashed, setTrashed] = useState(0);
@@ -131,6 +132,7 @@ const Staff = () => {
             setTrashed(result.data.trashed);
             setDesignations(result.data.designations);
             setCompanies(result.data.companies);
+            setBranches(result.data.branches);
         } catch (error) {
             showError(error.response.data.message);
         }
@@ -209,6 +211,29 @@ const Staff = () => {
                                                 value={company.id}   // or company.name
                                             >
                                                 {company.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="row mb-4">
+                                <div className="col-12">
+                                    {/* <label className="form-label"> </label> */}
+
+                                    <select
+                                        name="branch_id"
+                                        className="form-select"
+                                        onChange={handleInput}
+                                    >
+                                        <option value="">Select Branch</option>
+
+                                        {branches.map((branch) => (
+                                            <option
+                                                key={branch.id}
+                                                value={branch.id}   // or branch.name
+                                            >
+                                                {branch.name}
                                             </option>
                                         ))}
                                     </select>
@@ -418,7 +443,8 @@ const Staff = () => {
                                     <tr>
                                         <th>S.no</th>
                                         <th>staff Name</th>
-                                        <th>Company Named</th>
+                                        <th>Company Name</th>
+                                        <th>Branch Name</th>
                                         <th>Designation</th>
                                         <th>Actions</th>
                                     </tr>
@@ -437,7 +463,7 @@ const Staff = () => {
                                                                 style={{ background: "#141414aa" }}
                                                             >
                                                                 {
-                                                                    staff.image ? <img src={`${BASE_URL}/uploads/user/${staff.user?.image}`} alt="Profile" class="navbar-avatar" />
+                                                                    staff.user?.image ? <img src={`${BASE_URL}/uploads/user/${staff.user?.image}`} alt="Profile" class="navbar-avatar" />
                                                                         : <img alt="Profile" class="navbar-avatar" src={noimage} />
                                                                 }
 
@@ -453,6 +479,10 @@ const Staff = () => {
 
                                                     <td>
                                                         {staff.company?.name}
+                                                    </td>
+
+                                                    <td>
+                                                        {staff.branch?.name}
                                                     </td>
 
                                                     <td>

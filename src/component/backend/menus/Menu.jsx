@@ -199,7 +199,6 @@ const Menu = () => {
 
 
               <div className="form-floating">
-
                 <input
                   type="text"
                   name="name"
@@ -210,6 +209,20 @@ const Menu = () => {
                   placeholder="Menu Name"
                 />
                 <label htmlFor="menuName">Menu Name</label>
+              </div>
+
+
+              <div className="form-floating">
+                <input
+                  type="text"
+                  name="display_name"
+                  value={menu?.display_name}
+                  onChange={handleInput}
+                  className="form-control"
+                  id="menuName"
+                  placeholder="Display Name"
+                />
+                <label htmlFor="menuName">Display Name</label>
               </div>
 
               <div className="form-floating">
@@ -281,103 +294,103 @@ const Menu = () => {
 
               {category.map((item, index) => {
                 return (
-                  
-                    <Accordion key={item.id} defaultActiveKey="0">
-                      <Accordion.Item eventKey={String(item.id)}>
-                        <Accordion.Header>
-                          <span className="form-label me-2">
-                            # {index + 1}
+
+                  <Accordion key={item.id} defaultActiveKey="0">
+                    <Accordion.Item eventKey={String(item.id)}>
+                      <Accordion.Header>
+                        <span className="form-label me-2">
+                          # {index + 1}
+                        </span>
+
+                        {can("menus.update") && (
+                          <Link
+                            to={`/admin/menu/edit/${item.id}`}
+                            className="btn-edit-sm me-2"
+                            title="Edit"
+                          >
+                            <i className="bi bi-pencil"></i>
+                          </Link>
+                        )}
+
+                        {can("menus.destroy") && (
+                          <button
+                            type="button"
+                            className="btn-danger-sm me-2"
+                            onClick={() => deleteMenu(item.id)}
+                            title="Delete"
+                          >
+                            <i className="bi bi-trash3"></i>
+                          </button>
+                        )}
+
+                        <span className="form-label">
+                          {item.display_name}
+                          <span className="gap-5">
+                            ({item.sub_categories.length})
                           </span>
+                          <i className={`${item.icon} ms-4`}></i>
+                        </span>
+                      </Accordion.Header>
 
-                          {can("menus.update") && (
-                            <Link
-                              to={`/admin/menu/edit/${item.id}`}
-                              className="btn-edit-sm me-2"
-                              title="Edit"
-                            >
-                              <i className="bi bi-pencil"></i>
-                            </Link>
-                          )}
+                      <Accordion.Body>
+                        <table className="admin-table">
+                          <thead>
+                            <tr>
+                              <th>S.no</th>
+                              <th>Name</th>
+                              <th>Route Name</th>
+                              <th>Rank</th>
+                              <th>Icon</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
 
-                          {can("menus.destroy") && (
-                            <button
-                              type="button"
-                              className="btn-danger-sm me-2"
-                              onClick={() => deleteMenu(item.id)}
-                              title="Delete"
-                            >
-                              <i className="bi bi-trash3"></i>
-                            </button>
-                          )}
+                          <tbody>
+                            {item.sub_categories.map((menu, index) => (
+                              <tr key={menu.id}>
+                                <td>{index + 1}</td>
 
-                          <span className="form-label">
-                            {item.display_name}
-                            <span className="gap-5">
-                              ({item.sub_categories.length})
-                            </span>
-                            <i className={`${item.icon} ms-4`}></i>
-                          </span>
-                        </Accordion.Header>
+                                <td>{menu.name}</td>
 
-                        <Accordion.Body>
-                          <table className="admin-table">
-                            <thead>
-                              <tr>
-                                <th>S.no</th>
-                                <th>Name</th>
-                                <th>Route Name</th>
-                                <th>Rank</th>
-                                <th>Icon</th>
-                                <th>Actions</th>
+                                <td>{menu.route}</td>
+
+                                <td>{menu.rank}</td>
+
+                                <td>
+                                  <i className={menu.icon}></i>
+                                </td>
+
+                                <td>
+                                  <div className="table-actions">
+                                    {can("menus.update") && (
+                                      <Link
+                                        to={`/admin/menu/edit/${menu.id}`}
+                                        className="btn-edit-sm"
+                                        title="Edit"
+                                      >
+                                        <i className="bi bi-pencil"></i>
+                                      </Link>
+                                    )}
+
+                                    {can("menus.destroy") && (
+                                      <button
+                                        type="button"
+                                        className="btn-danger-sm"
+                                        onClick={() => deleteMenu(menu.id)}
+                                        title="Delete"
+                                      >
+                                        <i className="bi bi-trash3"></i>
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
                               </tr>
-                            </thead>
-
-                            <tbody>
-                              {item.sub_categories.map((menu, index) => (
-                                <tr key={menu.id}>
-                                  <td>{index + 1}</td>
-
-                                  <td>{menu.name}</td>
-
-                                  <td>{menu.route}</td>
-
-                                  <td>{menu.rank}</td>
-
-                                  <td>
-                                    <i className={menu.icon}></i>
-                                  </td>
-
-                                  <td>
-                                    <div className="table-actions">
-                                      {can("menus.update") && (
-                                        <Link
-                                          to={`/admin/menu/edit/${menu.id}`}
-                                          className="btn-edit-sm"
-                                          title="Edit"
-                                        >
-                                          <i className="bi bi-pencil"></i>
-                                        </Link>
-                                      )}
-
-                                      {can("menus.destroy") && (
-                                        <button
-                                          type="button"
-                                          className="btn-danger-sm"
-                                          onClick={() => deleteMenu(menu.id)}
-                                          title="Delete"
-                                        >
-                                          <i className="bi bi-trash3"></i>
-                                        </button>
-                                      )}
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </Accordion.Body>
-                      </Accordion.Item>
-                    </Accordion> 
+                            ))}
+                          </tbody>
+                        </table>
+                      </Accordion.Body>
+                    </Accordion.Item>
+                  </Accordion>
                 );
               })}
             </div>

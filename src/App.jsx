@@ -47,6 +47,9 @@ import DeviceManager from './component/backend/company-device/DeviceManager'
 import PermissionRoute from './component/PermissionRoute'
 import StaffDeviceLInk from './component/backend/staff-device-link/StaffDeviceLInk'
 import LeaveIsApproved from './component/backend/leave-application/LeaveIsApproved'
+import Branch from './component/backend/branch/Branch'
+import BranchTrashed from './component/backend/branch/BranchTrashed'
+import BranchEdit from './component/backend/branch/BranchEdit'
 
 const App = () => {
   const { can } = useAuth();
@@ -103,6 +106,11 @@ const App = () => {
             <Route path='company' element={<Company />} />
             <Route path='company/trashed' element={<CompanyTrashed />} />
             <Route path='company/edit/:id' element={<CompanyEdit />} />
+
+            {/* Companies  */}
+            <Route path='branch' element={<Branch />} />
+            <Route path='branch/trashed' element={<BranchTrashed />} />
+            <Route path='branch/edit/:id' element={<BranchEdit />} />
 
             {/* Company Devices */}
 
