@@ -32,6 +32,50 @@ const LeaveApplication = () => {
         date_from: "",
         date_to: "",
     });
+
+    const [companies, setCompanies] = useState([]);
+
+    const [branches, setBranches] = useState([]);
+
+    const [companyBranch, setCompanyBranch] = useState({
+        company_id: "",
+        branch_id: "",
+    });
+
+    const handleInputCompanyBranch = (e) => {
+        const { name, value } = e.target;
+
+        if (name === 'company_id') {
+            const selectedCompany = companies.find((company) => company.id === Number(value));
+            setBranches(selectedCompany?.branches || []);
+
+            // Reset branch when company changes
+            setCompanyBranch({ ...companyBranch, company_id: value, branch_id: "", });
+            return;
+
+        }
+        
+        setCompanyBranch({ ...companyBranch, [name]: value })
+    }
+
+    const handleSubmitCompanyBranch = async (e, company_id, branch_id) => {
+        e.preventDefault(e);
+
+        try {
+            const result = await api.get("leave/staffs-company-and-branch-wise/", {
+                params: {
+                    company_id: company_id,
+                    branch_id: branch_id,
+                }
+            })
+            // setStaffs(result.data.staffs);
+            setLeaveApplications(result.data.leave_applications);
+
+        } catch (error) {
+            showError(error.response.data.message || "Something went wrong")
+        }
+    }
+
     const [leaveApplications, setLeaveApplications] = useState([]);
     const [leaveType, setLeaveType] = useState([]);
 
@@ -110,6 +154,8 @@ const LeaveApplication = () => {
             const result = await api.get(`/leave-applications`);
             setLeaveApplications(result.data.leave_applications);
             setLeaveType(result.data.leave_type);
+            setCompanies(result.data.companies);
+            setBranches(result.data.branches);
 
         } catch (error) {
             showError(error.response.data.message);
@@ -366,15 +412,81 @@ const LeaveApplication = () => {
                     </div>
                     {/* Admin List */}
                     <div className="glass-card-solid admin-list-card">
-                        <div className="admin-table-header">
-                            <div>
-                                <div className="section-title" style={{ fontSize: 15 }}>
-                                    Leave Application
+                        <div style={{ marginBottom: 18 }}>
+
+                            {/* Title row + Trashed button */}
+                            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 18 }}>
+                                <div>
+                                    <div className="section-title" style={{ fontSize: 15 }}>Company staff accounts</div>
+                                    <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>Manage existing staff and administrator accounts</div>
                                 </div>
-                                <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 1 }}>
-                                    Manage existing administrator accounts
-                                </div>
+
+                                {/* <Link
+                            to="/admin/staff/trashed"
+                            style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 6, padding: '0 14px', height: 34, borderRadius: 8,
+                                background: 'rgba(239,68,68,0.1)', color: '#EF4444', fontSize: 12, fontWeight: 500,
+                                textDecoration: 'none', position: 'relative', whiteSpace: 'nowrap'
+                            }}
+                        >
+                            <i className="bi bi-trash3-fill" style={{ fontSize: 14 }} />
+                            Trashed
+                            <span style={{
+                                position: 'absolute', top: -7, right: -7, background: '#EF4444', color: '#fff',
+                                fontSize: 10, fontWeight: 700, borderRadius: 999, padding: '1px 6px', lineHeight: '16px'
+                            }}>
+                                {trashed || 0}+
+                            </span>
+                        </Link> */}
                             </div>
+
+                            {/* Filters row — all three columns use the same height:36px wrapper */}
+                            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
+                                {/* Company */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 160 }}>
+                                    <label style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', lineHeight: 1 }}>
+                                        Company
+                                    </label>
+                                    <div style={{ position: 'relative', height: 41 }}>
+                                        <i className="bi bi-building" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#94A3B8', pointerEvents: 'none' }} />
+                                        <select
+                                            name="company_id"
+                                            className="form-select"
+                                            onChange={handleInputCompanyBranch}
+                                            value={companyBranch.company_id}
+                                            style={{ position: 'absolute', inset: 0, width: '100%', height: 41, paddingLeft: 30, fontSize: 13 }}
+                                        >
+                                            <option value="">All companies</option>
+                                            {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Branch */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 160 }}>
+                                    <label style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', lineHeight: 2 }}>
+                                        Branch
+                                    </label>
+                                    <div style={{ position: 'relative', height: 41 }}>
+                                        <i className="bi bi-geo-alt" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#646464', pointerEvents: 'none' }} />
+                                        <select
+                                            name="branch_id"
+                                            className="form-select"
+                                            onChange={handleInputCompanyBranch}
+                                            value={companyBranch.branch_id}
+                                            style={{ position: 'absolute', inset: 0, width: '100%', height: 41, paddingLeft: 30, fontSize: 13 }}
+                                        >
+                                            <option value="">All branches</option>
+                                            {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" onClick={(e) => handleSubmitCompanyBranch(e, companyBranch.company_id, companyBranch.branch_id)} class="theme-toggle-btn" title="Cycle theme">
+                                    <i class="bi bi-check2-circle"></i> Submit
+                                </button>
+                            </div>
+
 
                         </div>
                         <div style={{ overflowX: "auto" }}>
@@ -383,8 +495,9 @@ const LeaveApplication = () => {
                                 <thead>
                                     <tr>
                                         <th>S.no</th>
-                                        <th>Name / Role</th>
-                                        <th>Leave Name</th>
+                                        <th>Staff Name And Role</th>
+                                        {/* <th>Company</th> */}
+                                        <th> Name</th>
                                         <th>Leave Start/End</th>
                                         <th>Days</th>
                                         <th> Is Approved?</th>
@@ -419,6 +532,7 @@ const LeaveApplication = () => {
                                                             </div>
                                                         </div>
                                                     </td>
+                                                    {/* <td><small>{leave.user?.staff?.company?.name}</small></td> */}
 
                                                     <td>
                                                         <small>{leave.leave_type?.name}</small>
@@ -512,84 +626,7 @@ const LeaveApplication = () => {
 
 
 
-            {/* <!-- Modal --> */}
-            {/* <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">Approval Request From</h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <form onSubmit={handleIsApprovedSubmit}>
-                            <div className="modal-body">
-                                <div class="alert alert-info mb-3">
-                                    <small>Please review the leave application before approving or rejecting.</small>
-                                </div>
-                                <table className="table table-sm table-bordered mb-0">
-                                    <tbody>
-                                        <tr>
-                                            <th width="35%"><label class="form-label"> Name</label></th>
-                                            <td id="modal_user">{viewLeaveApproval.user?.name}</td>
-                                        </tr>
-                                        <tr>
-                                            <th><label class="form-label"> Leave Type </label></th>
-                                            <td id="modal_leave_type">{viewLeaveApproval.leave_type?.name}</td>
-                                        </tr>
 
-                                        <tr>
-                                            <th><label class="form-label">Leave Start / End  </label></th>
-                                            <td>
-                                                <span>{viewLeaveApproval.date_from} </span>
-                                                to
-                                                <span> {viewLeaveApproval.date_to}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><label class="form-label"> Total Requested Days</label></th>
-                                            <td>
-                                                <span>{viewLeaveApproval.total_days}</span>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <th><label class="form-label">Approval Remarks</label></th> 
-                                            <td>
-                                                <textarea name="approval_remarks" value={leaveaIsApproved.approval_remarks} onChange={handleApprove} className="form-control" />
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <th><label class="form-label">Approve / Reject</label></th>
-                                            <td>
-                                                <div>
-                                                    <div className="form-check form-check-inline">
-                                                        <input className="form-check-input" value={0} type="radio" name="is_approved" id="inlineRadio0" />
-                                                        <label className="form-check-label" htmlFor="inlineRadio0">Pending</label>
-                                                    </div>
-                                                    <div className="form-check form-check-inline">
-                                                        <input className="form-check-input" value={1} type="radio" name="is_approved" id="inlineRadio1" />
-                                                        <label className="form-check-label" htmlFor="inlineRadio1">Approve</label>
-                                                    </div>
-                                                    <div className="form-check form-check-inline">
-                                                        <input className="form-check-input" value={2} type="radio" name="is_approved" id="inlineRadio2" />
-                                                        <label className="form-check-label" htmlFor="inlineRadio2">Reject</label>
-                                                    </div>
-                                                </div>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Cancel</button>
-                                <button type="submit" className="btn-danger"><i class="bi bi-x-circle"></i> <label htmlFor="inlineRadio2"> Rejected</label></button>
-                                <button type="submit" className="btn-success"><i className="bi bi-check2-circle fs-6"></i> <label htmlFor="inlineRadio1"> Approved </label></button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div> */}
         </div>
     );
 };

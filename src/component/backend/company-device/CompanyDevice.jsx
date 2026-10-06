@@ -63,9 +63,8 @@ const CompanyDevice = () => {
                         device_brand_id: value
                     }
                 });
-
-
                 setDeviceName(response.data.devices || []);
+
             } catch (error) {
                 console.error("Error fetching devices:", error);
                 setDeviceName([]);
@@ -141,11 +140,11 @@ const CompanyDevice = () => {
 
     }
 
-    
+
     const [busyId, setBusyId] = useState(null); // which device row is mid-action
     const [messages, setMessages] = useState({}); // deviceId -> last result/error text
 
- 
+
     const listDevices = async () => {
         const result = await api.get(`/company-devices`);
         return result.data.devices;
@@ -184,7 +183,7 @@ const CompanyDevice = () => {
         loadDevices();
     }, [loadDevices]);
 
-    
+
 
     const handleCheckConnection = async (device) => {
         setBusyId(device.id);
@@ -254,16 +253,10 @@ const CompanyDevice = () => {
                             </div>
 
 
-
-
                             <div className="form-group">
                                 {/* <label className="form-label"> Company Name</label> */}
 
-
-                                <FloatingLabel
-                                    controlId="floatingSelectGrid"
-                                    label="Company Name"
-                                >
+                                <FloatingLabel controlId="floatingSelectGrid" label="Company Name">
                                     <Form.Select name="company_id" onChange={handleInput} aria-label="Floating label select example" className="mb-3">
                                         <option>Please Select Company</option>
                                         {
@@ -284,8 +277,6 @@ const CompanyDevice = () => {
                                     controlId="floatingSelectGrid"
                                     label="Device Brand"
                                 >
-                                     
-
                                     <Form.Select
                                         name="device_brand_id"
                                         value={device?.device_brand_id || ""}
@@ -317,7 +308,7 @@ const CompanyDevice = () => {
                                     }
                                 </Form.Select>
                             </div>
- 
+
 
                             <FloatingLabel
                                 controlId="floatingSelectGrid"
@@ -326,7 +317,7 @@ const CompanyDevice = () => {
                                 <input type="text" name='serial_no' value={device?.serial_no} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. ZKTK40PRO001" />
                             </FloatingLabel>
 
-                            
+
 
                             <FloatingLabel
                                 controlId="floatingSelectGrid"
@@ -335,7 +326,7 @@ const CompanyDevice = () => {
                                 <input type="text" name='port' value={device?.port} onChange={handleInput} className="form-control" id="newAdminName" placeholder="e.g. 4370" />
                             </FloatingLabel>
 
- 
+
 
                             <FloatingLabel
                                 controlId="floatingSelectGrid"
@@ -469,7 +460,7 @@ const CompanyDevice = () => {
                                                     <td>
                                                         <div className="table-actions">
 
-                                                          
+
 
                                                             {/* <span className="text-xs text-gray-500"> */}
                                                             <span className="btn-edit-sm rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50">

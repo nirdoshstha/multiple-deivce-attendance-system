@@ -53,11 +53,54 @@ const Attendance = () => {
     const [month, setMonth] = useState(getTodayBs().month);
     const [year, setYear] = useState(getTodayBs().year);
 
+    //Filter By Company & Branch
+    const [companies, setCompanies] = useState([]);
+
+    const [branches, setBranches] = useState([]);
+
+    const [companyBranch, setCompanyBranch] = useState({
+        company_id: "",
+        branch_id: "",
+    });
+
+    const handleInputCompanyBranch = (e) => {
+        const { name, value } = e.target;
+
+        if (name === 'company_id') {
+            const selectedCompany = companies.find((company) => company.id === Number(value));
+            setBranches(selectedCompany?.branches || []);
+
+            // Reset branch when company changes
+            setCompanyBranch({ ...companyBranch, company_id: value, branch_id: "", });
+            return;
+
+        }
+
+        setCompanyBranch({ ...companyBranch, [name]: value })
+    }
+
+    const handleSubmitCompanyBranch = async (e, company_id, branch_id) => {
+        e.preventDefault(e);
+
+        try {
+            const result = await api.get("attendance/staffs-company-and-branch-wise/", {
+                params: {
+                    company_id: company_id,
+                    branch_id: branch_id,
+                }
+            })
+
+            setStaffs(result.data.staffs);
+
+        } catch (error) {
+            showError(error.response.data.message || "Something went wrong")
+        }
+    }
+
     const handleAttendanceChange = (staffId, field, value) => {
         setAttendances((prev) => prev.map((item) => item.staff_id === staffId ? { ...item, [field]: value } : item));
 
     };
-
 
     useEffect(() => {
         fetchDailyData(date);
@@ -160,8 +203,6 @@ const Attendance = () => {
         return parts.length === 3 ? parseInt(parts[2], 10) : null;
     };
 
-
-
     // ===================== VIEW SWITCH =====================
     useEffect(() => {
         const buttons = document.querySelectorAll(".view-switch button");
@@ -247,6 +288,51 @@ const Attendance = () => {
                                                         {date ? `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}` : "-"}
                                                     </strong>
                                                 </span>
+                                            </div>
+
+                                            <div>
+                                                {/* Filters row — all three columns use the same height:36px wrapper */}
+                                                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
+                                                    {/* Company */}
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 160 }}>
+
+                                                        <div style={{ position: 'relative', height: 41 }}>
+                                                            <i className="bi bi-building" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#94A3B8', pointerEvents: 'none' }} />
+                                                            <select
+                                                                name="company_id"
+                                                                className="form-select"
+                                                                onChange={handleInputCompanyBranch}
+                                                                value={companyBranch.company_id}
+                                                                style={{ position: 'absolute', inset: 0, width: '100%', height: 41, paddingLeft: 30, fontSize: 13 }}
+                                                            >
+                                                                <option value="">All companies</option>
+                                                                {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Branch */}
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 160 }}>
+
+                                                        <div style={{ position: 'relative', height: 41 }}>
+                                                            <i className="bi bi-geo-alt" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#646464', pointerEvents: 'none' }} />
+                                                            <select
+                                                                name="branch_id"
+                                                                className="form-select"
+                                                                onChange={handleInputCompanyBranch}
+                                                                value={companyBranch.branch_id}
+                                                                style={{ position: 'absolute', inset: 0, width: '100%', height: 41, paddingLeft: 30, fontSize: 13 }}
+                                                            >
+                                                                <option value="">All branches</option>
+                                                                {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <button type="submit" onClick={(e) => handleSubmitCompanyBranch(e, companyBranch.company_id, companyBranch.branch_id)} class="theme-toggle-btn" title="Cycle theme">
+                                                        <i class="bi bi-check2-circle"></i> Submit
+                                                    </button>
+                                                </div>
                                             </div>
 
                                             <div className="d-flex gap-2">
@@ -337,9 +423,9 @@ const Attendance = () => {
                                                                                 <option value="absent">Absent</option>
                                                                                 <option value="present">Present</option>
                                                                                 <option value="leave">Leave</option>
-                                                                                <option value="holiday">Holiday</option>
+                                                                                {/* <option value="holiday">Holiday</option>
                                                                                 <option value="halfday">Half Day</option>
-                                                                                <option value="weekend">Weekend</option>
+                                                                                <option value="weekend">Weekend</option> */}
                                                                             </select>
                                                                         </td>
                                                                         <td>

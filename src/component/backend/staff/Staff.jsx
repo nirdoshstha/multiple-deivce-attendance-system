@@ -25,6 +25,8 @@ const Staff = () => {
     const [loading, setLoading] = useState(false);
     const [staff, setStaff] = useState({
         image: null,
+        company_id: "",
+        branch_id: "",
         name: "",
         email: "",
         gender: "",
@@ -33,8 +35,12 @@ const Staff = () => {
     });
     const [staffs, setStaffs] = useState([]);
     const [designations, setDesignations] = useState([]);
+
     const [companies, setCompanies] = useState([]);
     const [branches, setBranches] = useState([]);
+
+
+
     const [gender, setGender] = useState("");
 
     const [trashed, setTrashed] = useState(0);
@@ -58,13 +64,34 @@ const Staff = () => {
 
     const handleInput = (e) => {
         const { name, files, value } = e.target;
-
         if (name === 'image') {
             setPreviewImage(URL.createObjectURL(files[0]))
         }
 
         setStaff({ ...staff, [name]: files?.length ? files[0] : value })
     }
+
+    const [companyBranch, setCompanyBranch] = useState({
+        company_id: "",
+        branch_id: "",
+    });
+
+    const handleInputCompanyBranch = (e) => {
+        const { name, files, value } = e.target;
+        if (name === 'image') {
+            setPreviewImage(URL.createObjectURL(files[0]))
+        }
+        if (name === 'company_id') {
+            const selectedCompany = companies.find((company) => company.id === Number(value));
+            setBranches(selectedCompany?.branches || []);
+
+            // Reset branch when company changes
+            setCompanyBranch({ ...companyBranch, company_id: value, branch_id: "", });
+
+        }
+        setCompanyBranch({ ...companyBranch, [name]: value })
+    }
+
 
 
     useEffect(() => {
@@ -179,6 +206,23 @@ const Staff = () => {
         }
     };
 
+    const handleSubmitCompanyBranch = async (e, company_id, branch_id) => {
+        e.preventDefault(e);
+
+        try {
+            const result = await api.get("/staffs-company-branch/", {
+                params: {
+                    company_id: company_id,
+                    branch_id: branch_id,
+                }
+            })
+            setStaffs(result.data.staffs);
+
+        } catch (error) {
+            showError(error.response.data.message || "Something went wrong")
+        }
+    }
+
     return (
         <div>
             <div className="admin-mgmt">
@@ -202,6 +246,7 @@ const Staff = () => {
                                         name="company_id"
                                         className="form-select"
                                         onChange={handleInput}
+                                        value={staff.company_id}
                                     >
                                         <option value="">Select Company</option>
 
@@ -225,6 +270,7 @@ const Staff = () => {
                                         name="branch_id"
                                         className="form-select"
                                         onChange={handleInput}
+                                        value={staff.branch_id}
                                     >
                                         <option value="">Select Branch</option>
 
@@ -401,41 +447,145 @@ const Staff = () => {
                     </div>
                     {/* Admin List */}
                     <div className="glass-card-solid admin-list-card">
-                        <div className="admin-table-header">
-                            <div>
-                                <div className="section-title" style={{ fontSize: 15 }}>Company staff Accounts</div>
-                                <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 1 }}>Manage existing administrator accounts</div>
-                            </div>
 
-                            <div className="search-box float-end">
+                        <div style={{ marginBottom: 18 }}>
 
-                                <form onSubmit={handleSubmitSearch}>
-                                    <div className="search-box float-end">
-                                        <input
-                                            type="text"
-                                            name="search"
-                                            className="form-control"
-                                            placeholder="Search by name or role..."
-                                            value={search}
-                                            onChange={(e) => setSearch(e.target.value)}
-                                        />
-                                        <i className="bi bi-search" />
-                                    </div>
-                                </form>
+                            {/* Title row + Trashed button */}
+                            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 18 }}>
+                                <div>
+                                    <div className="section-title" style={{ fontSize: 15 }}>Company staff accounts</div>
+                                    <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>Manage existing staff and administrator accounts</div>
+                                </div>
 
-                            </div>
-
-                            <div>
-                                <Link to={`/admin/staff/trashed`} type="button" className="theme-toggle-btn gap-0 position-relative">
-                                    <i class="bi bi-trash3-fill text-light"></i>
-                                    <span className='badge ms-0'> Trashed</span>
-                                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <Link
+                                    to="/admin/staff/trashed"
+                                    style={{
+                                        display: 'inline-flex', alignItems: 'center', gap: 6, padding: '0 14px', height: 34, borderRadius: 8,
+                                        background: 'rgba(239,68,68,0.1)', color: '#EF4444', fontSize: 12, fontWeight: 500,
+                                        textDecoration: 'none', position: 'relative', whiteSpace: 'nowrap'
+                                    }}
+                                >
+                                    <i className="bi bi-trash3-fill" style={{ fontSize: 14 }} />
+                                    Trashed
+                                    <span style={{
+                                        position: 'absolute', top: -7, right: -7, background: '#EF4444', color: '#fff',
+                                        fontSize: 10, fontWeight: 700, borderRadius: 999, padding: '1px 6px', lineHeight: '16px'
+                                    }}>
                                         {trashed || 0}+
-                                        <span className="visually-hidden">unread messages</span>
                                     </span>
                                 </Link>
+                            </div>
+
+                            {/* Filters row — all three columns use the same height:36px wrapper */}
+                            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
+
+                                {/* Company */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 160 }}>
+                                    <label style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', lineHeight: 1 }}>
+                                        Company
+                                    </label>
+                                    <div style={{ position: 'relative', height: 41 }}>
+                                        <i className="bi bi-building" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#94A3B8', pointerEvents: 'none' }} />
+                                        <select
+                                            name="company_id"
+                                            className="form-select"
+                                            onChange={handleInputCompanyBranch}
+                                            value={companyBranch.company_id}
+                                            style={{ position: 'absolute', inset: 0, width: '100%', height: 41, paddingLeft: 30, fontSize: 13 }}
+                                        >
+                                            <option value="">All companies</option>
+                                            {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Branch */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 160 }}>
+                                    <label style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', lineHeight: 2 }}>
+                                        Branch
+                                    </label>
+                                    <div style={{ position: 'relative', height: 41 }}>
+                                        <i className="bi bi-geo-alt" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#646464', pointerEvents: 'none' }} />
+                                        <select
+                                            name="branch_id"
+                                            className="form-select"
+                                            onChange={handleInputCompanyBranch}
+                                            value={companyBranch.branch_id}
+                                            style={{ position: 'absolute', inset: 0, width: '100%', height: 41, paddingLeft: 30, fontSize: 13 }}
+                                        >
+                                            <option value="">All branches</option>
+                                            {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" onClick={(e) => handleSubmitCompanyBranch(e, companyBranch.company_id, companyBranch.branch_id)} class="theme-toggle-btn" title="Cycle theme">
+                                    <i class="bi bi-check2-circle"></i> Submit
+                                </button>
+
+                                {/* Search — form is now display:contents so it contributes no box */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 180 }}>
+                                    <label style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', lineHeight: 1 }}>
+                                        Search
+                                    </label>
+                                    <div style={{ position: 'relative', height: 41 }}>
+                                        <i className="bi bi-search" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', fontSize: 14, color: '#94A3B8', pointerEvents: 'none', zIndex: 1 }} />
+                                        <form onSubmit={handleSubmitSearch} style={{ display: 'contents' }}>
+                                            <input
+                                                type="text"
+                                                name="search"
+                                                className="form-control"
+                                                placeholder="Name or role…"
+                                                value={search}
+                                                onChange={e => setSearch(e.target.value)}
+                                                style={{ position: 'absolute', inset: 0, width: '100%', height: 41, paddingLeft: 30, fontSize: 13, boxSizing: 'border-box' }}
+                                            />
+                                        </form>
+                                    </div>
+                                </div>
 
                             </div>
+
+                            {/* Active filter pills — render only when a filter is active */}
+                            {(staff.company_id || staff.branch_id) && (
+                                <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                                    <span style={{ fontSize: 11, color: '#94A3B8' }}>Active filters:</span>
+
+                                    {staff.company_id && (
+                                        <span style={{
+                                            display: 'inline-flex', alignItems: 'center', gap: 4,
+                                            background: 'rgba(37,99,235,0.1)', color: '#2563EB',
+                                            fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 999
+                                        }}>
+                                            {companies.find(c => c.id == staff.company_id)?.name}
+                                            <i className="bi bi-x" style={{ fontSize: 11, cursor: 'pointer' }}
+                                                onClick={() => handleInput({ target: { name: 'company_id', value: '' } })} />
+                                        </span>
+                                    )}
+
+                                    {staff.branch_id && (
+                                        <span style={{
+                                            display: 'inline-flex', alignItems: 'center', gap: 4,
+                                            background: 'rgba(37,99,235,0.1)', color: '#2563EB',
+                                            fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 999
+                                        }}>
+                                            {branches.find(b => b.id == staff.branch_id)?.name}
+                                            <i className="bi bi-x" style={{ fontSize: 11, cursor: 'pointer' }}
+                                                onClick={() => handleInput({ target: { name: 'branch_id', value: '' } })} />
+                                        </span>
+                                    )}
+
+                                    <button
+                                        onClick={() => {
+                                            handleInput({ target: { name: 'company_id', value: '' } });
+                                            handleInput({ target: { name: 'branch_id', value: '' } });
+                                        }}
+                                        style={{ fontSize: 11, color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px' }}
+                                    >
+                                        Clear all
+                                    </button>
+                                </div>
+                            )}
                         </div>
                         <div style={{ overflowX: 'auto' }}>
                             <table class="admin-table" id="adminTable">

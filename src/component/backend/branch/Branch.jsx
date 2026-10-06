@@ -19,6 +19,7 @@ const Branch = () => {
     const [branch, setBranch] = useState({
         logo: null,
         name: '',
+        company_id: "",
         email: "",
         phone: "",
         address: "",
@@ -279,8 +280,8 @@ const Branch = () => {
                                     <tr>
                                         <th>S.no</th>
                                         <th>Name</th>
+                                        <th>Company Name</th>
                                         <th>Pan</th>
-                                        {/* <th>Status</th> */}
                                         <th>Joined</th>
                                         <th>Actions</th>
                                     </tr>
@@ -314,6 +315,7 @@ const Branch = () => {
                                                                 </div>
                                                             </div>
                                                         </td>
+                                                        <td style={{ fontSize: "13px", color: "#64748B" }}>{item.company?.name}</td>
 
 
                                                         <td style={{ fontSize: "13px", color: "#64748B" }}>
